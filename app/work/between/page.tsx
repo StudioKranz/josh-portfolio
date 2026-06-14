@@ -8,7 +8,8 @@ export const metadata: Metadata = {
     "A deployed Next.js and Supabase foundation for agent-guided, mediated workflows.",
 };
 
-const DEMO_URL = "https://between-tan.vercel.app/spaces";
+const DEMO_URL = "https://between.global";
+const ACCESS_CODE = "MZGFB8DJZWGS"; // reviewer access code
 
 export default function Between() {
   return (
@@ -18,7 +19,7 @@ export default function Between() {
       maturity="deployed"
       maturityLabel="Deployed · Next.js + Supabase on Vercel"
     >
-      <div className="mt-8">
+      <div className="mt-8 rounded-xl border border-line bg-surface p-5 sm:p-6">
         <a
           href={DEMO_URL}
           target="_blank"
@@ -27,6 +28,20 @@ export default function Between() {
         >
           Open the live demo →
         </a>
+        <p className="mt-4 text-[13px] leading-relaxed text-muted">
+          Between is a two-person mediated space — open it at{" "}
+          <span className="text-ink">between.global</span>
+          {ACCESS_CODE ? (
+            <>
+              {" "}
+              with access code{" "}
+              <span className="rounded-md bg-white px-2 py-0.5 font-medium tracking-wide text-ink ring-1 ring-line">
+                {ACCESS_CODE}
+              </span>
+            </>
+          ) : null}
+          .
+        </p>
       </div>
 
       <Section label="The problem">

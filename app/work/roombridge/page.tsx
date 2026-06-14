@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import CaseStudy from "@/components/CaseStudy";
 import Section from "@/components/Section";
-import ImageSlot from "@/components/ImageSlot";
+import RoomBridgeGallery from "@/components/RoomBridgeGallery";
 
 export const metadata: Metadata = {
   title: "RoomBridge — Josh Rosenkranz",
@@ -17,12 +17,7 @@ export default function RoomBridge() {
       maturity="prototype"
       maturityLabel="Early visionOS prototype · built and tested on Vision Pro"
     >
-      <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <ImageSlot label="Room anchoring — add screenshot" ratio="aspect-[16/10]" />
-        <ImageSlot label="Glass panels — add screenshot" ratio="aspect-[16/10]" />
-        <ImageSlot label="Environment selection — add screenshot" ratio="aspect-[16/10]" />
-        <ImageSlot label="Glass Elevator — add screenshot" ratio="aspect-[16/10]" />
-      </div>
+      <RoomBridgeGallery />
 
       <Section label="The problem">
         <p>
