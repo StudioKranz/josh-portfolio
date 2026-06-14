@@ -22,6 +22,15 @@ export default function Home() {
           AI-driven interaction · spatial presence · emotional context and
           consent · agentic workflows · multimodal prototyping
         </p>
+        <p className="mt-6 text-[13px] text-muted">
+          <Link href="/why" className="underline-offset-4 hover:underline">
+            Why this work
+          </Link>
+          <span className="mx-2 text-faint">·</span>
+          <Link href="/how-i-work" className="underline-offset-4 hover:underline">
+            How I work
+          </Link>
+        </p>
       </header>
 
       <h2 className="mt-20 text-[11px] font-medium uppercase tracking-[0.16em] text-faint">
