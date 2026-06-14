@@ -16,6 +16,7 @@ const PATTERNS = [
   "Context — they lose the thread across apps, devices, and time.",
   "Communication — two people struggle to understand each other.",
   "Emotional relationship — people relate to technology with feeling, and it rarely relates back.",
+  "Friction — the digital plan is smooth, but the physical last mile (parking, walking, arriving) is where stress lives.",
 ];
 
 const PROJECTS = [
@@ -38,6 +39,11 @@ const PROJECTS = [
     slug: "roombridge",
     name: "RoomBridge",
     line: "presence and place — being somewhere, accessibly, without leaving the room.",
+  },
+  {
+    slug: "arrival-integrity",
+    name: "Arrival Integrity",
+    line: "friction — protecting the parking, the walk, and the stressful last five minutes of a trip.",
   },
 ];
 
@@ -92,8 +98,9 @@ export default function Why() {
       </ul>
 
       <p className="mt-10 max-w-2xl text-[15px] leading-7 text-ink/90">
-        Different surfaces — a watch face, a headset, a thread, a memory layer —
-        but one throughline: technology that meets people where they are.
+        Different surfaces — a watch face, a headset, a thread, a memory layer,
+        a map — but one throughline: technology that meets people where they
+        are.
       </p>
 
       <SiteFooter />

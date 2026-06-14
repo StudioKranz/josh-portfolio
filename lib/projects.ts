@@ -46,6 +46,15 @@ export const projects: Project[] = [
     maturityLabel: "Design exploration",
     thumbLabel: "Interactive",
   },
+  {
+    slug: "arrival-integrity",
+    name: "Arrival Integrity",
+    summary:
+      "Protecting the last five minutes of a trip — parking, walk time, and a calmer arrival in Apple Maps.",
+    maturity: "exploration",
+    maturityLabel: "Design exploration",
+    thumbLabel: "Maps concept",
+  },
 ];
 
 export function getProject(slug: string): Project | undefined {
