@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import CaseStudy from "@/components/CaseStudy";
 import Section from "@/components/Section";
-import ArrivalCard from "@/components/ArrivalCard";
+import ParkingLoop from "@/components/ParkingLoop";
 
 export const metadata: Metadata = {
   title: "Arrival Integrity — Josh Rosenkranz",
@@ -36,18 +36,19 @@ export default function ArrivalIntegrity() {
         </p>
       </Section>
 
-      <Section label="A key design decision">
+      <Section label="Two surfaces, one loop">
         <p>
-          My first version modeled this as a “hazard report” — tag a full lot
-          the way you’d flag a road hazard. Pressure-testing it, that was the
-          wrong home: a full lot isn’t a hazard, and reporting it there asks too
-          much of the driver. The friction is felt at the <em>end</em> of the
-          trip, so the affordance belongs in the contextual arrival card at the
-          bottom of directions — right next to Share ETA.
+          Parking has two jobs, and they want different homes.{" "}
+          <em>Reporting</em> a full lot is a quick, in-the-moment contribution —
+          it fits the existing hazard-report flow, the same way you’d flag
+          traffic. <em>Using</em> that information to protect your arrival is
+          proactive guidance — it belongs in the contextual arrival card, next
+          to Share ETA. Together they close a loop: one driver’s report becomes
+          the next driver’s reroute, with nothing shared but “lot full.”
         </p>
       </Section>
 
-      <ArrivalCard />
+      <ParkingLoop />
 
       <Section label="From awareness to outcome">
         <p>
@@ -73,9 +74,9 @@ export default function ArrivalIntegrity() {
           I framed the problem from years of watching people arrive stressed,
           then designed the interaction, the system behind it, and the business
           case — captured in a full concept deck and mockups. The lesson that
-          stuck: put a feature where the friction is <em>felt</em>, not where
-          it’s easiest to bolt on. That single move — from hazard report to
-          arrival context — is what made the idea feel right.
+          stuck: match each job to the surface where it actually happens —
+          report where you feel the friction, guide where you can still act on
+          it — and let the two form a quiet, privacy-preserving loop.
         </p>
       </Section>
     </CaseStudy>
