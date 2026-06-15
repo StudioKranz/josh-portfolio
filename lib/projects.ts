@@ -41,10 +41,10 @@ export const projects: Project[] = [
     slug: "attune",
     name: "Attune",
     summary:
-      "Real-time Siri personality, emotional consent, and gentle modes — with an interactive Tone Slider.",
+      "Emotionally-aware technology built up from one caring object — PetTag, tone controls, consent, and gentle modes.",
     maturity: "exploration",
     maturityLabel: "Design exploration",
-    thumbLabel: "Interactive",
+    thumbLabel: "PetTag + system",
   },
   {
     slug: "arrival-integrity",
