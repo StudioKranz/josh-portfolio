@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 
 const FEATURES = [
   {
-    name: "Tone Slider",
-    desc: "Real-time Siri personality, from gentle to sassy.",
+    name: "Sassitivity Slider",
+    desc: "Real-time Siri personality — dial from Sensitive to Sassitive.",
   },
   {
     name: "Consent controls",
