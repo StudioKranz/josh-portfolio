@@ -66,6 +66,18 @@ export const projects: Project[] = [
   },
 ];
 
+export const emergingProjects: Project[] = [
+  {
+    slug: "mindmeld",
+    name: "MindMeld",
+    summary:
+      "A user-owned reasoning archive queried live across Claude, Codex, and ChatGPT — preserving why decisions were made, not just what was decided.",
+    maturity: "prototype",
+    maturityLabel: "Active prototype",
+    thumbLabel: "Cross-AI",
+  },
+];
+
 export function getProject(slug: string): Project | undefined {
-  return projects.find((p) => p.slug === slug);
+  return [...projects, ...emergingProjects].find((p) => p.slug === slug);
 }
