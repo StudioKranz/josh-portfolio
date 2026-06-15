@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const TONE_NAMES = ["Very gentle", "Gentle", "Balanced", "Playful", "Sassy"];
+const TONE_NAMES = ["Very sensitive", "Sensitive", "Balanced", "Playful", "Sassitive"];
 
 const DECLINE_LABELS = [
   "I'd rather not right now",
@@ -86,12 +86,12 @@ export default function ToneSlider() {
           value={tone}
           onChange={(e) => setTone(Number(e.target.value))}
           className="w-full accent-ink"
-          aria-label="Siri tone, gentle to sassy"
+          aria-label="Siri tone, sensitive to sassitive"
         />
         <div className="mt-1 flex justify-between text-[11px] text-faint">
-          <span>Gentle</span>
+          <span>Sensitive</span>
           <span className="font-medium text-muted">{TONE_NAMES[tone]}</span>
-          <span>Sassy</span>
+          <span>Sassitive</span>
         </div>
       </div>
 

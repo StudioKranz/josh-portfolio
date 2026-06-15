@@ -41,10 +41,28 @@ export const projects: Project[] = [
     slug: "attune",
     name: "Attune",
     summary:
-      "Real-time Siri personality, emotional consent, and gentle modes — with an interactive Tone Slider.",
+      "Real-time tone controls, emotional consent, and gentle modes — the human side of emotionally-aware technology.",
     maturity: "exploration",
     maturityLabel: "Design exploration",
-    thumbLabel: "Interactive",
+    thumbLabel: "System concept",
+  },
+  {
+    slug: "moodwidth",
+    name: "Moodwidth",
+    summary:
+      "What technology should do when you don't want to — treating emotional resistance as signal, not friction.",
+    maturity: "exploration",
+    maturityLabel: "Design exploration",
+    thumbLabel: "Consent model",
+  },
+  {
+    slug: "companion-health",
+    name: "Companion Health",
+    summary:
+      "A consent-first wellness platform for pets and caregiving relationships — with PetTag as the hardware endpoint.",
+    maturity: "exploration",
+    maturityLabel: "Design exploration",
+    thumbLabel: "Platform concept",
   },
   {
     slug: "arrival-integrity",
