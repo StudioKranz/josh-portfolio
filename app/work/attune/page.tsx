@@ -6,7 +6,7 @@ import ToneSlider from "@/components/ToneSlider";
 export const metadata: Metadata = {
   title: "Attune — Josh Rosenkranz",
   description:
-    "A design exploration for emotionally-aware technology — starting with one caring object and scaling to real-time consent and tone controls.",
+    "A design exploration for real-time tone controls, emotional consent, and gentle modes — the human side of emotionally-aware technology.",
 };
 
 const FEATURES = [
@@ -16,7 +16,7 @@ const FEATURES = [
   },
   {
     name: "Consent controls",
-    desc: ""I'd rather not" and "No thank you" as graceful refusal.",
+    desc: "“I’d rather not” and “No thank you” as graceful refusal.",
   },
   {
     name: "Gentle iOS Mode",
@@ -28,7 +28,7 @@ const FEATURES = [
   },
   {
     name: "Companion Health",
-    desc: "Quiet care signals for the people and pets you love.",
+    desc: "Quiet care signals for pets and caregiving relationships.",
   },
   {
     name: "Harmony Clock",
@@ -40,7 +40,7 @@ export default function Attune() {
   return (
     <CaseStudy
       name="Attune"
-      tagline="Emotionally-aware technology, built up from one caring object."
+      tagline="Tone, consent, and emotional bandwidth as first-class controls."
       maturity="exploration"
       maturityLabel="Design exploration"
     >
@@ -54,33 +54,17 @@ export default function Attune() {
         </p>
       </Section>
 
-      <Section label="The anchor — PetTag">
-        <p>
-          Attune is a big idea. The way to build it is to start with one small,
-          holdable piece. PetTag is that piece: an AirTag-class companion device
-          with a low-power e-ink face. It shows a pet's name, a basic health
-          signal — normal or needs attention — and an emergency owner contact.
-          Nothing more.
-        </p>
-        <p className="mt-3">
-          The contact surfaces only when the device has been separated from its
-          owner for an unusual amount of time. Not on demand, not by default.
-          The design question that shaped it:{" "}
-          <em>what's the minimum a stranger would need to know if they found
-          your pet?</em>{" "}
-          Answer that honestly and you've defined the privacy model for the
-          whole system.
-        </p>
-        <p className="mt-3">
-          One caring object you can hold. On-ramp to technology that attends to
-          how someone is doing — not just where they are.
-        </p>
-      </Section>
-
       <Section label="Where it scales">
         <p>
-          From that one object, the same principle — read emotional state,
-          respect it, always with consent — extends across the system:
+          The principle — read emotional state, respect it, always with consent
+          — runs across a system. The physical and caregiving side lives in{" "}
+          <a
+            href="/work/companion-health"
+            className="underline underline-offset-2 decoration-line hover:text-ink transition-colors"
+          >
+            Companion Health
+          </a>
+          . The human-assistant side:
         </p>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {FEATURES.map((f) => (
@@ -111,10 +95,11 @@ export default function Attune() {
 
       <Section label="What I directed">
         <p>
-          I defined the interaction patterns and emotional model — from PetTag's
-          privacy logic through the full consent framework. The Tone Slider
-          above is the only working software prototype; the rest is a mature
-          design exploration, ready to be built from.
+          I defined the interaction patterns and emotional model — the tone
+          framework, the consent response vocabulary, and the connection to
+          Companion Health's physical endpoint. The Tone Slider above is the
+          only working software prototype; the rest is a mature design
+          exploration, ready to be built from.
         </p>
       </Section>
 

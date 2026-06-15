@@ -41,10 +41,19 @@ export const projects: Project[] = [
     slug: "attune",
     name: "Attune",
     summary:
-      "Emotionally-aware technology built up from one caring object — PetTag, tone controls, consent, and gentle modes.",
+      "Real-time tone controls, emotional consent, and gentle modes — the human side of emotionally-aware technology.",
     maturity: "exploration",
     maturityLabel: "Design exploration",
-    thumbLabel: "PetTag + system",
+    thumbLabel: "System concept",
+  },
+  {
+    slug: "companion-health",
+    name: "Companion Health",
+    summary:
+      "A consent-first wellness platform for pets and caregiving relationships — with PetTag as the hardware endpoint.",
+    maturity: "exploration",
+    maturityLabel: "Design exploration",
+    thumbLabel: "Platform concept",
   },
   {
     slug: "arrival-integrity",
