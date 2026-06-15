@@ -47,6 +47,15 @@ export const projects: Project[] = [
     thumbLabel: "System concept",
   },
   {
+    slug: "moodwidth",
+    name: "Moodwidth",
+    summary:
+      "What technology should do when you don't want to — treating emotional resistance as signal, not friction.",
+    maturity: "exploration",
+    maturityLabel: "Design exploration",
+    thumbLabel: "Consent model",
+  },
+  {
     slug: "companion-health",
     name: "Companion Health",
     summary:
