@@ -81,9 +81,44 @@ export default function Attune() {
         </div>
       </Section>
 
+      <Section label="Moodwidth">
+        <p>
+          One of the sharpest distinctions in the framework: two phrases that
+          look similar reveal a fundamentally different design problem.
+        </p>
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-line bg-surface px-4 py-4">
+            <p className="text-[14px] font-medium text-ink">"No thank you"</p>
+            <p className="mt-2 text-[13px] leading-relaxed text-muted">
+              An external boundary. The world is asking something of me and I
+              am declining. The request comes from outside; the refusal is
+              clean.
+            </p>
+          </div>
+          <div className="rounded-lg border border-line bg-surface px-4 py-4">
+            <p className="text-[14px] font-medium text-ink">
+              "I don't want to"
+            </p>
+            <p className="mt-2 text-[13px] leading-relaxed text-muted">
+              An internal boundary. I am struggling with myself. The task is
+              mine — I assigned it. The resistance is not to an external request
+              but to my own capacity.
+            </p>
+          </div>
+        </div>
+        <p className="mt-4 text-[15px] leading-7 text-ink/90">
+          Current software conflates these. Attune proposes treating them
+          differently — because they are. The underlying model is{" "}
+          <em>moodwidth</em>: the emotional capacity available at a given
+          moment. Not mood, not productivity — capacity. A person with low
+          moodwidth doesn't need another reminder. They need the system to
+          notice, de-escalate, and ask what would help.
+        </p>
+      </Section>
+
       <Section label="A small working proof">
         <p>
-          One feature from that grid, made interactive: when Siri is invoked,
+          One feature from the system, made interactive: when Siri is invoked,
           you set how it responds. Drag the slider to hear the same request
           answered differently — the graceful "no" adapts to the same tone.
           This is a prototype, not a shipped product. Five tones, a handful of
@@ -96,18 +131,19 @@ export default function Attune() {
       <Section label="What I directed">
         <p>
           I defined the interaction patterns and emotional model — the tone
-          framework, the consent response vocabulary, and the connection to
-          Companion Health's physical endpoint. The Tone Slider above is the
-          only working software prototype; the rest is a mature design
-          exploration, ready to be built from.
+          framework, the internal/external boundary taxonomy, the moodwidth
+          capacity concept, and the connection to Companion Health's physical
+          endpoint. The Sassitivity Slider above is the only working software
+          prototype; the rest is a mature design exploration, ready to be built
+          from.
         </p>
       </Section>
 
       <Section label="What I learned">
         <p>
           Tone and consent deserve to be first-class controls, not buried
-          settings. And the way to earn a big emotional vision is to ship one
-          honest, concrete piece of it first.
+          settings. And resistance — "I don't want to" — is information worth
+          attending to, not friction to overcome.
         </p>
       </Section>
     </CaseStudy>

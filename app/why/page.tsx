@@ -27,11 +27,6 @@ const PROJECTS = [
     line: "the emotional relationship — tone, consent, and emotional bandwidth as first-class controls.",
   },
   {
-    slug: "moodwidth",
-    name: "Moodwidth",
-    line: "capacity — what technology should do when someone is struggling, not just when they're succeeding.",
-  },
-  {
     slug: "companion-health",
     name: "Companion Health",
     line: "the beings you care for — consent-first wellness signals for pets and caregiving relationships.",
