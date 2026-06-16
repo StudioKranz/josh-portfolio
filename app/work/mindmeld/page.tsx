@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import CaseStudy from "@/components/CaseStudy";
 import Section from "@/components/Section";
+import MindMeldDiagram from "@/components/MindMeldDiagram";
 
 export const metadata: Metadata = {
   title: "MindMeld — Josh Rosenkranz",
@@ -16,6 +17,8 @@ export default function MindMeld() {
       maturity="prototype"
       maturityLabel="Active prototype"
     >
+      <MindMeldDiagram />
+
       <Section label="The problem">
         <p>
           Projects span tools, sessions, and models — and the reasoning behind
@@ -35,6 +38,53 @@ export default function MindMeld() {
           Decisions live in a local archive that no model owns and no session
           can delete.
         </p>
+        <div className="mt-6 overflow-hidden rounded-xl border border-line bg-surface">
+          <div className="flex items-center justify-between border-b border-line px-5 py-3">
+            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-faint">
+              Sample record
+            </p>
+            <p className="font-mono text-[11px] text-faint">decision-0247</p>
+          </div>
+          <dl className="divide-y divide-line">
+            {[
+              {
+                term: "Decision",
+                detail:
+                  "Store the archive locally as an MCP server rather than a hosted API.",
+              },
+              {
+                term: "Alternatives",
+                detail:
+                  "Hosted multi-tenant service · per-tool plugins · a shared cloud database keyed by user.",
+              },
+              {
+                term: "Dissent",
+                detail:
+                  "Local-first complicates cross-device sync — flagged as the cost worth paying for now.",
+              },
+              {
+                term: "Provenance",
+                detail:
+                  "Proposed in Claude Code, pressure-tested in Codex, confirmed against the privacy goal.",
+              },
+              {
+                term: "Context",
+                detail:
+                  "The archive must outlive any single vendor; ownership and deletability ranked above convenience.",
+              },
+            ].map((row) => (
+              <div
+                key={row.term}
+                className="grid gap-1 px-5 py-4 sm:grid-cols-[120px_1fr] sm:gap-4"
+              >
+                <dt className="text-[12px] font-medium uppercase tracking-[0.1em] text-faint">
+                  {row.term}
+                </dt>
+                <dd className="text-[13.5px] leading-6 text-ink">{row.detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </Section>
 
       <Section label="The demonstration">
