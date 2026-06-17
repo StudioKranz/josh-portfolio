@@ -78,6 +78,20 @@ export const emergingProjects: Project[] = [
   },
 ];
 
+export const additionalProjects: Project[] = [
+  {
+    slug: "worldtag",
+    name: "WorldTag + RelicWorld",
+    summary:
+      "Turning raw GPS and heading into fair, safe, deterministic gameplay — a native iOS spatial state machine built without a backend.",
+    maturity: "prototype",
+    maturityLabel: "Functional iOS prototype",
+    thumbLabel: "Spatial iOS",
+  },
+];
+
 export function getProject(slug: string): Project | undefined {
-  return [...projects, ...emergingProjects].find((p) => p.slug === slug);
+  return [...projects, ...emergingProjects, ...additionalProjects].find(
+    (p) => p.slug === slug
+  );
 }

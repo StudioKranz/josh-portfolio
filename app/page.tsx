@@ -2,7 +2,7 @@ import Link from "next/link";
 import Container from "@/components/Container";
 import MaturityTag from "@/components/MaturityTag";
 import SiteFooter from "@/components/SiteFooter";
-import { projects, emergingProjects } from "@/lib/projects";
+import { projects, emergingProjects, additionalProjects } from "@/lib/projects";
 
 export default function Home() {
   return (
@@ -67,6 +67,35 @@ export default function Home() {
       </h2>
       <ul className="mt-2">
         {emergingProjects.map((p) => (
+          <li key={p.slug}>
+            <Link
+              href={`/work/${p.slug}`}
+              className="group flex items-center gap-5 border-t border-line py-6"
+            >
+              <div className="flex h-[78px] w-[120px] flex-none items-center justify-center rounded-md bg-surface text-[10px] tracking-wide text-faint">
+                {p.thumbLabel}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-[16px] font-medium text-ink underline-offset-4 group-hover:underline">
+                  {p.name}
+                </p>
+                <p className="mt-1 text-[13px] leading-snug text-muted">
+                  {p.summary}
+                </p>
+              </div>
+              <div className="hidden flex-none sm:block">
+                <MaturityTag maturity={p.maturity} label={p.maturityLabel} />
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
+
+      <h2 className="mt-16 text-[11px] font-medium uppercase tracking-[0.16em] text-faint">
+        Additional work
+      </h2>
+      <ul className="mt-2">
+        {additionalProjects.map((p) => (
           <li key={p.slug}>
             <Link
               href={`/work/${p.slug}`}
