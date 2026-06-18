@@ -677,14 +677,16 @@
 
    Dual-layer: the incoming renderer is in normal flow (it defines the final
    height, so there's no reflow when the wave ends). The outgoing renderer is
-   an opaque overlay on top, clipped away top-to-bottom by a sharp amber scan
-   line. --wave-h is the incoming height, so the sweep covers the whole new
-   page (naturally strongest when moving into the taller Enhanced view).
+   an opaque overlay on top, clipped away by a gentle 9-point sine arc that
+   rolls down the page (ease-in-out, ~1.4s). The amber wavefront is a
+   drop-shadow on the clipped layer, so it traces the curved silhouette and
+   bends with the arc for free. Side/lower polygon bounds sit just off-screen,
+   so only the curved top edge is ever visible.
    =========================================================================== */
 
 .sbx-stage {
   position: relative;
-  overflow: hidden; /* contain a taller outgoing overlay mid-sweep */
+  overflow: hidden; /* contain the off-screen polygon bounds + taller overlay */
 }
 
 .sbx-layer-in {
@@ -699,38 +701,45 @@
   width: 100%;
   z-index: 2;
   background: var(--canvas-bg); /* fully occludes the incoming until clipped */
-  animation: sbx-wave-clip 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: clip-path;
+  /* Amber wavefront: traces the clipped (curved) silhouette — bends in sync. */
+  filter: drop-shadow(0 0 1.5px var(--accent-amber))
+    drop-shadow(0 0 6px rgba(212, 175, 55, 0.5));
+  animation: sbx-wave-roll 1.4s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  will-change: clip-path, filter;
 }
 
-.sbx-wavefront {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  z-index: 3;
-  background: var(--accent-amber);
-  box-shadow: 0 0 4px rgba(212, 175, 55, 0.45); /* crisp scan line, not a glow */
-  animation: sbx-wave-edge 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: transform;
-}
-
-@keyframes sbx-wave-clip {
+/* The arc keeps its gentle ~6% smile and translates from just above the top
+   to just below the bottom — a coherent ripple rolling down the canvas. */
+@keyframes sbx-wave-roll {
   from {
-    clip-path: inset(0 0 0 0);
+    clip-path: polygon(
+      -5% -8%,
+      8.75% -5.7%,
+      22.5% -3.76%,
+      36.25% -2.46%,
+      50% -2%,
+      63.75% -2.46%,
+      77.5% -3.76%,
+      91.25% -5.7%,
+      105% -8%,
+      105% 300%,
+      -5% 300%
+    );
   }
   to {
-    clip-path: inset(var(--wave-h, 100vh) 0 0 0);
-  }
-}
-
-@keyframes sbx-wave-edge {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(var(--wave-h, 100vh));
+    clip-path: polygon(
+      -5% 102%,
+      8.75% 104.3%,
+      22.5% 106.24%,
+      36.25% 107.54%,
+      50% 108%,
+      63.75% 107.54%,
+      77.5% 106.24%,
+      91.25% 104.3%,
+      105% 102%,
+      105% 300%,
+      -5% 300%
+    );
   }
 }
 

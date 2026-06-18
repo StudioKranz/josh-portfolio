@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   PORTFOLIO_DATABASE,
   LENSES,
@@ -48,7 +48,7 @@ function prefersReducedMotion(): boolean {
   );
 }
 
-const WAVE_MS = 1100;
+const WAVE_MS = 1400;
 
 // ---------------------------------------------------------------------------
 // Evidence (Layer 0) renderers — identical data, shown by both view engines.
@@ -314,17 +314,6 @@ export default function SandboxV2() {
     setWaving(false);
     setPrevRenderer(null);
   }
-
-  // Drive the scan line over the on-screen page: the incoming height, capped to
-  // the viewport so the time budget is spent where the user is looking (a short
-  // page sweeps fully; a tall one sweeps a screenful, the rest below the fold).
-  // Set before first paint via the ref callback — no glitch.
-  const setStageRef = useCallback((node: HTMLDivElement | null) => {
-    if (!node) return;
-    const viewport = window.innerHeight || node.offsetHeight;
-    const distance = Math.min(node.offsetHeight, viewport);
-    node.style.setProperty("--wave-h", `${distance}px`);
-  }, []);
 
   // Safety net: never leave the overlay stuck if animationEnd doesn't fire.
   useEffect(() => {
@@ -631,12 +620,7 @@ export default function SandboxV2() {
         // Reinterpretation wave: incoming renders in flow (defines final
         // height → no end shift); outgoing overlays on top and is clipped
         // away top-to-bottom by a sharp amber scan line.
-        <div
-          className="sbx-stage"
-          ref={setStageRef}
-          data-from={prevRenderer}
-          data-to={renderer}
-        >
+        <div className="sbx-stage" data-from={prevRenderer} data-to={renderer}>
           <div className="sbx-layer sbx-layer-in">{renderMain(renderer)}</div>
           <div
             className="sbx-layer sbx-layer-out"
@@ -645,7 +629,6 @@ export default function SandboxV2() {
           >
             {renderMain(prevRenderer)}
           </div>
-          <div className="sbx-wavefront" aria-hidden="true" />
         </div>
       ) : (
         renderMain(renderer)
