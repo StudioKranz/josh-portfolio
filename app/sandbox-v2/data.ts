@@ -27,6 +27,15 @@ export type SecurityTier = "public" | "private";
 
 export type EvidenceType = "image" | "code" | "document" | "video";
 
+export type Maturity = "deployed" | "prototype" | "exploration";
+
+// Mirrors the production MaturityTag dot colors so Classic matches the live site.
+export const MATURITY_COLORS: Record<Maturity, string> = {
+  deployed: "#3f6f12",
+  prototype: "#2f74c0",
+  exploration: "#b07515",
+};
+
 export interface Evidence {
   id: string;
   type: EvidenceType;
@@ -49,6 +58,12 @@ export interface SandboxProject {
   subtitle: string;
   type: string;
   status: string;
+  /** Production index fields — let Classic mirror the live homepage rows. */
+  summary: string;
+  thumbLabel: string;
+  maturity: Maturity;
+  maturityLabel: string;
+  href: string;
   metadata: {
     date: string;
     hardware: string;
@@ -69,6 +84,8 @@ export const MASTER = {
   role: "Apple technologist and experience systems designer",
   thesis:
     "I turn long-term human observation into prototypeable experience systems — across iOS, visionOS, AI continuity, and the web.",
+  capabilities:
+    "AI-driven interaction · spatial presence · emotional context and consent · agentic workflows · multimodal prototyping",
 };
 
 // ---------------------------------------------------------------------------
@@ -147,6 +164,12 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     subtitle: "Familiar rooms become viewfinders and vehicles.",
     type: "spatial prototype",
     status: "Early visionOS prototype · built and tested on Apple Vision Pro",
+    summary:
+      "Familiar rooms become viewfinders and vehicles — anchoring, glass surfaces, and environment selection on Vision Pro.",
+    thumbLabel: "Vision Pro",
+    maturity: "prototype",
+    maturityLabel: "Early visionOS prototype",
+    href: "/work/roombridge",
     metadata: {
       date: "June 2025",
       hardware: "Apple Vision Pro",
@@ -206,6 +229,12 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     subtitle: "Turning raw GPS and device heading into fair, deterministic gameplay.",
     type: "iOS application prototype",
     status: "Functional iOS architecture prototype · formerly WorldTag",
+    summary:
+      "A location-based capture-the-flag system exploring how real-world movement, map data, and spatial state can become playable interaction.",
+    thumbLabel: "Spatial iOS",
+    maturity: "prototype",
+    maturityLabel: "Earlier prototype",
+    href: "/work/worldtag",
     metadata: {
       date: "Earlier prototype · revisited 2026",
       hardware: "iPhone · iOS",

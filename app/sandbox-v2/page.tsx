@@ -6,6 +6,7 @@ import {
   LENSES,
   RENDERERS,
   MASTER,
+  MATURITY_COLORS,
   type Evidence,
   type Perspective,
   type Renderer,
@@ -422,45 +423,104 @@ export default function SandboxV2() {
         </p>
       </div>
 
-      <main className="sbx-main">
-        <header className="sbx-header">
-          <h1 className="sbx-name">{MASTER.name}</h1>
-          <p className="sbx-role">{MASTER.role}</p>
-          <p className="sbx-thesis">{MASTER.thesis}</p>
-          <p className="sbx-lens-intro">{lensIntro}</p>
-        </header>
+      {renderer === "classic" ? (
+        // CLASSIC — closely mirrors the live production homepage so the
+        // baseline reads as today's published portfolio, not a new design.
+        <main className="sbx-classic">
+          <header>
+            <h1 className="cl-name">{MASTER.name}</h1>
+            <p className="cl-role">{MASTER.role}</p>
+            <p className="cl-thesis">{MASTER.thesis}</p>
+            <p className="cl-capabilities">{MASTER.capabilities}</p>
+            <p className="cl-links">
+              <a href="/why">Why this work</a>
+              <span className="sep" aria-hidden="true">
+                ·
+              </span>
+              <a href="/how-i-work">How I work</a>
+            </p>
+          </header>
 
-        <div className="sbx-banner">
-          <b>Phase 1 proof of concept.</b> One content source, two renderers.
-          Use the floating control to switch <b>View</b> (Classic ↔ Enhanced)
-          and <b>Lens</b> (Builder, Inventor, …). Choices persist across reloads.
-          RoomBridge&rsquo;s images are real; RelicWorld&rsquo;s are intentionally
-          absent to show the graceful placeholder, and every 🔒 item shows the
-          gated-vault treatment.
-        </div>
+          <h2 className="cl-section-label">Selected work</h2>
+          <ul className="cl-list">
+            {ordered.map((project) => (
+              <li key={project.id}>
+                <a className="cl-row" href={project.href}>
+                  <span className="cl-thumb">{project.thumbLabel}</span>
+                  <span className="cl-row-body">
+                    <span className="cl-row-name">{project.title}</span>
+                    <span className="cl-row-summary">{project.summary}</span>
+                  </span>
+                  <span className="cl-maturity">
+                    <span
+                      className="dot"
+                      style={{ background: MATURITY_COLORS[project.maturity] }}
+                      aria-hidden="true"
+                    />
+                    {project.maturityLabel}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
 
-        <h2 className="sbx-grid-label">Selected work</h2>
-        <section className="portfolio-grid">
-          {ordered.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              spotlight={
-                perspective !== "curious" &&
-                project.perspectives.includes(perspective)
-              }
-              lensLabel={activeLens.label}
-            />
-          ))}
-        </section>
+          <footer className="cl-footer">
+            <a href="/">Work</a>
+            <a href="/how-i-work">How I work</a>
+            <a href="/why">Why this work</a>
+            <a href="/Josh_Rosenkranz_Resume.pdf">Résumé</a>
+            <a href="mailto:joshrosenkranz@mac.com">joshrosenkranz@mac.com</a>
+            <a
+              href="https://www.linkedin.com/in/joshrosenkranz/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LinkedIn
+            </a>
+          </footer>
+        </main>
+      ) : (
+        // ENHANCED — the experimental editorial renderer.
+        <main className="sbx-main">
+          <header className="sbx-header">
+            <h1 className="sbx-name">{MASTER.name}</h1>
+            <p className="sbx-role">{MASTER.role}</p>
+            <p className="sbx-thesis">{MASTER.thesis}</p>
+            <p className="sbx-lens-intro">{lensIntro}</p>
+          </header>
 
-        <footer className="sbx-footer">
-          Isolated architecture sandbox — the same Layer 0 / Layer 1 content,
-          re-expressed by a swappable renderer. Wave transition, Museum renderer,
-          and the AI curator build on top of this exact foundation.{" "}
-          <a href="/">← Back to the live portfolio</a>
-        </footer>
-      </main>
+          <div className="sbx-banner">
+            <b>Phase 1 proof of concept.</b> One content source, two renderers.
+            Use the floating control to switch <b>View</b> (Classic ↔ Enhanced)
+            and <b>Lens</b> (Builder, Inventor, …). Choices persist across
+            reloads. RoomBridge&rsquo;s images are real; RelicWorld&rsquo;s are
+            intentionally absent to show the graceful placeholder, and every 🔒
+            item shows the gated-vault treatment.
+          </div>
+
+          <h2 className="sbx-grid-label">Selected work</h2>
+          <section className="portfolio-grid">
+            {ordered.map((project) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                spotlight={
+                  perspective !== "curious" &&
+                  project.perspectives.includes(perspective)
+                }
+                lensLabel={activeLens.label}
+              />
+            ))}
+          </section>
+
+          <footer className="sbx-footer">
+            Isolated architecture sandbox — the same Layer 0 / Layer 1 content,
+            re-expressed by a swappable renderer. Wave transition, Museum
+            renderer, and the AI curator build on top of this exact foundation.{" "}
+            <a href="/">← Back to the live portfolio</a>
+          </footer>
+        </main>
+      )}
     </div>
   );
 }
