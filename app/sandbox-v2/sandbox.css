@@ -701,26 +701,29 @@
   width: 100%;
   z-index: 2;
   background: var(--canvas-bg); /* fully occludes the incoming until clipped */
-  /* Amber wavefront: traces the clipped (curved) silhouette — bends in sync. */
+  /* Amber wavefront: traces the clipped (curved) silhouette — bends in sync.
+     The halo blur is tunable (--wave-glow-intensity) over a crisp core. */
   filter: drop-shadow(0 0 1.5px var(--accent-amber))
-    drop-shadow(0 0 6px rgba(212, 175, 55, 0.5));
-  animation: sbx-wave-roll 1.4s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+    drop-shadow(0 0 var(--wave-glow-intensity, 6px) rgba(212, 175, 55, 0.5));
+  animation: sbx-wave-roll var(--wave-duration, 1.4s)
+    cubic-bezier(0.76, 0, 0.24, 1) forwards;
   will-change: clip-path, filter;
 }
 
-/* The arc keeps its gentle ~6% smile and translates from just above the top
-   to just below the bottom — a coherent ripple rolling down the canvas. */
+/* A gentle smile arc (depth = --wave-arc-depth, default 6%) translates from
+   just above the top to just below the bottom — a ripple rolling down the
+   canvas. Each point: baseline + sin-weighted depth, so it flexes live. */
 @keyframes sbx-wave-roll {
   from {
     clip-path: polygon(
       -5% -8%,
-      8.75% -5.7%,
-      22.5% -3.76%,
-      36.25% -2.46%,
-      50% -2%,
-      63.75% -2.46%,
-      77.5% -3.76%,
-      91.25% -5.7%,
+      8.75% calc(-8% + 0.383 * var(--wave-arc-depth, 6%)),
+      22.5% calc(-8% + 0.707 * var(--wave-arc-depth, 6%)),
+      36.25% calc(-8% + 0.924 * var(--wave-arc-depth, 6%)),
+      50% calc(-8% + var(--wave-arc-depth, 6%)),
+      63.75% calc(-8% + 0.924 * var(--wave-arc-depth, 6%)),
+      77.5% calc(-8% + 0.707 * var(--wave-arc-depth, 6%)),
+      91.25% calc(-8% + 0.383 * var(--wave-arc-depth, 6%)),
       105% -8%,
       105% 300%,
       -5% 300%
@@ -729,13 +732,13 @@
   to {
     clip-path: polygon(
       -5% 102%,
-      8.75% 104.3%,
-      22.5% 106.24%,
-      36.25% 107.54%,
-      50% 108%,
-      63.75% 107.54%,
-      77.5% 106.24%,
-      91.25% 104.3%,
+      8.75% calc(102% + 0.383 * var(--wave-arc-depth, 6%)),
+      22.5% calc(102% + 0.707 * var(--wave-arc-depth, 6%)),
+      36.25% calc(102% + 0.924 * var(--wave-arc-depth, 6%)),
+      50% calc(102% + var(--wave-arc-depth, 6%)),
+      63.75% calc(102% + 0.924 * var(--wave-arc-depth, 6%)),
+      77.5% calc(102% + 0.707 * var(--wave-arc-depth, 6%)),
+      91.25% calc(102% + 0.383 * var(--wave-arc-depth, 6%)),
       105% 102%,
       105% 300%,
       -5% 300%
@@ -850,19 +853,20 @@
   display: inline-flex;
 }
 
-/* Companions yield the stage: soften and drift radially out from the anchor. */
+/* Companions yield the stage: soften and drift radially out from the anchor.
+   Drift magnitude is tunable via --bloom-drift-distance (default 15px). */
 .kc-cluster[data-bloom="identity"] .kc-view,
 .kc-cluster[data-bloom="identity"] .kc-theme {
   opacity: 0.4;
-  transform: translateY(15px);
+  transform: translateY(var(--bloom-drift-distance, 15px));
 }
 .kc-cluster[data-bloom="view"] .kc-identity {
   opacity: 0.4;
-  transform: translateY(-15px);
+  transform: translateY(calc(-1 * var(--bloom-drift-distance, 15px)));
 }
 .kc-cluster[data-bloom="view"] .kc-theme {
   opacity: 0.4;
-  transform: translateX(15px);
+  transform: translateX(var(--bloom-drift-distance, 15px));
 }
 
 /* The anchor key gets a quiet amber rim while its bloom is open. */
@@ -1006,6 +1010,127 @@
 .kc-switcher-btn:focus-visible {
   outline: 2px solid var(--accent-cyan);
   outline-offset: 1px;
+}
+
+/* ===========================================================================
+   TUNING LAB — live physics controls (bottom-right; balances the switcher).
+   Sliders write CSS variables on :root, read by the wave/bloom rules above.
+   =========================================================================== */
+
+.tune-lab {
+  position: fixed;
+  bottom: 0.85rem;
+  right: 0.85rem;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+}
+
+.tune-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: var(--glass-shadow);
+  color: var(--text-bright);
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.tune-toggle:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+.tune-toggle:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.tune-body {
+  width: 244px;
+  max-width: calc(100vw - 1.7rem);
+  padding: 0.9rem 0.95rem 0.8rem;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  background: var(--tray-bg);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: var(--tray-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tune-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 0.6rem;
+  row-gap: 0.3rem;
+}
+
+.tune-name {
+  grid-column: 1 / -1;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.tune-row input[type="range"] {
+  grid-column: 1;
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent-amber);
+  cursor: pointer;
+}
+
+.tune-row input[type="range"]:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+
+.tune-val {
+  grid-column: 2;
+  min-width: 3.5ch;
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  color: var(--text-bright);
+}
+
+.tune-reset {
+  align-self: flex-start;
+  margin-top: 0.1rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-cyan);
+  font: inherit;
+  font-size: 0.66rem;
+  cursor: pointer;
+}
+
+.tune-reset:hover {
+  text-decoration: underline;
+}
+
+.tune-reset:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
 }
 
 /* --- Footer --------------------------------------------------------------- */

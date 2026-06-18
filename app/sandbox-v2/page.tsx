@@ -21,6 +21,7 @@ const STORAGE = {
   renderer: "sbx_renderer",
   theme: "sbx_theme",
   cluster: "sbx_cluster",
+  tune: "sbx_tune",
 };
 
 type Theme = "light" | "dark";
@@ -48,7 +49,38 @@ function prefersReducedMotion(): boolean {
   );
 }
 
-const WAVE_MS = 1400;
+// --- Tuning Lab: live CSS-variable controls (set on :root, read by .sbx) -----
+type TuneKey = "depth" | "duration" | "glow" | "drift";
+const TUNE_DEFAULTS: Record<TuneKey, number> = {
+  depth: 6, // % arc smile
+  duration: 1.4, // s wave sweep
+  glow: 6, // px amber edge blur
+  drift: 15, // px companion drift
+};
+const TUNE_VAR: Record<TuneKey, string> = {
+  depth: "--wave-arc-depth",
+  duration: "--wave-duration",
+  glow: "--wave-glow-intensity",
+  drift: "--bloom-drift-distance",
+};
+const TUNE_UNIT: Record<TuneKey, string> = {
+  depth: "%",
+  duration: "s",
+  glow: "px",
+  drift: "px",
+};
+const TUNE_FIELDS: {
+  key: TuneKey;
+  label: string;
+  min: number;
+  max: number;
+  step: number;
+}[] = [
+  { key: "depth", label: "Wave arc depth", min: 0, max: 15, step: 0.5 },
+  { key: "duration", label: "Wave duration", min: 0.5, max: 3, step: 0.1 },
+  { key: "glow", label: "Amber edge glow", min: 2, max: 25, step: 1 },
+  { key: "drift", label: "Bloom drift spread", min: 5, max: 40, step: 1 },
+];
 
 // ---------------------------------------------------------------------------
 // Evidence (Layer 0) renderers — identical data, shown by both view engines.
@@ -180,6 +212,9 @@ export default function SandboxV2() {
   // Wave transition between Classic <-> Enhanced (dual-layer, runs on toggle).
   const [waving, setWaving] = useState(false);
   const [prevRenderer, setPrevRenderer] = useState<Renderer | null>(null);
+  // Tuning Lab — live physics controls mapped to :root CSS variables.
+  const [tune, setTune] = useState<Record<TuneKey, number>>(TUNE_DEFAULTS);
+  const [tuneOpen, setTuneOpen] = useState(false);
   const clusterRef = useRef<HTMLDivElement>(null);
 
   // Restore persisted choices after mount (avoids hydration mismatch).
@@ -316,11 +351,62 @@ export default function SandboxV2() {
   }
 
   // Safety net: never leave the overlay stuck if animationEnd doesn't fire.
+  // Tracks the live (tunable) wave duration.
   useEffect(() => {
     if (!waving) return;
-    const t = setTimeout(endWave, WAVE_MS + 300);
+    const t = setTimeout(endWave, Math.round(tune.duration * 1000) + 300);
     return () => clearTimeout(t);
-  }, [waving]);
+  }, [waving, tune.duration]);
+
+  function applyTuneVar(key: TuneKey, value: number) {
+    document.documentElement.style.setProperty(
+      TUNE_VAR[key],
+      `${value}${TUNE_UNIT[key]}`,
+    );
+  }
+
+  function updateTune(key: TuneKey, value: number) {
+    setTune((prev) => {
+      const next = { ...prev, [key]: value };
+      try {
+        localStorage.setItem(STORAGE.tune, JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+    applyTuneVar(key, value);
+  }
+
+  function resetTune() {
+    setTune(TUNE_DEFAULTS);
+    try {
+      localStorage.setItem(STORAGE.tune, JSON.stringify(TUNE_DEFAULTS));
+    } catch {
+      /* ignore */
+    }
+    (Object.keys(TUNE_DEFAULTS) as TuneKey[]).forEach((k) =>
+      applyTuneVar(k, TUNE_DEFAULTS[k]),
+    );
+  }
+
+  // Restore Tuning Lab values from storage and apply them to :root on mount.
+  useEffect(() => {
+    let restored: Record<TuneKey, number> = TUNE_DEFAULTS;
+    try {
+      const raw = localStorage.getItem(STORAGE.tune);
+      if (raw) restored = { ...TUNE_DEFAULTS, ...JSON.parse(raw) };
+    } catch {
+      /* ignore */
+    }
+    setTune(restored);
+    (Object.keys(restored) as TuneKey[]).forEach((k) =>
+      document.documentElement.style.setProperty(
+        TUNE_VAR[k],
+        `${restored[k]}${TUNE_UNIT[k]}`,
+      ),
+    );
+  }, []);
 
   // Close an open bloom on outside click / Escape.
   useEffect(() => {
@@ -614,6 +700,43 @@ export default function SandboxV2() {
             {c.toUpperCase()}
           </button>
         ))}
+      </div>
+
+      {/* Tuning Lab — live physics controls (bottom-right). */}
+      <div className="tune-lab" data-open={tuneOpen ? "true" : undefined}>
+        <button
+          type="button"
+          className="tune-toggle"
+          aria-expanded={tuneOpen}
+          onClick={() => setTuneOpen((o) => !o)}
+        >
+          <span aria-hidden="true">🛠️</span> Tune Physics
+        </button>
+        {tuneOpen && (
+          <div className="tune-body">
+            {TUNE_FIELDS.map((f) => (
+              <label key={f.key} className="tune-row">
+                <span className="tune-name">{f.label}</span>
+                <input
+                  type="range"
+                  min={f.min}
+                  max={f.max}
+                  step={f.step}
+                  value={tune[f.key]}
+                  onChange={(e) => updateTune(f.key, parseFloat(e.target.value))}
+                  aria-label={f.label}
+                />
+                <span className="tune-val">
+                  {tune[f.key]}
+                  {TUNE_UNIT[f.key]}
+                </span>
+              </label>
+            ))}
+            <button type="button" className="tune-reset" onClick={resetTune}>
+              Reset to defaults
+            </button>
+          </div>
+        )}
       </div>
 
       {waving && prevRenderer ? (
