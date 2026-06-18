@@ -146,11 +146,13 @@
 .sbx-main {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 8.5rem 1.5rem 5rem; /* top clears the floating keycap cluster */
+  padding: 7.75rem 1.5rem 5rem; /* tighter top: hero sits close under the cluster */
 }
 
 .sbx-header {
-  max-width: 40rem;
+  max-width: 44rem;
+  margin-left: auto;
+  margin-right: auto; /* center the editorial hero column; text stays left */
 }
 
 .sbx-name {
@@ -191,7 +193,8 @@
 /* --- Proof-of-concept banner --------------------------------------------- */
 
 .sbx-banner {
-  margin: 2.5rem 0 0;
+  max-width: 44rem;
+  margin: 2.5rem auto 0; /* align with the centered hero column */
   padding: 1rem 1.25rem;
   border: 1px solid var(--hairline);
   border-left: 2px solid var(--accent-cyan);
@@ -434,9 +437,9 @@
    =========================================================================== */
 
 .sbx-classic {
-  max-width: 44rem; /* matches Tailwind max-w-content */
+  max-width: 44rem; /* matches Tailwind max-w-content; centered, text left */
   margin: 0 auto;
-  padding: 8.5rem 1.5rem 3rem; /* top clears the floating keycap cluster */
+  padding: 7.75rem 1.5rem 3rem; /* tighter top: hero sits close under the cluster */
 }
 
 .cl-name {
@@ -975,13 +978,13 @@
 /* --- Responsive ----------------------------------------------------------- */
 
 @media (max-width: 560px) {
-  /* Extra top room so the floating cluster clears the hero. */
+  /* Hero tucks just under the floating cluster. */
   .sbx-main {
-    padding: 8.5rem 1.1rem 4rem;
+    padding: 7rem 1.1rem 4rem;
   }
 
   .sbx-classic {
-    padding: 9rem 1.25rem 3rem;
+    padding: 7.25rem 1.25rem 3rem;
   }
 
   .kc {
