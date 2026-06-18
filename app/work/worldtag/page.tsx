@@ -39,9 +39,9 @@ const RELICWORLD_NOW = [
 ];
 
 const GALLERY_FILES = [
-  "worldtag-telemetry.png",
-  "worldtag-boundaries.png",
-  "worldtag-compromised.png",
+  "relicworld-zone-reveal.png",
+  "relicworld-carrying-state.png",
+  "relicworld-retry-lockout.png",
 ];
 
 // Server-side gate: only render the Field Validation gallery once all three
