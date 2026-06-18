@@ -132,16 +132,39 @@ export const LENSES: Lens[] = [
   },
 ];
 
-export interface RendererOption {
-  id: Renderer | "museum";
+// Node 1 — audience identities. Each maps to an underlying lens that drives the
+// renderers' sorting/spotlight. (Contextual label swaps come later; for now the
+// throne simply shows the chosen identity.)
+export interface Identity {
+  id: string;
   label: string;
+  lens: Perspective;
+}
+
+export const IDENTITIES: Identity[] = [
+  { id: "recruiter", label: "Recruiter", lens: "leader" },
+  { id: "hiring-manager", label: "Hiring Manager", lens: "leader" },
+  { id: "design-leader", label: "Design Leader", lens: "creative" },
+  { id: "product-leader", label: "Product Leader", lens: "inventor" },
+  { id: "engineering-manager", label: "Engineering Manager", lens: "builder" },
+  { id: "incubation-team", label: "Incubation Team", lens: "inventor" },
+  { id: "music-collaborator", label: "Music Collaborator", lens: "musician" },
+  { id: "curious-human", label: "Curious Human", lens: "curious" },
+];
+
+// Node 2 — experience (renderer) options. V3/V4 are upcoming, shown frosted.
+export interface ExperienceOption {
+  id: string;
+  label: string;
+  renderer?: Renderer;
   available: boolean;
 }
 
-export const RENDERERS: RendererOption[] = [
-  { id: "classic", label: "Classic", available: true },
-  { id: "enhanced", label: "Enhanced", available: true },
-  { id: "museum", label: "Museum (soon)", available: false },
+export const EXPERIENCES: ExperienceOption[] = [
+  { id: "classic", label: "V1 Classic", renderer: "classic", available: true },
+  { id: "enhanced", label: "V2 Enhanced", renderer: "enhanced", available: true },
+  { id: "museum", label: "V3 Museum", available: false },
+  { id: "roombridge", label: "V4 RoomBridge", available: false },
 ];
 
 // ---------------------------------------------------------------------------

@@ -769,6 +769,116 @@
   font-size: 1rem;
 }
 
+/* --- Glass Bloom expansion ------------------------------------------------ */
+
+.kc-slot {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Companions yield the stage: soften and drift radially out from the anchor. */
+.kc-cluster[data-bloom="identity"] .kc-view,
+.kc-cluster[data-bloom="identity"] .kc-theme {
+  opacity: 0.4;
+  transform: translateY(15px);
+}
+.kc-cluster[data-bloom="view"] .kc-identity {
+  opacity: 0.4;
+  transform: translateY(-15px);
+}
+.kc-cluster[data-bloom="view"] .kc-theme {
+  opacity: 0.4;
+  transform: translateX(15px);
+}
+
+/* The anchor key gets a quiet amber rim while its bloom is open. */
+.kc-cluster[data-bloom="identity"] .kc-identity,
+.kc-cluster[data-bloom="view"] .kc-view {
+  border-color: rgba(212, 175, 55, 0.45);
+}
+
+/* Bloom cloud — chips emerge outward from the anchor (not a linear menu). */
+.kc-bloom {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 0.4rem;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 2rem));
+}
+
+.kc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 12px;
+  background: var(--keycap-bg);
+  color: var(--keycap-text);
+  border: 1px solid var(--keycap-border);
+  border-bottom: 2px solid var(--keycap-shelf);
+  box-shadow: var(--keycap-shadow);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transform-origin: center top;
+  animation: kc-bloom-in 0.34s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.kc-chip:hover:not(:disabled) {
+  background: var(--keycap-bg-hover);
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+.kc-chip:active:not(:disabled) {
+  border-bottom-width: 1px;
+  box-shadow: var(--keycap-shadow-active);
+}
+
+.kc-chip:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.kc-chip[data-active="true"] {
+  border-color: rgba(212, 175, 55, 0.55);
+  color: var(--accent-amber);
+}
+
+.kc-chip[data-soon="true"] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.kc-chip-soon {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@keyframes kc-bloom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
 /* Temporary cluster spit-test switch (low-profile, bottom-left). */
 .kc-switcher {
   position: fixed;
@@ -858,6 +968,7 @@
   .sbx *::before,
   .sbx *::after {
     transition: none !important;
+    animation: none !important;
   }
 }
 

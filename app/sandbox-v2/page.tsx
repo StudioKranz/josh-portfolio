@@ -1,20 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   PORTFOLIO_DATABASE,
   LENSES,
+  IDENTITIES,
+  EXPERIENCES,
   MASTER,
   MATURITY_COLORS,
   type Evidence,
+  type ExperienceOption,
   type Perspective,
   type Renderer,
   type SandboxProject,
 } from "./data";
 
-const PERSPECTIVE_IDS = LENSES.map((l) => l.id);
+const IDENTITY_IDS = IDENTITIES.map((i) => i.id);
 const STORAGE = {
-  perspective: "sbx_perspective",
+  identity: "sbx_identity",
   renderer: "sbx_renderer",
   theme: "sbx_theme",
   cluster: "sbx_cluster",
@@ -22,10 +25,8 @@ const STORAGE = {
 
 type Theme = "light" | "dark";
 type Cluster = "a" | "b" | "c";
+type Bloom = "identity" | "view" | null;
 
-function isPerspective(v: string): v is Perspective {
-  return (PERSPECTIVE_IDS as string[]).includes(v);
-}
 function isRenderer(v: string): v is Renderer {
   return v === "classic" || v === "enhanced";
 }
@@ -34,6 +35,9 @@ function isTheme(v: string | null): v is Theme {
 }
 function isCluster(v: string | null): v is Cluster {
   return v === "a" || v === "b" || v === "c";
+}
+function isKnownIdentity(v: string | null): v is string {
+  return v != null && IDENTITY_IDS.includes(v);
 }
 
 // ---------------------------------------------------------------------------
@@ -157,23 +161,21 @@ function ProjectCard({
 // ---------------------------------------------------------------------------
 
 export default function SandboxV2() {
-  const [perspective, setPerspective] = useState<Perspective>("builder");
+  const [identityId, setIdentityId] = useState<string | null>(null);
   const [renderer, setRenderer] = useState<Renderer>("classic");
   const [theme, setTheme] = useState<Theme>("dark");
   const [cluster, setCluster] = useState<Cluster>("b"); // tight constellation default
-  const [identityChosen, setIdentityChosen] = useState(false);
+  const [openBloom, setOpenBloom] = useState<Bloom>(null);
   const [hydrated, setHydrated] = useState(false);
+  const clusterRef = useRef<HTMLDivElement>(null);
 
   // Restore persisted choices after mount (avoids hydration mismatch).
   useEffect(() => {
     try {
-      const p = localStorage.getItem(STORAGE.perspective);
+      const id = localStorage.getItem(STORAGE.identity);
       const r = localStorage.getItem(STORAGE.renderer);
       const c = localStorage.getItem(STORAGE.cluster);
-      if (p && isPerspective(p)) {
-        setPerspective(p);
-        setIdentityChosen(true);
-      }
+      if (isKnownIdentity(id)) setIdentityId(id);
       if (r && isRenderer(r)) setRenderer(r);
       if (c && isCluster(c)) setCluster(c);
     } catch {
@@ -182,15 +184,15 @@ export default function SandboxV2() {
     setHydrated(true);
   }, []);
 
-  // Persist site-wide so the choice carries across pages and sessions.
+  // Persist the chosen identity site-wide.
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || identityId == null) return;
     try {
-      localStorage.setItem(STORAGE.perspective, perspective);
+      localStorage.setItem(STORAGE.identity, identityId);
     } catch {
       /* ignore */
     }
-  }, [perspective, hydrated]);
+  }, [identityId, hydrated]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -254,6 +256,7 @@ export default function SandboxV2() {
   }, []);
 
   function toggleTheme() {
+    setOpenBloom(null);
     setTheme((prev) => {
       const next: Theme = prev === "dark" ? "light" : "dark";
       try {
@@ -265,22 +268,50 @@ export default function SandboxV2() {
     });
   }
 
-  // Each keycap advances its own state on press. The bloom/menu selection
-  // (Coke-Freestyle style) and contextual label mutation come in a later pass;
-  // for now cycling keeps perspective switching alive without a dropdown.
-  function cycleIdentity() {
-    setIdentityChosen(true);
-    setPerspective((prev) => {
-      const i = PERSPECTIVE_IDS.indexOf(prev);
-      return PERSPECTIVE_IDS[(i + 1) % PERSPECTIVE_IDS.length];
-    });
+  function toggleBloom(node: Exclude<Bloom, null>) {
+    setOpenBloom((prev) => (prev === node ? null : node));
   }
 
-  function toggleView() {
-    setRenderer((prev) => (prev === "classic" ? "enhanced" : "classic"));
+  function selectIdentity(id: string) {
+    setIdentityId(id); // persisted by effect
+    setOpenBloom(null);
   }
 
+  function selectExperience(opt: ExperienceOption) {
+    if (!opt.available || !opt.renderer) return;
+    setRenderer(opt.renderer);
+    setOpenBloom(null);
+  }
+
+  // Close an open bloom on outside click / Escape.
+  useEffect(() => {
+    if (!openBloom) return;
+    function onDown(e: PointerEvent) {
+      if (clusterRef.current && !clusterRef.current.contains(e.target as Node)) {
+        setOpenBloom(null);
+      }
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setOpenBloom(null);
+    }
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [openBloom]);
+
+  // Node 1 maps the chosen audience identity to an underlying lens; the
+  // renderers sort/spotlight by that lens exactly as before.
+  const identity =
+    identityId != null
+      ? IDENTITIES.find((i) => i.id === identityId) ?? null
+      : null;
+  const perspective: Perspective = identity ? identity.lens : "curious";
   const activeLens = LENSES.find((l) => l.id === perspective) ?? LENSES[0];
+  const activeExperience =
+    EXPERIENCES.find((e) => e.renderer === renderer) ?? EXPERIENCES[0];
 
   const matches = useMemo(
     () =>
@@ -328,30 +359,85 @@ export default function SandboxV2() {
       <div
         className="kc-cluster"
         data-cluster={cluster}
+        data-bloom={openBloom ?? undefined}
         role="group"
         aria-label="Controls"
+        ref={clusterRef}
       >
-        <button
-          type="button"
-          className="kc kc-identity"
-          onClick={cycleIdentity}
-          aria-label={`Audience lens: ${
-            identityChosen ? activeLens.label : "not set"
-          }. Tap to change.`}
-        >
-          {identityChosen ? activeLens.label : "Who are you?"}
-        </button>
-        <div className="kc-row2">
+        {/* Node 1 — Identity (blooms the audience taxonomy). */}
+        <div className="kc-slot">
           <button
             type="button"
-            className="kc kc-view"
-            onClick={toggleView}
-            aria-label={`View: ${
-              renderer === "classic" ? "Classic" : "Enhanced"
-            }. Tap to switch.`}
+            className="kc kc-identity"
+            aria-haspopup="true"
+            aria-expanded={openBloom === "identity"}
+            onClick={() => toggleBloom("identity")}
+            aria-label={`Audience: ${
+              identity ? identity.label : "not chosen"
+            }. Tap to choose.`}
           >
-            {renderer === "classic" ? "Classic" : "Enhanced"}
+            {identity ? identity.label : "Who are you?"}
           </button>
+          {openBloom === "identity" && (
+            <div className="kc-bloom" role="listbox" aria-label="Audience">
+              {IDENTITIES.map((opt, i) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  role="option"
+                  aria-selected={identityId === opt.id}
+                  className="kc-chip"
+                  data-active={identityId === opt.id ? "true" : undefined}
+                  style={{ animationDelay: `${i * 30}ms` }}
+                  onClick={() => selectIdentity(opt.id)}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="kc-row2">
+          {/* Node 2 — Experience (blooms V1–V4). */}
+          <div className="kc-slot">
+            <button
+              type="button"
+              className="kc kc-view"
+              aria-haspopup="true"
+              aria-expanded={openBloom === "view"}
+              onClick={() => toggleBloom("view")}
+              aria-label={`Experience: ${activeExperience.label}. Tap to choose.`}
+            >
+              {activeExperience.label}
+            </button>
+            {openBloom === "view" && (
+              <div className="kc-bloom" role="listbox" aria-label="Experience">
+                {EXPERIENCES.map((opt, i) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    role="option"
+                    aria-selected={opt.renderer === renderer}
+                    aria-disabled={!opt.available}
+                    disabled={!opt.available}
+                    className="kc-chip"
+                    data-active={opt.renderer === renderer ? "true" : undefined}
+                    data-soon={!opt.available ? "true" : undefined}
+                    style={{ animationDelay: `${i * 30}ms` }}
+                    onClick={() => selectExperience(opt)}
+                  >
+                    {opt.label}
+                    {!opt.available && (
+                      <span className="kc-chip-soon">Upcoming</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Node 3 — Theme (simple toggle, no bloom). */}
           <button
             type="button"
             className="kc kc-theme"
@@ -456,10 +542,10 @@ export default function SandboxV2() {
           </header>
 
           <div className="sbx-banner">
-            <b>Phase 1 proof of concept.</b> One content source, two renderers.
-            Use the floating control to switch <b>View</b> (Classic ↔ Enhanced)
-            and <b>Lens</b> (Builder, Inventor, …). Choices persist across
-            reloads. RoomBridge&rsquo;s images are real; RelicWorld&rsquo;s are
+            <b>Phase 1 proof of concept.</b> One content source, multiple
+            renderers. Tap the floating glass keys to choose an <b>audience</b>{" "}
+            and an <b>experience</b> (V1–V4); choices persist across reloads.
+            RoomBridge&rsquo;s images are real; RelicWorld&rsquo;s are
             intentionally absent to show the graceful placeholder, and every 🔒
             item shows the gated-vault treatment.
           </div>
