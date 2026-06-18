@@ -16,7 +16,7 @@ export default function Home() {
         </p>
         <p className="mt-7 max-w-[34rem] text-[19px] leading-8 text-ink sm:text-[21px]">
           I turn long-term human observation into prototypeable experience
-          systems — across visionOS, AI continuity, and the web.
+          systems — across iOS, visionOS, AI continuity, and the web.
         </p>
         <p className="mt-5 max-w-[40rem] text-[13px] leading-6 text-faint">
           AI-driven interaction · spatial presence · emotional context and

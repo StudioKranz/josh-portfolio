@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://joshrosenkranz.info"),
   title: "Josh Rosenkranz — Apple technologist & experience systems designer",
   description:
-    "I turn long-term human observation into prototypeable experience systems — across visionOS, AI continuity, and the web.",
+    "I turn long-term human observation into prototypeable experience systems — across iOS, visionOS, AI continuity, and the web.",
   openGraph: {
     title: "Josh Rosenkranz",
     description:
