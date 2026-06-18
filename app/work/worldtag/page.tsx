@@ -239,8 +239,8 @@ export default async function RelicWorld() {
           <Section label="Field validation">
             <p>
               Captured on-device while walking the prototype around a real block —
-              the telemetry overlay, the nested boundaries rendered in place, and
-              the compromised failure state.
+              showing zone reveal, carrying state, and retry lockout without
+              exposing live coordinates or identifiable map detail.
             </p>
           </Section>
           <FieldValidationGallery />
