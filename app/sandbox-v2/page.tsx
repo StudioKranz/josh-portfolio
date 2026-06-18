@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   PORTFOLIO_DATABASE,
   LENSES,
@@ -39,6 +39,16 @@ function isCluster(v: string | null): v is Cluster {
 function isKnownIdentity(v: string | null): v is string {
   return v != null && IDENTITY_IDS.includes(v);
 }
+
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+}
+
+const WAVE_MS = 1100;
 
 // ---------------------------------------------------------------------------
 // Evidence (Layer 0) renderers — identical data, shown by both view engines.
@@ -167,6 +177,9 @@ export default function SandboxV2() {
   const [cluster, setCluster] = useState<Cluster>("b"); // tight constellation default
   const [openBloom, setOpenBloom] = useState<Bloom>(null);
   const [hydrated, setHydrated] = useState(false);
+  // Wave transition between Classic <-> Enhanced (dual-layer, runs on toggle).
+  const [waving, setWaving] = useState(false);
+  const [prevRenderer, setPrevRenderer] = useState<Renderer | null>(null);
   const clusterRef = useRef<HTMLDivElement>(null);
 
   // Restore persisted choices after mount (avoids hydration mismatch).
@@ -279,9 +292,46 @@ export default function SandboxV2() {
 
   function selectExperience(opt: ExperienceOption) {
     if (!opt.available || !opt.renderer) return;
-    setRenderer(opt.renderer);
     setOpenBloom(null);
+    if (opt.renderer === renderer) return; // already there — no-op
+    if (waving) {
+      // mid-transition: just settle on the new renderer without re-waving
+      setRenderer(opt.renderer);
+      return;
+    }
+    if (prefersReducedMotion()) {
+      setRenderer(opt.renderer); // honor reduced motion: instant swap
+      return;
+    }
+    // Explicit toggle → run the reinterpretation wave.
+    setPrevRenderer(renderer);
+    setRenderer(opt.renderer);
+    setWaving(true);
   }
+
+  // Tear down the dual-layer once the scan line finishes.
+  function endWave() {
+    setWaving(false);
+    setPrevRenderer(null);
+  }
+
+  // Drive the scan line over the on-screen page: the incoming height, capped to
+  // the viewport so the time budget is spent where the user is looking (a short
+  // page sweeps fully; a tall one sweeps a screenful, the rest below the fold).
+  // Set before first paint via the ref callback — no glitch.
+  const setStageRef = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    const viewport = window.innerHeight || node.offsetHeight;
+    const distance = Math.min(node.offsetHeight, viewport);
+    node.style.setProperty("--wave-h", `${distance}px`);
+  }, []);
+
+  // Safety net: never leave the overlay stuck if animationEnd doesn't fire.
+  useEffect(() => {
+    if (!waving) return;
+    const t = setTimeout(endWave, WAVE_MS + 300);
+    return () => clearTimeout(t);
+  }, [waving]);
 
   // Close an open bloom on outside click / Escape.
   useEffect(() => {
@@ -346,6 +396,108 @@ export default function SandboxV2() {
         Experience Design are next in the build queue.)
       </>
     );
+
+  // Either renderer, on demand — so the wave can mount both at once.
+  function renderMain(r: Renderer) {
+    if (r === "classic") {
+      return (
+        <main className="sbx-classic">
+          <header>
+            <h1 className="cl-name">{MASTER.name}</h1>
+            <p className="cl-role">{MASTER.role}</p>
+            <p className="cl-thesis">{MASTER.thesis}</p>
+            <p className="cl-capabilities">{MASTER.capabilities}</p>
+            <p className="cl-links">
+              <a href="/why">Why this work</a>
+              <span className="sep" aria-hidden="true">
+                ·
+              </span>
+              <a href="/how-i-work">How I work</a>
+            </p>
+          </header>
+
+          <h2 className="cl-section-label">Selected work</h2>
+          <ul className="cl-list">
+            {ordered.map((project) => (
+              <li key={project.id}>
+                <a className="cl-row" href={project.href}>
+                  <span className="cl-thumb">{project.thumbLabel}</span>
+                  <span className="cl-row-body">
+                    <span className="cl-row-name">{project.title}</span>
+                    <span className="cl-row-summary">{project.summary}</span>
+                  </span>
+                  <span className="cl-maturity">
+                    <span
+                      className="dot"
+                      style={{ background: MATURITY_COLORS[project.maturity] }}
+                      aria-hidden="true"
+                    />
+                    {project.maturityLabel}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <footer className="cl-footer">
+            <a href="/">Work</a>
+            <a href="/how-i-work">How I work</a>
+            <a href="/why">Why this work</a>
+            <a href="/Josh_Rosenkranz_Resume.pdf">Résumé</a>
+            <a href="mailto:joshrosenkranz@mac.com">joshrosenkranz@mac.com</a>
+            <a
+              href="https://www.linkedin.com/in/joshrosenkranz/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              LinkedIn
+            </a>
+          </footer>
+        </main>
+      );
+    }
+    return (
+      <main className="sbx-main">
+        <header className="sbx-header">
+          <h1 className="sbx-name">{MASTER.name}</h1>
+          <p className="sbx-role">{MASTER.role}</p>
+          <p className="sbx-thesis">{MASTER.thesis}</p>
+          <p className="sbx-lens-intro">{lensIntro}</p>
+        </header>
+
+        <div className="sbx-banner">
+          <b>Phase 1 proof of concept.</b> One content source, multiple
+          renderers. Tap the floating glass keys to choose an <b>audience</b>{" "}
+          and an <b>experience</b> (V1–V4); choices persist across reloads.
+          RoomBridge&rsquo;s images are real; RelicWorld&rsquo;s are
+          intentionally absent to show the graceful placeholder, and every 🔒
+          item shows the gated-vault treatment.
+        </div>
+
+        <h2 className="sbx-grid-label">Selected work</h2>
+        <section className="portfolio-grid">
+          {ordered.map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              spotlight={
+                perspective !== "curious" &&
+                project.perspectives.includes(perspective)
+              }
+              lensLabel={activeLens.label}
+            />
+          ))}
+        </section>
+
+        <footer className="sbx-footer">
+          Isolated architecture sandbox — the same Layer 0 / Layer 1 content,
+          re-expressed by a swappable renderer. Museum renderer and the AI
+          curator build on top of this exact foundation.{" "}
+          <a href="/">← Back to the live portfolio</a>
+        </footer>
+      </main>
+    );
+  }
 
   return (
     <div
@@ -475,103 +627,28 @@ export default function SandboxV2() {
         ))}
       </div>
 
-      {renderer === "classic" ? (
-        // CLASSIC — closely mirrors the live production homepage so the
-        // baseline reads as today's published portfolio, not a new design.
-        <main className="sbx-classic">
-          <header>
-            <h1 className="cl-name">{MASTER.name}</h1>
-            <p className="cl-role">{MASTER.role}</p>
-            <p className="cl-thesis">{MASTER.thesis}</p>
-            <p className="cl-capabilities">{MASTER.capabilities}</p>
-            <p className="cl-links">
-              <a href="/why">Why this work</a>
-              <span className="sep" aria-hidden="true">
-                ·
-              </span>
-              <a href="/how-i-work">How I work</a>
-            </p>
-          </header>
-
-          <h2 className="cl-section-label">Selected work</h2>
-          <ul className="cl-list">
-            {ordered.map((project) => (
-              <li key={project.id}>
-                <a className="cl-row" href={project.href}>
-                  <span className="cl-thumb">{project.thumbLabel}</span>
-                  <span className="cl-row-body">
-                    <span className="cl-row-name">{project.title}</span>
-                    <span className="cl-row-summary">{project.summary}</span>
-                  </span>
-                  <span className="cl-maturity">
-                    <span
-                      className="dot"
-                      style={{ background: MATURITY_COLORS[project.maturity] }}
-                      aria-hidden="true"
-                    />
-                    {project.maturityLabel}
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          <footer className="cl-footer">
-            <a href="/">Work</a>
-            <a href="/how-i-work">How I work</a>
-            <a href="/why">Why this work</a>
-            <a href="/Josh_Rosenkranz_Resume.pdf">Résumé</a>
-            <a href="mailto:joshrosenkranz@mac.com">joshrosenkranz@mac.com</a>
-            <a
-              href="https://www.linkedin.com/in/joshrosenkranz/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              LinkedIn
-            </a>
-          </footer>
-        </main>
-      ) : (
-        // ENHANCED — the experimental editorial renderer.
-        <main className="sbx-main">
-          <header className="sbx-header">
-            <h1 className="sbx-name">{MASTER.name}</h1>
-            <p className="sbx-role">{MASTER.role}</p>
-            <p className="sbx-thesis">{MASTER.thesis}</p>
-            <p className="sbx-lens-intro">{lensIntro}</p>
-          </header>
-
-          <div className="sbx-banner">
-            <b>Phase 1 proof of concept.</b> One content source, multiple
-            renderers. Tap the floating glass keys to choose an <b>audience</b>{" "}
-            and an <b>experience</b> (V1–V4); choices persist across reloads.
-            RoomBridge&rsquo;s images are real; RelicWorld&rsquo;s are
-            intentionally absent to show the graceful placeholder, and every 🔒
-            item shows the gated-vault treatment.
+      {waving && prevRenderer ? (
+        // Reinterpretation wave: incoming renders in flow (defines final
+        // height → no end shift); outgoing overlays on top and is clipped
+        // away top-to-bottom by a sharp amber scan line.
+        <div
+          className="sbx-stage"
+          ref={setStageRef}
+          data-from={prevRenderer}
+          data-to={renderer}
+        >
+          <div className="sbx-layer sbx-layer-in">{renderMain(renderer)}</div>
+          <div
+            className="sbx-layer sbx-layer-out"
+            aria-hidden="true"
+            onAnimationEnd={endWave}
+          >
+            {renderMain(prevRenderer)}
           </div>
-
-          <h2 className="sbx-grid-label">Selected work</h2>
-          <section className="portfolio-grid">
-            {ordered.map((project) => (
-              <ProjectCard
-                key={project.id}
-                project={project}
-                spotlight={
-                  perspective !== "curious" &&
-                  project.perspectives.includes(perspective)
-                }
-                lensLabel={activeLens.label}
-              />
-            ))}
-          </section>
-
-          <footer className="sbx-footer">
-            Isolated architecture sandbox — the same Layer 0 / Layer 1 content,
-            re-expressed by a swappable renderer. Wave transition, Museum
-            renderer, and the AI curator build on top of this exact foundation.{" "}
-            <a href="/">← Back to the live portfolio</a>
-          </footer>
-        </main>
+          <div className="sbx-wavefront" aria-hidden="true" />
+        </div>
+      ) : (
+        renderMain(renderer)
       )}
     </div>
   );

@@ -673,6 +673,68 @@
 }
 
 /* ===========================================================================
+   EXPERIENCE WAVE — Classic <-> Enhanced reinterpretation
+
+   Dual-layer: the incoming renderer is in normal flow (it defines the final
+   height, so there's no reflow when the wave ends). The outgoing renderer is
+   an opaque overlay on top, clipped away top-to-bottom by a sharp amber scan
+   line. --wave-h is the incoming height, so the sweep covers the whole new
+   page (naturally strongest when moving into the taller Enhanced view).
+   =========================================================================== */
+
+.sbx-stage {
+  position: relative;
+  overflow: hidden; /* contain a taller outgoing overlay mid-sweep */
+}
+
+.sbx-layer-in {
+  position: relative;
+  z-index: 1;
+}
+
+.sbx-layer-out {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+  background: var(--canvas-bg); /* fully occludes the incoming until clipped */
+  animation: sbx-wave-clip 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: clip-path;
+}
+
+.sbx-wavefront {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 3;
+  background: var(--accent-amber);
+  box-shadow: 0 0 4px rgba(212, 175, 55, 0.45); /* crisp scan line, not a glow */
+  animation: sbx-wave-edge 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform;
+}
+
+@keyframes sbx-wave-clip {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(var(--wave-h, 100vh) 0 0 0);
+  }
+}
+
+@keyframes sbx-wave-edge {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(var(--wave-h, 100vh));
+  }
+}
+
+/* ===========================================================================
    CONTROL SURFACE — independent glass "typewriter key" artifacts
 
    Three unlinked keycaps float over the page. The A/B/C cluster attribute on
