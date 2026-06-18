@@ -65,6 +65,16 @@
   --tray-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
   --subhint-bg: rgba(18, 19, 21, 0.6);
   --img-bg: #000;
+  --keycap-bg: rgba(255, 255, 255, 0.06);
+  --keycap-bg-hover: rgba(255, 255, 255, 0.1);
+  --keycap-border: rgba(255, 255, 255, 0.14);
+  --keycap-shelf: rgba(255, 255, 255, 0.22);
+  --keycap-text: #f5f6f7;
+  --keycap-shadow: 0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.25);
+  --keycap-shadow-active: 0 2px 6px rgba(0, 0, 0, 0.45),
+    inset 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* --- Theme scope: LIGHT (editorial paper) -------------------------------- */
@@ -105,15 +115,24 @@
   --tray-shadow: 0 18px 50px rgba(20, 20, 30, 0.18);
   --subhint-bg: rgba(255, 255, 255, 0.7);
   --img-bg: #e9e9ec;
+  --keycap-bg: rgba(255, 255, 255, 0.55);
+  --keycap-bg-hover: rgba(255, 255, 255, 0.8);
+  --keycap-border: rgba(0, 0, 0, 0.1);
+  --keycap-shelf: rgba(0, 0, 0, 0.18);
+  --keycap-text: #1b1b1b;
+  --keycap-shadow: 0 4px 12px rgba(20, 20, 30, 0.14),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.08);
+  --keycap-shadow-active: 0 2px 6px rgba(20, 20, 30, 0.2),
+    inset 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 /* Smooth "stage lighting" shifts on the surfaces that change with the theme. */
 .sbx .project-card,
 .sbx .human-insight-callout,
 .sbx .tech-tag,
-.sbx .lg-dock,
-.sbx .lg-tray,
-.sbx .lg-subhint,
+.sbx .kc,
+.sbx .kc-switcher,
 .sbx .media-placeholder,
 .sbx .gated-asset-vault,
 .sbx .sbx-banner,
@@ -127,7 +146,7 @@
 .sbx-main {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 7.5rem 1.5rem 5rem;
+  padding: 8.5rem 1.5rem 5rem; /* top clears the floating keycap cluster */
 }
 
 .sbx-header {
@@ -417,7 +436,7 @@
 .sbx-classic {
   max-width: 44rem; /* matches Tailwind max-w-content */
   margin: 0 auto;
-  padding: 7rem 1.5rem 3rem;
+  padding: 8.5rem 1.5rem 3rem; /* top clears the floating keycap cluster */
 }
 
 .cl-name {
@@ -651,223 +670,158 @@
 }
 
 /* ===========================================================================
-   LIQUID GLASS CAPSULE — the persistent, site-wide control surface
+   CONTROL SURFACE — independent glass "typewriter key" artifacts
+
+   Three unlinked keycaps float over the page. The A/B/C cluster attribute on
+   the wrapper swaps their spatial arrangement (temporary layout spit-test).
+   Each key advances its own state on press; menus/bloom come later.
    =========================================================================== */
 
-.lg-fixed {
+.kc-cluster {
   position: fixed;
-  top: 0.85rem;
+  top: 1rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 999;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
   max-width: calc(100vw - 1.5rem);
 }
 
-.lg-dock {
+.kc-row2 {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.25rem 0.4rem;
-  border-radius: 40px;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
+}
+
+/* Cluster A — flat horizontal row (row2 collapses into the parent row). */
+.kc-cluster[data-cluster="a"] {
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+.kc-cluster[data-cluster="a"] .kc-row2 {
+  display: contents;
+}
+
+/* Cluster B — tight constellation (default). */
+.kc-cluster[data-cluster="b"] {
+  gap: 0.6rem;
+}
+.kc-cluster[data-cluster="b"] .kc-row2 {
+  gap: 0.6rem;
+}
+
+/* Cluster C — wide constellation. */
+.kc-cluster[data-cluster="c"] {
+  gap: 1.4rem;
+}
+.kc-cluster[data-cluster="c"] .kc-row2 {
+  gap: 2.5rem;
+}
+
+/* The keycap — frosted glass with a beveled, pressable profile. */
+.kc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.1rem;
+  border-radius: 14px;
+  background: var(--keycap-bg);
+  color: var(--keycap-text);
+  border: 1px solid var(--keycap-border);
+  border-bottom: 2px solid var(--keycap-shelf); /* mechanical shelf */
+  box-shadow: var(--keycap-shadow);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: var(--glass-shadow);
-}
-
-.lg-dock:hover {
-  border-color: rgba(212, 175, 55, 0.3);
-  background: var(--glass-bg-hover);
-  box-shadow: var(--glass-shadow-hover);
-}
-
-.lg-control {
-  position: relative;
-}
-
-.lg-pill {
-  display: flex;
-  align-items: baseline;
-  gap: 0.45rem;
-  padding: 0.4rem 0.75rem;
-  border: 0;
-  border-radius: 30px;
-  background: transparent;
-  color: var(--text-body);
-  cursor: pointer;
   font: inherit;
-  transition: background 0.2s ease;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease,
+    color 0.3s ease;
 }
 
-.lg-pill:hover {
-  background: var(--hover-bg);
+.kc:hover {
+  background: var(--keycap-bg-hover);
+  border-color: rgba(212, 175, 55, 0.35);
+  transform: translateY(-1px);
 }
 
-.lg-pill:focus-visible {
+.kc:focus-visible {
   outline: 2px solid var(--accent-cyan);
   outline-offset: 2px;
 }
 
-.lg-pill .lg-key {
+/* Tactile press — the cap travels down and the shelf shortens. */
+.kc:active {
+  transform: translateY(1.5px);
+  border-bottom-width: 1px;
+  box-shadow: var(--keycap-shadow-active);
+}
+
+.kc-theme {
+  width: 42px;
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 1rem;
+}
+
+/* Temporary cluster spit-test switch (low-profile, bottom-left). */
+.kc-switcher {
+  position: fixed;
+  bottom: 0.85rem;
+  left: 0.85rem;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: var(--glass-shadow);
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.kc-switcher:hover {
+  opacity: 1;
+}
+
+.kc-switcher-label {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-muted);
 }
 
-.lg-pill .lg-value {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-bright);
-}
-
-.lg-pill .lg-caret {
-  font-size: 0.6rem;
+.kc-switcher-btn {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
   color: var(--text-muted);
-  transition: transform 0.2s ease;
-}
-
-.lg-pill[aria-expanded="true"] .lg-caret {
-  transform: rotate(180deg);
-}
-
-.lg-divider {
-  width: 1px;
-  height: 20px;
-  background: var(--divider);
-}
-
-/* Minimalist theme toggle — quiet sun/moon glyph on the capsule's edge. */
-.lg-theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text-bright);
-  cursor: pointer;
   font: inherit;
-  transition: background 0.2s ease;
-}
-
-.lg-theme-toggle:hover {
-  background: var(--hover-bg);
-}
-
-.lg-theme-toggle:focus-visible {
-  outline: 2px solid var(--accent-cyan);
-  outline-offset: 2px;
-}
-
-.lg-theme-glyph {
-  font-size: 0.95rem;
-  line-height: 1;
-}
-
-.lg-tray {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 12rem;
-  padding: 0.4rem;
-  border-radius: 16px;
-  border: 1px solid var(--glass-border);
-  background: var(--tray-bg);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  box-shadow: var(--tray-shadow);
-  list-style: none;
-  margin: 0;
-}
-
-.lg-option {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.1rem;
-  padding: 0.55rem 0.7rem;
-  border: 0;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--text-body);
-  text-align: left;
-  cursor: pointer;
-  font: inherit;
-}
-
-.lg-option:hover:not(:disabled),
-.lg-option[aria-selected="true"] {
-  background: var(--hover-bg);
-}
-
-.lg-option:focus-visible {
-  outline: 2px solid var(--accent-cyan);
-  outline-offset: -2px;
-}
-
-.lg-option:disabled {
-  cursor: default;
-  opacity: 0.4;
-}
-
-.lg-option .opt-label {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-bright);
-}
-
-.lg-option[aria-selected="true"] .opt-label::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--accent-amber);
-}
-
-.lg-option:not([aria-selected="true"]) .opt-label::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background: transparent;
-  border: 1px solid var(--hairline);
-}
-
-.lg-option .opt-blurb {
   font-size: 0.7rem;
-  line-height: 1.4;
-  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
-.lg-subhint {
-  margin: 0;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  background: var(--subhint-bg);
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+.kc-switcher-btn[data-active="true"] {
+  background: var(--hover-bg);
+  color: var(--text-bright);
 }
 
-.lg-subhint .dot {
-  color: var(--accent-amber);
+.kc-switcher-btn:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 1px;
 }
 
 /* --- Footer --------------------------------------------------------------- */
@@ -910,45 +864,22 @@
 /* --- Responsive ----------------------------------------------------------- */
 
 @media (max-width: 560px) {
-  /* Extra top room so the open tray sits above the hero, not over it. */
+  /* Extra top room so the floating cluster clears the hero. */
   .sbx-main {
-    padding: 8rem 1.1rem 4rem;
+    padding: 8.5rem 1.1rem 4rem;
   }
 
   .sbx-classic {
-    padding: 8.5rem 1.25rem 3rem;
+    padding: 9rem 1.25rem 3rem;
   }
 
-  /* Collapse the capsule to active values only: Builder | Classic | icon. */
-  .lg-key {
-    display: none;
-  }
-
-  .lg-pill {
-    padding: 0.35rem 0.55rem;
-    gap: 0.3rem;
-  }
-
-  .lg-pill .lg-value {
+  .kc {
+    padding: 0.5rem 0.85rem;
     font-size: 0.8rem;
   }
 
-  .lg-theme-toggle {
-    width: 30px;
-    height: 30px;
-  }
-
-  /* One-line tray options keep the dropdown short and legible. */
-  .lg-tray {
-    min-width: 10.5rem;
-  }
-
-  .lg-option {
-    padding: 0.5rem 0.6rem;
-  }
-
-  .opt-blurb {
-    display: none;
+  .kc-theme {
+    width: 38px;
   }
 
   .sbx[data-renderer="enhanced"] .portfolio-grid {

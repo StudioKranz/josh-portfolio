@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   PORTFOLIO_DATABASE,
   LENSES,
-  RENDERERS,
   MASTER,
   MATURITY_COLORS,
   type Evidence,
@@ -18,9 +17,11 @@ const STORAGE = {
   perspective: "sbx_perspective",
   renderer: "sbx_renderer",
   theme: "sbx_theme",
+  cluster: "sbx_cluster",
 };
 
 type Theme = "light" | "dark";
+type Cluster = "a" | "b" | "c";
 
 function isPerspective(v: string): v is Perspective {
   return (PERSPECTIVE_IDS as string[]).includes(v);
@@ -30,6 +31,9 @@ function isRenderer(v: string): v is Renderer {
 }
 function isTheme(v: string | null): v is Theme {
   return v === "light" || v === "dark";
+}
+function isCluster(v: string | null): v is Cluster {
+  return v === "a" || v === "b" || v === "c";
 }
 
 // ---------------------------------------------------------------------------
@@ -156,17 +160,22 @@ export default function SandboxV2() {
   const [perspective, setPerspective] = useState<Perspective>("builder");
   const [renderer, setRenderer] = useState<Renderer>("classic");
   const [theme, setTheme] = useState<Theme>("dark");
-  const [openTray, setOpenTray] = useState<"lens" | "view" | null>(null);
+  const [cluster, setCluster] = useState<Cluster>("b"); // tight constellation default
+  const [identityChosen, setIdentityChosen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
-  const fixedRef = useRef<HTMLDivElement>(null);
 
   // Restore persisted choices after mount (avoids hydration mismatch).
   useEffect(() => {
     try {
       const p = localStorage.getItem(STORAGE.perspective);
       const r = localStorage.getItem(STORAGE.renderer);
-      if (p && isPerspective(p)) setPerspective(p);
+      const c = localStorage.getItem(STORAGE.cluster);
+      if (p && isPerspective(p)) {
+        setPerspective(p);
+        setIdentityChosen(true);
+      }
       if (r && isRenderer(r)) setRenderer(r);
+      if (c && isCluster(c)) setCluster(c);
     } catch {
       /* localStorage unavailable — fall back to defaults */
     }
@@ -191,6 +200,16 @@ export default function SandboxV2() {
       /* ignore */
     }
   }, [renderer, hydrated]);
+
+  // Persist the cluster layout choice (temporary spit-test control).
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(STORAGE.cluster, cluster);
+    } catch {
+      /* ignore */
+    }
+  }, [cluster, hydrated]);
 
   // Theme: honor a saved manual override, otherwise follow the OS preference
   // and keep following it live until the visitor explicitly toggles.
@@ -235,7 +254,6 @@ export default function SandboxV2() {
   }, []);
 
   function toggleTheme() {
-    setOpenTray(null);
     setTheme((prev) => {
       const next: Theme = prev === "dark" ? "light" : "dark";
       try {
@@ -247,24 +265,20 @@ export default function SandboxV2() {
     });
   }
 
-  // Close trays on outside click / Escape.
-  useEffect(() => {
-    if (!openTray) return;
-    function onDown(e: PointerEvent) {
-      if (fixedRef.current && !fixedRef.current.contains(e.target as Node)) {
-        setOpenTray(null);
-      }
-    }
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") setOpenTray(null);
-    }
-    document.addEventListener("pointerdown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [openTray]);
+  // Each keycap advances its own state on press. The bloom/menu selection
+  // (Coke-Freestyle style) and contextual label mutation come in a later pass;
+  // for now cycling keeps perspective switching alive without a dropdown.
+  function cycleIdentity() {
+    setIdentityChosen(true);
+    setPerspective((prev) => {
+      const i = PERSPECTIVE_IDS.indexOf(prev);
+      return PERSPECTIVE_IDS[(i + 1) % PERSPECTIVE_IDS.length];
+    });
+  }
+
+  function toggleView() {
+    setRenderer((prev) => (prev === "classic" ? "enhanced" : "classic"));
+  }
 
   const activeLens = LENSES.find((l) => l.id === perspective) ?? LENSES[0];
 
@@ -309,97 +323,38 @@ export default function SandboxV2() {
       data-perspective={perspective}
       data-theme={theme}
     >
-      {/* Liquid Glass capsule — persistent, site-wide control surface */}
-      <div className="lg-fixed" ref={fixedRef}>
-        <div className="lg-dock" role="group" aria-label="View controls">
-          <div className="lg-control">
-            <button
-              type="button"
-              className="lg-pill"
-              aria-haspopup="listbox"
-              aria-expanded={openTray === "lens"}
-              onClick={() =>
-                setOpenTray((t) => (t === "lens" ? null : "lens"))
-              }
-            >
-              <span className="lg-key">Lens</span>
-              <span className="lg-value">{activeLens.label}</span>
-              <span className="lg-caret" aria-hidden="true">
-                ▾
-              </span>
-            </button>
-            {openTray === "lens" && (
-              <ul className="lg-tray" role="listbox" aria-label="Perspective">
-                {LENSES.map((lens) => (
-                  <li key={lens.id} role="none">
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={lens.id === perspective}
-                      className="lg-option"
-                      onClick={() => {
-                        setPerspective(lens.id);
-                        setOpenTray(null);
-                      }}
-                    >
-                      <span className="opt-label">{lens.label}</span>
-                      <span className="opt-blurb">{lens.blurb}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="lg-divider" aria-hidden="true" />
-
-          <div className="lg-control">
-            <button
-              type="button"
-              className="lg-pill"
-              aria-haspopup="listbox"
-              aria-expanded={openTray === "view"}
-              onClick={() =>
-                setOpenTray((t) => (t === "view" ? null : "view"))
-              }
-            >
-              <span className="lg-key">View</span>
-              <span className="lg-value">
-                {renderer === "classic" ? "Classic" : "Enhanced"}
-              </span>
-              <span className="lg-caret" aria-hidden="true">
-                ▾
-              </span>
-            </button>
-            {openTray === "view" && (
-              <ul className="lg-tray" role="listbox" aria-label="Renderer">
-                {RENDERERS.map((opt) => (
-                  <li key={opt.id} role="none">
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={opt.id === renderer}
-                      disabled={!opt.available}
-                      className="lg-option"
-                      onClick={() => {
-                        if (!opt.available) return;
-                        if (isRenderer(opt.id)) setRenderer(opt.id);
-                        setOpenTray(null);
-                      }}
-                    >
-                      <span className="opt-label">{opt.label}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <div className="lg-divider" aria-hidden="true" />
-
+      {/* Independent glass "typewriter key" artifacts (cluster spit-test).
+          Each key advances its own state on press — no dropdowns yet. */}
+      <div
+        className="kc-cluster"
+        data-cluster={cluster}
+        role="group"
+        aria-label="Controls"
+      >
+        <button
+          type="button"
+          className="kc kc-identity"
+          onClick={cycleIdentity}
+          aria-label={`Audience lens: ${
+            identityChosen ? activeLens.label : "not set"
+          }. Tap to change.`}
+        >
+          {identityChosen ? activeLens.label : "Who are you?"}
+        </button>
+        <div className="kc-row2">
           <button
             type="button"
-            className="lg-theme-toggle"
+            className="kc kc-view"
+            onClick={toggleView}
+            aria-label={`View: ${
+              renderer === "classic" ? "Classic" : "Enhanced"
+            }. Tap to switch.`}
+          >
+            {renderer === "classic" ? "Classic" : "Enhanced"}
+          </button>
+          <button
+            type="button"
+            className="kc kc-theme"
             onClick={toggleTheme}
             aria-label={
               theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
@@ -408,19 +363,30 @@ export default function SandboxV2() {
               theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
             }
           >
-            <span className="lg-theme-glyph" aria-hidden="true">
-              {theme === "dark" ? "☀" : "☾"}
-            </span>
+            <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
           </button>
         </div>
-        <p className="lg-subhint" aria-live="polite">
-          <span className="dot" aria-hidden="true">
-            ●
-          </span>{" "}
-          {renderer === "classic"
-            ? "Classic view — Enhanced available"
-            : "Enhanced view active"}
-        </p>
+      </div>
+
+      {/* Temporary layout spit-test switch — removed once a cluster wins. */}
+      <div
+        className="kc-switcher"
+        role="group"
+        aria-label="Cluster layout (temporary)"
+      >
+        <span className="kc-switcher-label">cluster</span>
+        {(["a", "b", "c"] as const).map((c) => (
+          <button
+            key={c}
+            type="button"
+            className="kc-switcher-btn"
+            data-active={cluster === c}
+            aria-pressed={cluster === c}
+            onClick={() => setCluster(c)}
+          >
+            {c.toUpperCase()}
+          </button>
+        ))}
       </div>
 
       {renderer === "classic" ? (
