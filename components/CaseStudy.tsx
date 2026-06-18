@@ -7,12 +7,14 @@ import SiteFooter from "@/components/SiteFooter";
 
 export default function CaseStudy({
   name,
+  eyebrow,
   tagline,
   maturity,
   maturityLabel,
   children,
 }: {
   name: string;
+  eyebrow?: string;
   tagline: string;
   maturity: Maturity;
   maturityLabel: string;
@@ -26,6 +28,11 @@ export default function CaseStudy({
         <h1 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight text-ink">
           {name}
         </h1>
+        {eyebrow && (
+          <p className="mt-2 text-[11px] font-medium uppercase tracking-[0.16em] text-faint">
+            {eyebrow}
+          </p>
+        )}
         <p className="mt-2 text-[17px] text-muted">{tagline}</p>
       </header>
       {children}

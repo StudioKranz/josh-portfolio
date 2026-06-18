@@ -81,11 +81,11 @@ export const emergingProjects: Project[] = [
 export const additionalProjects: Project[] = [
   {
     slug: "worldtag",
-    name: "WorldTag + RelicWorld",
+    name: "RelicWorld",
     summary:
-      "Turning raw GPS and heading into fair, safe, deterministic gameplay — a native iOS spatial state machine built without a backend.",
+      "A location-based capture-the-flag system exploring how real-world movement, map data, and spatial state can become playable interaction.",
     maturity: "prototype",
-    maturityLabel: "Functional iOS prototype",
+    maturityLabel: "Earlier prototype",
     thumbLabel: "Spatial iOS",
   },
 ];

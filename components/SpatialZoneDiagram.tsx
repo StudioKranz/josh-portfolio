@@ -4,7 +4,7 @@ export default function SpatialZoneDiagram() {
       <svg
         viewBox="0 0 640 452"
         role="img"
-        aria-label="Spatial hierarchy: a base spawn point roughly 120 meters from a 50-meter zone with a 5-meter exit-hysteresis buffer, containing a nested 12-meter retrieval chamber with a 3-meter hysteresis buffer and the relic at its center, with two flanking escape hazards positioned along the route back to base."
+        aria-label="Spatial hierarchy: a base spawn point roughly 120 meters from a 50-meter zone with a 5-meter exit-hysteresis buffer, containing a nested 10-meter retrieval chamber with a 3-meter hysteresis buffer and the relic at its center, with two flanking escape hazards positioned along the route back to base."
         className="h-auto w-full rounded-xl border border-[#2a2d34] bg-[#15171c]"
         fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
       >
@@ -89,7 +89,7 @@ export default function SpatialZoneDiagram() {
           Chamber
         </text>
         <text x="468" y="237" textAnchor="middle" fontSize="9" fill="#5fa89d">
-          12 m · 3 m hyst.
+          10 m · 3 m hyst.
         </text>
 
         {/* relic */}
