@@ -13,13 +13,22 @@ import {
 } from "./data";
 
 const PERSPECTIVE_IDS = LENSES.map((l) => l.id);
-const STORAGE = { perspective: "sbx_perspective", renderer: "sbx_renderer" };
+const STORAGE = {
+  perspective: "sbx_perspective",
+  renderer: "sbx_renderer",
+  theme: "sbx_theme",
+};
+
+type Theme = "light" | "dark";
 
 function isPerspective(v: string): v is Perspective {
   return (PERSPECTIVE_IDS as string[]).includes(v);
 }
 function isRenderer(v: string): v is Renderer {
   return v === "classic" || v === "enhanced";
+}
+function isTheme(v: string | null): v is Theme {
+  return v === "light" || v === "dark";
 }
 
 // ---------------------------------------------------------------------------
@@ -145,6 +154,7 @@ function ProjectCard({
 export default function SandboxV2() {
   const [perspective, setPerspective] = useState<Perspective>("builder");
   const [renderer, setRenderer] = useState<Renderer>("classic");
+  const [theme, setTheme] = useState<Theme>("dark");
   const [openTray, setOpenTray] = useState<"lens" | "view" | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const fixedRef = useRef<HTMLDivElement>(null);
@@ -180,6 +190,61 @@ export default function SandboxV2() {
       /* ignore */
     }
   }, [renderer, hydrated]);
+
+  // Theme: honor a saved manual override, otherwise follow the OS preference
+  // and keep following it live until the visitor explicitly toggles.
+  // Scoped to this sandbox only — the production homepage is untouched.
+  useEffect(() => {
+    let saved: string | null = null;
+    try {
+      saved = localStorage.getItem(STORAGE.theme);
+    } catch {
+      /* ignore */
+    }
+
+    const mq =
+      typeof window !== "undefined" && window.matchMedia
+        ? window.matchMedia("(prefers-color-scheme: dark)")
+        : null;
+
+    if (isTheme(saved)) {
+      setTheme(saved);
+    } else if (mq) {
+      setTheme(mq.matches ? "dark" : "light");
+    }
+
+    if (!mq) return;
+    const onSystemChange = (e: MediaQueryListEvent) => {
+      let override: string | null = null;
+      try {
+        override = localStorage.getItem(STORAGE.theme);
+      } catch {
+        /* ignore */
+      }
+      if (!isTheme(override)) setTheme(e.matches ? "dark" : "light");
+    };
+    // addEventListener is the modern API; addListener supports older Safari.
+    if (mq.addEventListener) mq.addEventListener("change", onSystemChange);
+    else mq.addListener(onSystemChange);
+    return () => {
+      if (mq.removeEventListener)
+        mq.removeEventListener("change", onSystemChange);
+      else mq.removeListener(onSystemChange);
+    };
+  }, []);
+
+  function toggleTheme() {
+    setOpenTray(null);
+    setTheme((prev) => {
+      const next: Theme = prev === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem(STORAGE.theme, next); // explicit override lock
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }
 
   // Close trays on outside click / Escape.
   useEffect(() => {
@@ -237,7 +302,12 @@ export default function SandboxV2() {
     );
 
   return (
-    <div className="sbx" data-renderer={renderer} data-perspective={perspective}>
+    <div
+      className="sbx"
+      data-renderer={renderer}
+      data-perspective={perspective}
+      data-theme={theme}
+    >
       {/* Liquid Glass capsule — persistent, site-wide control surface */}
       <div className="lg-fixed" ref={fixedRef}>
         <div className="lg-dock" role="group" aria-label="View controls">
@@ -323,6 +393,24 @@ export default function SandboxV2() {
               </ul>
             )}
           </div>
+
+          <div className="lg-divider" aria-hidden="true" />
+
+          <button
+            type="button"
+            className="lg-theme-toggle"
+            onClick={toggleTheme}
+            aria-label={
+              theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+            }
+            title={
+              theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+            }
+          >
+            <span className="lg-theme-glyph" aria-hidden="true">
+              {theme === "dark" ? "☀" : "☾"}
+            </span>
+          </button>
         </div>
         <p className="lg-subhint" aria-live="polite">
           <span className="dot" aria-hidden="true">

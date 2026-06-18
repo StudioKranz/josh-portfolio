@@ -1,36 +1,119 @@
 /* ===========================================================================
    Multi-Renderer Portfolio Engine — Phase 1 Sandbox styles.
 
-   Everything is namespaced under `.sbx` so this dark prototype is fully
-   isolated from the live light-themed site. Visual mode is driven entirely by
-   the `data-renderer` attribute on the `.sbx` root, which means switching
-   Classic <-> Enhanced is a pure-CSS re-interpretation of identical markup —
-   the foundation the wave transition will sit on later.
+   Everything is namespaced under `.sbx` so this prototype is fully isolated
+   from the live site. Two independent axes drive presentation, both set on the
+   `.sbx` root:
+     • data-renderer = classic | enhanced   (layout)
+     • data-theme    = light | dark          (color scheme)
+
+   Color tokens live ONLY inside the two theme scopes, so the production
+   homepage and global stylesheet are never affected.
    =========================================================================== */
 
 .sbx {
-  --canvas-bg: #121315;
-  --surface-card: #1a1c1e;
-  --surface-raised: #202325;
-  --accent-amber: #d4af37;
-  --accent-cyan: #a2e8dd;
-  --text-muted: #8e939c;
-  --text-body: #c5c9d0;
-  --text-bright: #f5f6f7;
-  --hairline: rgba(255, 255, 255, 0.08);
-
   min-height: 100vh;
   background-color: var(--canvas-bg);
   color: var(--text-body);
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica,
     Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 .sbx *,
 .sbx *::before,
 .sbx *::after {
   box-sizing: border-box;
+}
+
+/* --- Theme scope: DARK (default stage) ----------------------------------- */
+.sbx[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas-bg: #121315;
+  --surface-card: #1a1c1e;
+  --surface-raised: #202325;
+  --text-muted: #8e939c;
+  --text-body: #c5c9d0;
+  --text-bright: #f5f6f7;
+  --accent-amber: #d4af37;
+  --accent-cyan: #a2e8dd;
+  --hairline: rgba(255, 255, 255, 0.08);
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  --spotlight-border: rgba(212, 175, 55, 0.35);
+  --spotlight-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(212, 175, 55, 0.15);
+  --placeholder-border: rgba(255, 255, 255, 0.16);
+  --placeholder-stripe-a: rgba(255, 255, 255, 0.02);
+  --placeholder-stripe-b: rgba(255, 255, 255, 0.04);
+  --vault-bg: rgba(0, 0, 0, 0.22);
+  --vault-border: rgba(255, 255, 255, 0.16);
+  --hover-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg: rgba(26, 28, 30, 0.55);
+  --glass-bg-hover: rgba(26, 28, 30, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --glass-shadow-hover: 0 10px 40px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --divider: rgba(255, 255, 255, 0.15);
+  --tray-bg: rgba(20, 22, 24, 0.92);
+  --tray-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
+  --subhint-bg: rgba(18, 19, 21, 0.6);
+  --img-bg: #000;
+}
+
+/* --- Theme scope: LIGHT (editorial paper) -------------------------------- */
+.sbx[data-theme="light"] {
+  color-scheme: light;
+  --canvas-bg: #f9f9fa;
+  --surface-card: #ffffff;
+  --surface-raised: #f1f1f3;
+  --text-muted: #6e737a;
+  --text-body: #2c2e31;
+  --text-bright: #121315;
+  --accent-amber: #9a7b16; /* deeper gold for readable text/borders on white */
+  --accent-cyan: #3e8e82;
+  --hairline: rgba(0, 0, 0, 0.1);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-shadow: 0 12px 30px rgba(20, 20, 30, 0.08);
+  --spotlight-border: rgba(154, 123, 22, 0.45);
+  --spotlight-shadow: 0 12px 30px rgba(20, 20, 30, 0.08),
+    0 0 0 1px rgba(154, 123, 22, 0.25);
+  --placeholder-border: rgba(0, 0, 0, 0.16);
+  --placeholder-stripe-a: rgba(0, 0, 0, 0.02);
+  --placeholder-stripe-b: rgba(0, 0, 0, 0.045);
+  --vault-bg: rgba(0, 0, 0, 0.03);
+  --vault-border: rgba(0, 0, 0, 0.14);
+  --hover-bg: rgba(0, 0, 0, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg-hover: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 4px 30px rgba(20, 20, 30, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --glass-shadow-hover: 0 10px 40px rgba(20, 20, 30, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --divider: rgba(0, 0, 0, 0.12);
+  --tray-bg: rgba(250, 250, 251, 0.95);
+  --tray-shadow: 0 18px 50px rgba(20, 20, 30, 0.18);
+  --subhint-bg: rgba(255, 255, 255, 0.7);
+  --img-bg: #e9e9ec;
+}
+
+/* Smooth "stage lighting" shifts on the surfaces that change with the theme. */
+.sbx .project-card,
+.sbx .human-insight-callout,
+.sbx .tech-tag,
+.sbx .lg-dock,
+.sbx .lg-tray,
+.sbx .lg-subhint,
+.sbx .media-placeholder,
+.sbx .gated-asset-vault,
+.sbx .sbx-banner,
+.sbx .sbx-footer {
+  transition: background-color 0.4s ease, border-color 0.4s ease,
+    box-shadow 0.4s ease, color 0.4s ease;
 }
 
 /* --- Layout shell --------------------------------------------------------- */
@@ -88,7 +171,7 @@
   border: 1px solid var(--hairline);
   border-left: 2px solid var(--accent-cyan);
   border-radius: 10px;
-  background: rgba(162, 232, 221, 0.04);
+  background: var(--hover-bg);
   font-size: 0.8rem;
   line-height: 1.6;
   color: var(--text-muted);
@@ -159,7 +242,7 @@
   gap: 0.4rem;
   margin: 0.85rem 0 0;
   padding: 0.2rem 0.6rem;
-  border: 1px solid rgba(212, 175, 55, 0.35);
+  border: 1px solid var(--spotlight-border);
   border-radius: 999px;
   background: rgba(212, 175, 55, 0.08);
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
@@ -221,7 +304,7 @@
 
 .evidence-figure img {
   object-fit: cover;
-  background: #000;
+  background: var(--img-bg);
   border: 1px solid var(--hairline);
 }
 
@@ -233,13 +316,13 @@
   gap: 0.35rem;
   padding: 0.75rem;
   text-align: center;
-  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border: 1px dashed var(--placeholder-border);
   background: repeating-linear-gradient(
     45deg,
-    rgba(255, 255, 255, 0.02),
-    rgba(255, 255, 255, 0.02) 10px,
-    rgba(255, 255, 255, 0.04) 10px,
-    rgba(255, 255, 255, 0.04) 20px
+    var(--placeholder-stripe-a),
+    var(--placeholder-stripe-a) 10px,
+    var(--placeholder-stripe-b) 10px,
+    var(--placeholder-stripe-b) 20px
   );
 }
 
@@ -276,9 +359,9 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 1rem 1.1rem;
-  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border: 1px dashed var(--vault-border);
   border-radius: 10px;
-  background: rgba(0, 0, 0, 0.22);
+  background: var(--vault-bg);
 }
 
 .gated-asset-vault .vault-glyph {
@@ -376,10 +459,10 @@
   display: flex;
   flex-direction: column;
   padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
   border-radius: 16px;
   background: var(--surface-card);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--card-shadow);
 }
 
 .sbx[data-renderer="enhanced"] .card-titles {
@@ -426,9 +509,8 @@
 
 /* Spotlight ring for projects matching the active lens. */
 .sbx[data-renderer="enhanced"] .project-card[data-spotlight="true"] {
-  border-color: rgba(212, 175, 55, 0.35);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(212, 175, 55, 0.15);
+  border-color: var(--spotlight-border);
+  box-shadow: var(--spotlight-shadow);
 }
 
 /* ===========================================================================
@@ -453,20 +535,17 @@
   gap: 0.5rem;
   padding: 0.35rem 0.5rem;
   border-radius: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(26, 28, 30, 0.55);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: border-color 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
+  box-shadow: var(--glass-shadow);
 }
 
 .lg-dock:hover {
   border-color: rgba(212, 175, 55, 0.3);
-  background: rgba(26, 28, 30, 0.7);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg-hover);
+  box-shadow: var(--glass-shadow-hover);
 }
 
 .lg-control {
@@ -488,7 +567,7 @@
 }
 
 .lg-pill:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--hover-bg);
 }
 
 .lg-pill:focus-visible {
@@ -523,7 +602,37 @@
 .lg-divider {
   width: 1px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--divider);
+}
+
+/* Minimalist theme toggle — quiet sun/moon glyph on the capsule's edge. */
+.lg-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-bright);
+  cursor: pointer;
+  font: inherit;
+  transition: background 0.2s ease;
+}
+
+.lg-theme-toggle:hover {
+  background: var(--hover-bg);
+}
+
+.lg-theme-toggle:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.lg-theme-glyph {
+  font-size: 0.95rem;
+  line-height: 1;
 }
 
 .lg-tray {
@@ -534,11 +643,11 @@
   min-width: 12rem;
   padding: 0.4rem;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(20, 22, 24, 0.92);
+  border: 1px solid var(--glass-border);
+  background: var(--tray-bg);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
+  box-shadow: var(--tray-shadow);
   list-style: none;
   margin: 0;
 }
@@ -561,7 +670,7 @@
 
 .lg-option:hover:not(:disabled),
 .lg-option[aria-selected="true"] {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--hover-bg);
 }
 
 .lg-option:focus-visible {
@@ -612,7 +721,7 @@
   font-size: 0.62rem;
   letter-spacing: 0.08em;
   color: var(--text-muted);
-  background: rgba(18, 19, 21, 0.6);
+  background: var(--subhint-bg);
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
   backdrop-filter: blur(8px);
