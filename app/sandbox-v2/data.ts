@@ -169,8 +169,8 @@ export interface ExperienceOption {
 }
 
 export const EXPERIENCES: ExperienceOption[] = [
-  { id: "classic", label: "V1 Classic", renderer: "classic", available: true },
-  { id: "enhanced", label: "V2 Enhanced", renderer: "enhanced", available: true },
+  { id: "classic", label: "Detailed Story", renderer: "classic", available: true },
+  { id: "enhanced", label: "Executive Brief", renderer: "enhanced", available: true },
   { id: "museum", label: "V3 Museum", available: false },
   { id: "roombridge", label: "V4 RoomBridge", available: false },
 ];
@@ -444,7 +444,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     evidence: [],
     narrative: {
       problem:
-        "As software gets more predictive and autonomous, it has no real awareness of a person's emotional bandwidth — so it pushes notifications and demands attention regardless of state.",
+        "Most people know what they feel. Fewer know how those feelings affect the people around them. Attune explores ways technology might help people better understand tone and emotional context before misunderstandings happen.",
       execution:
         "I designed Attune: real-time tone controls, explicit emotional consent, and gentle modes that scale back density and pacing when a person needs quiet.",
       insight:

@@ -29,6 +29,7 @@ const STORAGE = {
 };
 
 type Theme = "light" | "dark";
+type ThemeMode = "light" | "dark" | "auto";
 type Cluster = "a" | "b" | "c";
 type Bloom = "identity" | "view" | null;
 
@@ -68,8 +69,8 @@ function autoFeaturedId(identityId: string | null): string {
 function isRenderer(v: string): v is Renderer {
   return v === "classic" || v === "enhanced";
 }
-function isTheme(v: string | null): v is Theme {
-  return v === "light" || v === "dark";
+function isThemeMode(v: string | null): v is ThemeMode {
+  return v === "light" || v === "dark" || v === "auto";
 }
 function isCluster(v: string | null): v is Cluster {
   return v === "a" || v === "b" || v === "c";
@@ -339,7 +340,10 @@ function FeaturedCard({ project }: { project: SandboxProject }) {
 export default function SandboxV2() {
   const [identityId, setIdentityId] = useState<string | null>(null);
   const [renderer, setRenderer] = useState<Renderer>("classic");
-  const [theme, setTheme] = useState<Theme>("dark");
+  // Three-state theme: an explicit Light/Dark choice, or Auto which follows the
+  // OS preference live. The effective theme drives data-theme on the root.
+  const [themeMode, setThemeMode] = useState<ThemeMode>("auto");
+  const [systemTheme, setSystemTheme] = useState<Theme>("dark");
   const [cluster, setCluster] = useState<Cluster>("b"); // tight constellation default
   const [openBloom, setOpenBloom] = useState<Bloom>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -427,6 +431,8 @@ export default function SandboxV2() {
     }
 
     const fire = () => {
+      // Camera correction: ensure the wavefront sweeps in view (see selectExperience).
+      window.scrollTo({ top: 0, behavior: "auto" });
       setInvite(false);
       setPrevRenderer("classic");
       setRenderer("enhanced");
@@ -479,9 +485,8 @@ export default function SandboxV2() {
     }
   }, [cluster, hydrated]);
 
-  // Theme: honor a saved manual override, otherwise follow the OS preference
-  // and keep following it live until the visitor explicitly toggles.
-  // Scoped to this sandbox only — the production homepage is untouched.
+  // Theme: restore the saved mode (Light / Dark / Auto), and always track the OS
+  // preference live so Auto stays in sync. Scoped to this sandbox only.
   useEffect(() => {
     let saved: string | null = null;
     try {
@@ -489,28 +494,16 @@ export default function SandboxV2() {
     } catch {
       /* ignore */
     }
+    if (isThemeMode(saved)) setThemeMode(saved);
 
     const mq =
       typeof window !== "undefined" && window.matchMedia
         ? window.matchMedia("(prefers-color-scheme: dark)")
         : null;
-
-    if (isTheme(saved)) {
-      setTheme(saved);
-    } else if (mq) {
-      setTheme(mq.matches ? "dark" : "light");
-    }
-
     if (!mq) return;
-    const onSystemChange = (e: MediaQueryListEvent) => {
-      let override: string | null = null;
-      try {
-        override = localStorage.getItem(STORAGE.theme);
-      } catch {
-        /* ignore */
-      }
-      if (!isTheme(override)) setTheme(e.matches ? "dark" : "light");
-    };
+    setSystemTheme(mq.matches ? "dark" : "light");
+    const onSystemChange = (e: MediaQueryListEvent) =>
+      setSystemTheme(e.matches ? "dark" : "light");
     // addEventListener is the modern API; addListener supports older Safari.
     if (mq.addEventListener) mq.addEventListener("change", onSystemChange);
     else mq.addListener(onSystemChange);
@@ -521,17 +514,13 @@ export default function SandboxV2() {
     };
   }, []);
 
-  function toggleTheme() {
-    setOpenBloom(null);
-    setTheme((prev) => {
-      const next: Theme = prev === "dark" ? "light" : "dark";
-      try {
-        localStorage.setItem(STORAGE.theme, next); // explicit override lock
-      } catch {
-        /* ignore */
-      }
-      return next;
-    });
+  function updateThemeMode(mode: ThemeMode) {
+    setThemeMode(mode);
+    try {
+      localStorage.setItem(STORAGE.theme, mode);
+    } catch {
+      /* ignore */
+    }
   }
 
   function toggleBloom(node: Exclude<Bloom, null>) {
@@ -558,12 +547,24 @@ export default function SandboxV2() {
     const enteringEnhanced =
       renderer === "classic" && opt.renderer === "enhanced";
     if (enteringEnhanced && !prefersReducedMotion()) {
+      // Camera correction: snap the viewport to the top before the sweep so the
+      // flat wavefront always runs in front of the viewer, not off-screen above.
+      window.scrollTo({ top: 0, behavior: "auto" });
       setPrevRenderer("classic");
       setRenderer("enhanced");
       setWaving(true);
       return;
     }
     setRenderer(opt.renderer);
+  }
+
+  // Portfolio keycap (#1): smoothly return to the top of the feed.
+  function scrollToTop() {
+    setOpenBloom(null);
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
+    });
   }
 
   // Tear down the dual-layer once the scan line finishes.
@@ -753,6 +754,9 @@ export default function SandboxV2() {
   const perspective: Perspective = identity ? identity.lens : "curious";
   const activeExperience =
     EXPERIENCES.find((e) => e.renderer === renderer) ?? EXPERIENCES[0];
+
+  // Effective theme: Auto follows the OS; Light/Dark are explicit locks.
+  const theme: Theme = themeMode === "auto" ? systemTheme : themeMode;
 
   // The invitation only shows in V1 Classic and steps aside once any bloom opens.
   const inviteActive = invite && renderer === "classic" && openBloom == null;
@@ -948,9 +952,9 @@ export default function SandboxV2() {
       data-cluster={cluster}
       data-dim={openBloom ? "true" : undefined}
     >
-      {/* Independent glass "typewriter key" artifacts. Sequence (left → right):
-          [ ☾ ] | [ Enhanced ] | [ Who are you? ] — identity sits at the right
-          so its dense bloom opens over clean margin space, not the hero copy. */}
+      {/* Persistent glass header. Sequence (left → right):
+          [ Portfolio ▲ ] | [ Detailed Story / Executive Brief ] | [ Who are you? ]
+          identity sits at the right so its dense bloom opens over clean margin. */}
       <div
         className="kc-cluster"
         data-cluster={cluster}
@@ -959,19 +963,14 @@ export default function SandboxV2() {
         aria-label="Controls"
         ref={clusterRef}
       >
-        {/* Theme (leftmost; simple toggle, no bloom). */}
+        {/* Portfolio (first element; scrolls back to the top of the feed). */}
         <button
           type="button"
-          className="kc kc-theme"
-          onClick={toggleTheme}
-          aria-label={
-            theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-          }
-          title={
-            theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-          }
+          className="kc kc-portfolio"
+          onClick={scrollToTop}
+          aria-label="Scroll to the top of the portfolio"
         >
-          <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
+          Portfolio <span className="kc-caret" aria-hidden="true">▲</span>
         </button>
 
         {/* Experience (blooms V1–V4). On a fresh cold open this key gently
@@ -991,7 +990,7 @@ export default function SandboxV2() {
           </button>
           {inviteActive && (
             <div className="kc-invite" role="status">
-              Try Enhanced view for an executive brief
+              Try the Executive Brief for a fast, high-signal tour
             </div>
           )}
           {openBloom === "view" && (
@@ -1032,7 +1031,16 @@ export default function SandboxV2() {
               identity ? identity.label : "not chosen"
             }. Tap to choose.`}
           >
-            {identity ? identity.label : "Who are you?"}
+            {identity ? (
+              <>
+                {identity.label}{" "}
+                <span className="kc-caret" aria-hidden="true">
+                  ▾
+                </span>
+              </>
+            ) : (
+              "Who are you?"
+            )}
           </button>
           {openBloom === "identity" && (
             <div
@@ -1057,6 +1065,34 @@ export default function SandboxV2() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Theme — independent three-state chip floated to the far right. */}
+      <div className="sbx-theme-chip" role="group" aria-label="Theme">
+        {(["light", "dark", "auto"] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            className="theme-seg"
+            data-active={themeMode === m ? "true" : undefined}
+            aria-pressed={themeMode === m}
+            onClick={() => updateThemeMode(m)}
+            title={
+              m === "light"
+                ? "Light"
+                : m === "dark"
+                  ? "Dark"
+                  : "Auto — match system"
+            }
+          >
+            <span aria-hidden="true">
+              {m === "light" ? "☀️" : m === "dark" ? "🌙" : "💻"}
+            </span>
+            <span className="theme-seg-label">
+              {m === "light" ? "Light" : m === "dark" ? "Dark" : "Auto"}
+            </span>
+          </button>
+        ))}
       </div>
 
       {/* Temporary layout spit-test switch — removed once a cluster wins. */}

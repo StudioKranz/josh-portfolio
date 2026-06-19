@@ -1217,6 +1217,7 @@
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.01em;
+  white-space: nowrap;
   cursor: pointer;
   transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
     background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease,
@@ -1241,11 +1242,58 @@
   box-shadow: var(--keycap-shadow-active);
 }
 
-.kc-theme {
-  width: 42px;
-  padding-left: 0;
-  padding-right: 0;
-  font-size: 1rem;
+/* Caret glyph inside the Portfolio / identity keycaps. */
+.kc-caret {
+  font-size: 0.7em;
+  opacity: 0.7;
+}
+
+/* --- Theme chip — independent three-state control, far right of the bar ---- */
+.sbx-theme-chip {
+  position: fixed;
+  top: 1.1rem;
+  right: 1.1rem;
+  z-index: 9999;
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: var(--glass-shadow);
+}
+
+.theme-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.62rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.theme-seg:hover {
+  color: var(--text-bright);
+}
+
+.theme-seg[data-active="true"] {
+  background: var(--keycap-bg);
+  color: var(--text-bright);
+  box-shadow: var(--keycap-shadow);
+}
+
+.theme-seg:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
 }
 
 /* --- Invitation: a gentle ambient pulse + low-profile toast ---------------- */
@@ -1319,13 +1367,13 @@
 
 /* Companions yield the stage: soften and drift horizontally away from the
    anchor. Drift magnitude is tunable via --bloom-drift-distance (default 15px).
-   Layout is [ theme | view | identity ] left → right. */
-.kc-cluster[data-bloom="identity"] .kc-theme,
+   Layout is [ Portfolio | view | identity ] left → right. */
+.kc-cluster[data-bloom="identity"] .kc-portfolio,
 .kc-cluster[data-bloom="identity"] .kc-view {
   opacity: 0.4;
   transform: translateX(calc(-1 * var(--bloom-drift-distance, 15px)));
 }
-.kc-cluster[data-bloom="view"] .kc-theme {
+.kc-cluster[data-bloom="view"] .kc-portfolio {
   opacity: 0.4;
   transform: translateX(calc(-1 * var(--bloom-drift-distance, 15px)));
 }
@@ -1747,30 +1795,41 @@
     padding: 7rem 1.1rem 4.5rem;
   }
 
-  /* Cluster: let every layout wrap and shrink so nothing overflows the edge. */
-  .kc-cluster {
-    gap: 0.5rem;
-    max-width: calc(100vw - 1rem);
-  }
+  /* Cluster: left-anchor + wrap so it clears the top-right theme chip and never
+     overflows. The chip lives in the freed right zone of the top band. The
+     [data-cluster] override matches the base rule's specificity so A wraps too. */
+  .kc-cluster,
   .kc-cluster[data-cluster="a"] {
+    gap: 0.45rem;
+    left: 0.6rem;
+    transform: none;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
+    max-width: calc(100vw - 8.5rem);
   }
   .kc {
-    padding: 0.45rem 0.8rem;
-    font-size: 0.78rem;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.76rem;
   }
-  .kc-theme {
-    width: 38px;
+  /* Theme chip compresses to icons-only on small screens. */
+  .sbx-theme-chip {
+    top: 0.85rem;
+    right: 0.6rem;
   }
-  /* Keep blooms inside the viewport and centered. */
+  .sbx-theme-chip .theme-seg-label {
+    display: none;
+  }
+  .theme-seg {
+    padding: 0.3rem 0.42rem;
+  }
+  /* Keep blooms inside the viewport. */
   .kc-bloom,
   .kc-cluster[data-cluster="a"] .kc-bloom-right {
-    left: 50%;
+    left: 0;
     right: auto;
-    transform: translateX(-50%);
-    justify-content: center;
-    max-width: calc(100vw - 1.5rem);
+    transform: none;
+    justify-content: flex-start;
+    max-width: calc(100vw - 1.2rem);
   }
 
   /* Single-column catalog. */

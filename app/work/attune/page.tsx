@@ -46,11 +46,11 @@ export default function Attune() {
     >
       <Section label="The problem">
         <p>
-          Assistants ship with one fixed personality and no sense of a person's
-          emotional bandwidth. They optimize for tasks and location, not for how
-          someone actually feels. But people relate to technology emotionally —
-          Attune explores what it looks like when devices attend to that, with
-          consent and privacy built in from the start.
+          Most people know what they feel. Fewer know how those feelings affect
+          the people around them. Attune explores ways technology might help
+          people better understand tone and emotional context before
+          misunderstandings happen — with consent and privacy built in from the
+          start.
         </p>
       </Section>
 
@@ -107,12 +107,13 @@ export default function Attune() {
           </div>
         </div>
         <p className="mt-4 text-[15px] leading-7 text-ink/90">
-          Current software conflates these. Attune proposes treating them
-          differently — because they are. The underlying model is{" "}
-          <em>moodwidth</em>: the emotional capacity available at a given
-          moment. Not mood, not productivity — capacity. A person with low
-          moodwidth doesn't need another reminder. They need the system to
-          notice, de-escalate, and ask what would help.
+          Today's software tends to treat these as the same thing. Attune treats
+          them differently — because, to the person living them, they are. A
+          later layer explores a model for this called <em>moodwidth</em>: the
+          emotional capacity available at a given moment. Not mood, not
+          productivity — capacity. Someone with low moodwidth doesn't need
+          another reminder. They need the system to notice, ease off, and ask
+          what would help.
         </p>
       </Section>
 

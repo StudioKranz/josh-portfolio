@@ -18,6 +18,19 @@ html {
   }
 }
 
+/* Persistent universal header — a fixed, centered glass bar matching the
+   sandbox control cluster's placement so navigation feels continuous. */
+.site-nav {
+  position: fixed;
+  top: 1.1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  max-width: calc(100vw - 1.5rem);
+}
+
 /* Shared glass keycap — the sandbox's premium control surface, adapted for the
    light case-study pages so navigation feels continuous across the system.
    (Nav/header alignment only — not expanded into the case-study body.) */
