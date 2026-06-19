@@ -25,6 +25,7 @@ const STORAGE = {
   wavefront: "sbx_wavefront",
   scrollStart: "sbx_scrollstart",
   featured: "sbx_featured",
+  forceAutoWave: "sbx_forceautowave",
 };
 
 type Theme = "light" | "dark";
@@ -246,6 +247,12 @@ function ProjectCard({
           </span>
         ))}
       </div>
+
+      {project.href && project.href !== "#" && (
+        <a className="card-cta" href={project.href}>
+          Read case study <span aria-hidden="true">→</span>
+        </a>
+      )}
     </article>
   );
 }
@@ -303,9 +310,11 @@ function FeaturedCard({ project }: { project: SandboxProject }) {
             <li key={h}>{h}</li>
           ))}
         </ul>
-        <a className="featured-cta" href={project.href}>
-          Explore <span aria-hidden="true">→</span>
-        </a>
+        {project.href && project.href !== "#" && (
+          <a className="featured-cta" href={project.href}>
+            Explore <span aria-hidden="true">→</span>
+          </a>
+        )}
       </div>
     </article>
   );
@@ -330,6 +339,11 @@ export default function SandboxV2() {
   // before it begins (otherwise it plays as a normal cold open). First-visit
   // only — it has no effect on returning visits or manual switching.
   const [scrollStart, setScrollStart] = useState(false);
+  // Invitation model (default): a fresh cold open stays in V1 and, after a beat,
+  // the experience keycap pulses with a gentle "try Enhanced" invitation rather
+  // than force-sweeping. Auto-wave is opt-in via forceAutoWave (Tuning Lab).
+  const [forceAutoWave, setForceAutoWave] = useState(false);
+  const [invite, setInvite] = useState(false);
   // Tuning Lab — live physics controls mapped to :root CSS variables.
   const [tune, setTune] = useState<Record<TuneKey, number>>(TUNE_DEFAULTS);
   const [tuneOpen, setTuneOpen] = useState(false);
@@ -354,32 +368,45 @@ export default function SandboxV2() {
         setScrollStart(true);
       const f = localStorage.getItem(STORAGE.featured);
       if (isFeatured(f)) setFeatured(f);
+      if (localStorage.getItem(STORAGE.forceAutoWave) === "true")
+        setForceAutoWave(true);
     } catch {
       /* localStorage unavailable — fall back to defaults */
     }
     setHydrated(true);
 
-    // Intro-only wave: a first cold open (no saved view) opens in V1 Classic and
-    // sweeps to V2 Enhanced exactly once. Returning visits open directly in the
-    // saved view; manual switching is always instant.
+    // A first cold open (no saved view) arms the cold-open behavior; the effect
+    // below decides between the invitation (default) and the auto-wave (opt-in).
+    // Returning visits open directly in the saved view.
     const firstVisit = !(savedRenderer && isRenderer(savedRenderer));
-    if (firstVisit) {
-      if (prefersReducedMotion()) {
-        setRenderer("enhanced"); // arrive in V2 without the animation
-      } else {
-        setIntroArmed(true);
-      }
-    }
+    if (firstVisit) setIntroArmed(true);
   }, []);
 
-  // Fire the one-time intro sweep after a first cold open. Timing is tunable
-  // (Tuning Lab "Intro start delay"). When "Start intro wave on scroll" is on,
-  // the sweep holds in V1 until the visitor's first scroll, then plays after
-  // the same start delay; otherwise it plays as an automatic cold open.
+  // Cold-open behavior after a first visit. Default (invitation): stay in V1 and,
+  // after the tunable delay, pulse the experience keycap with a gentle "try
+  // Enhanced" invitation. Opt-in (Force Auto-Wave): play the original V1->V2
+  // sweep instead, optionally gated on first scroll. Reduced motion never sweeps.
   useEffect(() => {
     if (!introArmed) return;
     const delayMs = Math.max(0, tune.delay);
+
+    if (!forceAutoWave) {
+      // Respectful default — invite, never interrupt.
+      const t = setTimeout(() => {
+        setInvite(true);
+        setIntroArmed(false);
+      }, delayMs);
+      return () => clearTimeout(t);
+    }
+
+    if (prefersReducedMotion()) {
+      setRenderer("enhanced"); // arrive in V2 without the animation
+      setIntroArmed(false);
+      return;
+    }
+
     const fire = () => {
+      setInvite(false);
       setPrevRenderer("classic");
       setRenderer("enhanced");
       setWaving(true);
@@ -400,7 +427,7 @@ export default function SandboxV2() {
 
     const t = setTimeout(fire, delayMs);
     return () => clearTimeout(t);
-  }, [introArmed, scrollStart, tune.delay]);
+  }, [introArmed, forceAutoWave, scrollStart, tune.delay]);
 
   // Persist the chosen identity site-wide.
   useEffect(() => {
@@ -487,6 +514,7 @@ export default function SandboxV2() {
   }
 
   function toggleBloom(node: Exclude<Bloom, null>) {
+    if (node === "view") setInvite(false); // engaging the control answers the invite
     setOpenBloom((prev) => (prev === node ? null : node));
   }
 
@@ -498,6 +526,7 @@ export default function SandboxV2() {
   function selectExperience(opt: ExperienceOption) {
     if (!opt.available || !opt.renderer) return;
     setOpenBloom(null);
+    setInvite(false);
     if (opt.renderer === renderer) return; // already there — no-op
 
     // V1 -> V2 plays the dramatic rolling-arc reinterpretation sweep.
@@ -596,8 +625,17 @@ export default function SandboxV2() {
     }
   }
 
-  // Clear the onboarding flag and reload so the first-visit intro replays —
-  // a quick loop for evaluating the cold-open sweep with the current settings.
+  function updateForceAutoWave(value: boolean) {
+    setForceAutoWave(value);
+    try {
+      localStorage.setItem(STORAGE.forceAutoWave, value ? "true" : "false");
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // Clear the cold-open / onboarding flag and reload so the first-visit behavior
+  // replays — a quick loop for benchmarking the invitation pulse (or auto-wave).
   function resetFirstVisit() {
     try {
       localStorage.removeItem(STORAGE.renderer);
@@ -665,6 +703,9 @@ export default function SandboxV2() {
   const activeLens = LENSES.find((l) => l.id === perspective) ?? LENSES[0];
   const activeExperience =
     EXPERIENCES.find((e) => e.renderer === renderer) ?? EXPERIENCES[0];
+
+  // The invitation only shows in V1 Classic and steps aside once any bloom opens.
+  const inviteActive = invite && renderer === "classic" && openBloom == null;
 
   const matches = useMemo(
     () =>
@@ -755,13 +796,13 @@ export default function SandboxV2() {
     }
     return (
       <main className="sbx-main">
-        {/* Executive split: V2 compresses the intro to a single razor-thin
-            designation so the featured artifact lands in the first viewport. */}
+        {/* Executive split: V2 keeps a compact-but-present introduction — name,
+            role, and a tight discipline summary — on tighter margins so the
+            featured artifact still lands high in the first viewport. */}
         <header className="sbx-header sbx-header-exec">
-          <p className="sbx-designation">
-            <span className="sbx-designation-name">{MASTER.name}</span> — Builder
-            of spatial, AI, and experience systems.
-          </p>
+          <h1 className="sbx-exec-name">{MASTER.name}</h1>
+          <p className="sbx-exec-role">{MASTER.role}</p>
+          <p className="sbx-exec-thesis">{MASTER.thesis}</p>
         </header>
 
         {/* The feed itself leads with the strongest artifact, then the rest of
@@ -827,11 +868,14 @@ export default function SandboxV2() {
           <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
         </button>
 
-        {/* Experience (blooms V1–V4). */}
+        {/* Experience (blooms V1–V4). On a fresh cold open this key gently
+            pulses and shows a low-profile invitation toast instead of an
+            auto-sweep — the transition stays user-initiated. */}
         <div className="kc-slot">
           <button
             type="button"
             className="kc kc-view"
+            data-invite={inviteActive ? "true" : undefined}
             aria-haspopup="true"
             aria-expanded={openBloom === "view"}
             onClick={() => toggleBloom("view")}
@@ -839,6 +883,11 @@ export default function SandboxV2() {
           >
             {activeExperience.label}
           </button>
+          {inviteActive && (
+            <div className="kc-invite" role="status">
+              Try Enhanced view for an executive brief
+            </div>
+          )}
           {openBloom === "view" && (
             <div className="kc-bloom" role="listbox" aria-label="Experience">
               {EXPERIENCES.map((opt, i) => (
@@ -989,15 +1038,30 @@ export default function SandboxV2() {
               <input
                 type="checkbox"
                 className="tune-check"
-                checked={scrollStart}
-                onChange={(e) => updateScrollStart(e.target.checked)}
-                aria-label="Start the first-visit intro wave only after the visitor scrolls"
+                checked={forceAutoWave}
+                onChange={(e) => updateForceAutoWave(e.target.checked)}
+                aria-label="Force the original auto-wave sweep on a fresh cold open"
               />
               <span className="tune-name tune-check-name">
-                Start intro wave on scroll
+                Force Auto-Wave on Cold Open
               </span>
               <span className="tune-check-hint">
-                First visit only — holds in V1 until the first scroll.
+                Off = invitation pulse (default). On = original V1→V2 auto-sweep.
+              </span>
+            </label>
+            <label className="tune-row tune-check-row">
+              <input
+                type="checkbox"
+                className="tune-check"
+                checked={scrollStart}
+                onChange={(e) => updateScrollStart(e.target.checked)}
+                aria-label="Start the first-visit auto-wave only after the visitor scrolls"
+              />
+              <span className="tune-name tune-check-name">
+                Start auto-wave on scroll
+              </span>
+              <span className="tune-check-hint">
+                Applies only when Auto-Wave is on — holds in V1 until first scroll.
               </span>
             </label>
             <button

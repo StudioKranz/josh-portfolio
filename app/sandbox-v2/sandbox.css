@@ -168,23 +168,35 @@
   margin-right: auto; /* center the editorial hero column; text stays left */
 }
 
-/* --- V2 executive designation — a single razor-thin intro line ------------- */
+/* --- V2 executive header — a compact-but-present introduction --------------
+   A premium middle ground: name still prominent, role + a tight discipline
+   summary retained, but on tighter margins and a smaller type scale than V1 so
+   the featured artifact still sits high in the first viewport. */
 .sbx-header-exec {
-  max-width: 60rem;
+  max-width: 46rem;
 }
 
-.sbx-designation {
+.sbx-exec-name {
   margin: 0;
-  font-size: clamp(0.95rem, 1.7vw, 1.2rem);
-  line-height: 1.4;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-bright);
+}
+
+.sbx-exec-role {
+  margin: 0.3rem 0 0;
+  font-size: 0.85rem;
   font-weight: 500;
-  letter-spacing: -0.01em;
   color: var(--text-muted);
 }
 
-.sbx-designation-name {
-  color: var(--text-bright);
-  font-weight: 700;
+.sbx-exec-thesis {
+  margin: 0.6rem 0 0;
+  max-width: 40rem;
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  line-height: 1.5;
+  color: var(--text-body);
 }
 
 .sbx-name {
@@ -718,6 +730,30 @@
   box-shadow: var(--spotlight-shadow);
 }
 
+/* Per-card action link out to the dedicated case-study page. */
+.sbx[data-renderer="enhanced"] .card-cta {
+  align-self: flex-start;
+  margin-top: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.sbx[data-renderer="enhanced"] .card-cta:hover {
+  gap: 0.6rem;
+  text-decoration: underline;
+}
+
+.sbx[data-renderer="enhanced"] .card-cta:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
 /* --- Featured artifact — the V2 feed's full-width lead entry --------------- */
 /* Pull the feed tight to the thin hero so the visual lands in view 1. */
 .sbx[data-renderer="enhanced"] .portfolio-grid-feed {
@@ -1060,6 +1096,68 @@ img.featured-visual {
   padding-left: 0;
   padding-right: 0;
   font-size: 1rem;
+}
+
+/* --- Invitation: a gentle ambient pulse + low-profile toast ---------------- */
+/* Replaces the auto-wave on a fresh cold open — calls attention without
+   interrupting. The keycap breathes an amber ring; a small toast sits beneath. */
+.kc[data-invite="true"] {
+  border-color: rgba(212, 175, 55, 0.5);
+  animation: kc-invite-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes kc-invite-pulse {
+  0%,
+  100% {
+    box-shadow: var(--keycap-shadow), 0 0 0 0 rgba(212, 175, 55, 0);
+  }
+  50% {
+    box-shadow: var(--keycap-shadow), 0 0 0 6px rgba(212, 175, 55, 0.16);
+  }
+}
+
+.kc-invite {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: min(78vw, 19rem);
+  white-space: nowrap;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: var(--tray-bg);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  box-shadow: var(--glass-shadow);
+  color: var(--text-bright);
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  animation: kc-invite-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes kc-invite-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Respect reduced motion — keep the static toast, drop the breathing ring. */
+@media (prefers-reduced-motion: reduce) {
+  .kc[data-invite="true"] {
+    animation: none;
+  }
+  .kc-invite {
+    animation: none;
+  }
 }
 
 /* --- Glass Bloom expansion ------------------------------------------------ */
