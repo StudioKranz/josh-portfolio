@@ -23,6 +23,7 @@ const STORAGE = {
   cluster: "sbx_cluster",
   tune: "sbx_tune",
   wavefront: "sbx_wavefront",
+  scrollStart: "sbx_scrollstart",
 };
 
 type Theme = "light" | "dark";
@@ -51,10 +52,18 @@ function prefersReducedMotion(): boolean {
 }
 
 // --- Tuning Lab: live CSS-variable controls (set on :root, read by .sbx) -----
-type TuneKey = "depth" | "duration" | "glow" | "drift" | "attack" | "release";
+type TuneKey =
+  | "depth"
+  | "duration"
+  | "delay"
+  | "glow"
+  | "drift"
+  | "attack"
+  | "release";
 const TUNE_DEFAULTS: Record<TuneKey, number> = {
   depth: 6, // % arc smile
   duration: 3.1, // s wave sweep (dialed-in default)
+  delay: 700, // ms before the intro wave starts
   glow: 6, // px amber edge blur
   drift: 15, // px companion drift
   attack: 0.95, // ease-in handle (cubic-bezier x1)
@@ -63,6 +72,7 @@ const TUNE_DEFAULTS: Record<TuneKey, number> = {
 const TUNE_VAR: Record<TuneKey, string> = {
   depth: "--wave-arc-depth",
   duration: "--wave-duration",
+  delay: "--wave-start-delay", // mirrored to :root for reference (JS reads state)
   glow: "--wave-glow-intensity",
   drift: "--bloom-drift-distance",
   attack: "--wave-attack",
@@ -71,6 +81,7 @@ const TUNE_VAR: Record<TuneKey, string> = {
 const TUNE_UNIT: Record<TuneKey, string> = {
   depth: "%",
   duration: "s",
+  delay: "ms",
   glow: "px",
   drift: "px",
   attack: "",
@@ -85,6 +96,7 @@ const TUNE_FIELDS: {
 }[] = [
   { key: "depth", label: "Wave arc depth", min: 0, max: 15, step: 0.5 },
   { key: "duration", label: "Wave duration", min: 0.5, max: 6, step: 0.1 },
+  { key: "delay", label: "Intro start delay", min: 0, max: 3000, step: 50 },
   { key: "attack", label: "Wave attack (ease-in)", min: 0, max: 1, step: 0.01 },
   { key: "release", label: "Wave release (ease-out)", min: 0, max: 1, step: 0.01 },
   { key: "glow", label: "Amber edge glow", min: 2, max: 25, step: 1 },
@@ -238,6 +250,10 @@ export default function SandboxV2() {
   const [waving, setWaving] = useState(false);
   const [prevRenderer, setPrevRenderer] = useState<Renderer | null>(null);
   const [introArmed, setIntroArmed] = useState(false);
+  // When true, the first-visit intro wave waits for the visitor to scroll
+  // before it begins (otherwise it plays as a normal cold open). First-visit
+  // only — it has no effect on returning visits or manual switching.
+  const [scrollStart, setScrollStart] = useState(false);
   // Tuning Lab — live physics controls mapped to :root CSS variables.
   const [tune, setTune] = useState<Record<TuneKey, number>>(TUNE_DEFAULTS);
   const [tuneOpen, setTuneOpen] = useState(false);
@@ -256,6 +272,8 @@ export default function SandboxV2() {
       if (savedRenderer && isRenderer(savedRenderer)) setRenderer(savedRenderer);
       if (c && isCluster(c)) setCluster(c);
       if (isWavefront(w)) setWavefront(w);
+      if (localStorage.getItem(STORAGE.scrollStart) === "true")
+        setScrollStart(true);
     } catch {
       /* localStorage unavailable — fall back to defaults */
     }
@@ -274,17 +292,35 @@ export default function SandboxV2() {
     }
   }, []);
 
-  // Fire the one-time intro sweep shortly after a first cold open.
+  // Fire the one-time intro sweep after a first cold open. Timing is tunable
+  // (Tuning Lab "Intro start delay"). When "Start intro wave on scroll" is on,
+  // the sweep holds in V1 until the visitor's first scroll, then plays after
+  // the same start delay; otherwise it plays as an automatic cold open.
   useEffect(() => {
     if (!introArmed) return;
-    const t = setTimeout(() => {
+    const delayMs = Math.max(0, tune.delay);
+    const fire = () => {
       setPrevRenderer("classic");
       setRenderer("enhanced");
       setWaving(true);
       setIntroArmed(false);
-    }, 700);
+    };
+
+    if (scrollStart) {
+      let timer: ReturnType<typeof setTimeout> | null = null;
+      const onScroll = () => {
+        timer = setTimeout(fire, delayMs);
+      };
+      window.addEventListener("scroll", onScroll, { passive: true, once: true });
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+        if (timer) clearTimeout(timer);
+      };
+    }
+
+    const t = setTimeout(fire, delayMs);
     return () => clearTimeout(t);
-  }, [introArmed]);
+  }, [introArmed, scrollStart, tune.delay]);
 
   // Persist the chosen identity site-wide.
   useEffect(() => {
@@ -447,6 +483,15 @@ export default function SandboxV2() {
     setWavefront(value);
     try {
       localStorage.setItem(STORAGE.wavefront, value);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function updateScrollStart(value: boolean) {
+    setScrollStart(value);
+    try {
+      localStorage.setItem(STORAGE.scrollStart, value ? "true" : "false");
     } catch {
       /* ignore */
     }
@@ -813,6 +858,21 @@ export default function SandboxV2() {
                   </option>
                 ))}
               </select>
+            </label>
+            <label className="tune-row tune-check-row">
+              <input
+                type="checkbox"
+                className="tune-check"
+                checked={scrollStart}
+                onChange={(e) => updateScrollStart(e.target.checked)}
+                aria-label="Start the first-visit intro wave only after the visitor scrolls"
+              />
+              <span className="tune-name tune-check-name">
+                Start intro wave on scroll
+              </span>
+              <span className="tune-check-hint">
+                First visit only — holds in V1 until the first scroll.
+              </span>
             </label>
             <button type="button" className="tune-reset" onClick={resetTune}>
               Reset to defaults

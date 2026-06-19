@@ -822,19 +822,37 @@
   z-index: 9999; /* always above content + the blurred narrative layer */
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   max-width: calc(100vw - 1.5rem);
 }
 
-/* Sequence is fixed [ ☾ | Enhanced | Who are you? ]; A/B/C vary spacing only. */
+/* A/B/C are visibly distinct arrangements of the same three keys.
+   A — one clean horizontal row.
+   B — tight constellation: identity lifted onto a centered top row.
+   C — wide constellation: same stacked shape, generously spread. */
 .kc-cluster[data-cluster="a"] {
+  flex-wrap: nowrap;
   gap: 1rem;
 }
 .kc-cluster[data-cluster="b"] {
-  gap: 0.55rem;
+  column-gap: 0.6rem;
+  row-gap: 0.5rem;
 }
 .kc-cluster[data-cluster="c"] {
-  gap: 1.6rem;
+  column-gap: 2.4rem;
+  row-gap: 0.9rem;
+}
+
+/* Constellations (B/C) float the identity key onto its own centered top row
+   and nest the theme + view keys beneath it; A keeps all three inline. */
+.kc-cluster[data-cluster="b"] .kc-slot-identity,
+.kc-cluster[data-cluster="c"] .kc-slot-identity {
+  order: -1;
+  flex-basis: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 /* The keycap — frosted glass with a beveled, pressable profile. */
@@ -932,8 +950,10 @@
   max-width: min(320px, calc(100vw - 2rem));
 }
 
-/* Identity sits at the right edge — open its bloom over the right margin. */
-.kc-bloom-right {
+/* In the flat row (A) identity sits at the right edge, so its bloom opens over
+   the right margin. In the constellations (B/C) the identity key rides a
+   centered top row, so the base centered bloom is correct — don't re-anchor. */
+.kc-cluster[data-cluster="a"] .kc-bloom-right {
   left: auto;
   right: 0;
   transform: none;
@@ -1182,6 +1202,40 @@
 .tune-select:focus-visible {
   outline: 2px solid var(--accent-cyan);
   outline-offset: 2px;
+}
+
+/* Boolean control — checkbox left, label right, hint spanning underneath. */
+.tune-check-row {
+  grid-template-columns: auto 1fr;
+  column-gap: 0.5rem;
+  row-gap: 0.25rem;
+  align-items: center;
+}
+
+.tune-check {
+  grid-column: 1;
+  width: 0.95rem;
+  height: 0.95rem;
+  margin: 0;
+  accent-color: var(--accent-amber);
+  cursor: pointer;
+}
+
+.tune-check:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.tune-check-name {
+  grid-column: 2;
+  margin: 0;
+}
+
+.tune-check-hint {
+  grid-column: 1 / -1;
+  font-size: 0.58rem;
+  line-height: 1.4;
+  color: var(--text-muted);
 }
 
 .tune-reset {
