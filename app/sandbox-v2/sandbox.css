@@ -717,10 +717,19 @@
 
 .sbx[data-renderer="enhanced"] .evidence-figure {
   flex: 0 0 auto;
-  width: 150px;
+  width: auto;
+  height: 92px;
 }
 
-.sbx[data-renderer="enhanced"] .evidence-figure img,
+/* Natural width at a uniform height so portrait and landscape thumbnails are
+   each shown whole (no cover-crop to a sliver). */
+.sbx[data-renderer="enhanced"] .evidence-figure img {
+  width: auto;
+  height: 100%;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
 .sbx[data-renderer="enhanced"] .evidence-grid .media-missing {
   height: 92px;
   aspect-ratio: auto;
@@ -892,19 +901,22 @@
   scrollbar-width: thin;
 }
 
+/* Uniform height, natural width: every shot sits at the same height while
+   keeping its own aspect ratio — portrait phone screenshots (e.g. RelicWorld,
+   1284×2778) stay phone-shaped and landscape captures (RoomBridge, 16:9) stay
+   wide. Nothing is cropped to a sliver. */
 .featured-shot {
   flex: 0 0 auto;
-  width: clamp(160px, 22vw, 240px);
-  height: 162px;
+  height: 220px;
   border-radius: 12px;
   overflow: hidden;
 }
 
 .featured-shot img {
-  width: 100%;
+  width: auto;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   background: var(--img-bg);
   border: 1px solid var(--hairline);
   border-radius: 12px;
@@ -999,8 +1011,7 @@
     overflow-x: visible;
   }
   .featured-shot {
-    width: clamp(150px, 20%, 196px);
-    height: 150px;
+    height: 220px;
   }
   .featured-meta {
     justify-content: flex-start;
@@ -1977,15 +1988,16 @@
     font-size: 1.05rem;
   }
 
-  /* Featured strip → swipeable single-image carousel; no margin clipping. */
+  /* Swipeable strip; shots keep natural width at a taller uniform height so
+     portrait app screenshots read clearly (several fit per row) and landscape
+     captures scroll. */
   .featured-strip {
     scroll-snap-type: x mandatory;
     gap: 0.5rem;
     -webkit-overflow-scrolling: touch;
   }
   .featured-shot {
-    width: 86%;
-    height: 200px;
+    height: 240px;
     scroll-snap-align: start;
   }
 
@@ -2043,10 +2055,9 @@
 }
 
 @media (max-width: 430px) {
-  /* Smallest phones — carousel shows one full frame with a peek of the next. */
+  /* Smallest phones — keep a readable uniform height; natural width preserved. */
   .featured-shot {
-    width: 90%;
-    height: 180px;
+    height: 220px;
   }
   .sbx-exec-name,
   .featured-title,
