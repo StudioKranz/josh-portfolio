@@ -22,6 +22,7 @@ const STORAGE = {
   theme: "sbx_theme",
   cluster: "sbx_cluster",
   tune: "sbx_tune",
+  wavefront: "sbx_wavefront",
 };
 
 type Theme = "light" | "dark";
@@ -50,24 +51,30 @@ function prefersReducedMotion(): boolean {
 }
 
 // --- Tuning Lab: live CSS-variable controls (set on :root, read by .sbx) -----
-type TuneKey = "depth" | "duration" | "glow" | "drift";
+type TuneKey = "depth" | "duration" | "glow" | "drift" | "attack" | "release";
 const TUNE_DEFAULTS: Record<TuneKey, number> = {
   depth: 6, // % arc smile
   duration: 1.4, // s wave sweep
   glow: 6, // px amber edge blur
   drift: 15, // px companion drift
+  attack: 0.76, // ease-in handle (cubic-bezier x1)
+  release: 0.24, // ease-out handle (cubic-bezier x2)
 };
 const TUNE_VAR: Record<TuneKey, string> = {
   depth: "--wave-arc-depth",
   duration: "--wave-duration",
   glow: "--wave-glow-intensity",
   drift: "--bloom-drift-distance",
+  attack: "--wave-attack",
+  release: "--wave-release",
 };
 const TUNE_UNIT: Record<TuneKey, string> = {
   depth: "%",
   duration: "s",
   glow: "px",
   drift: "px",
+  attack: "",
+  release: "",
 };
 const TUNE_FIELDS: {
   key: TuneKey;
@@ -77,10 +84,23 @@ const TUNE_FIELDS: {
   step: number;
 }[] = [
   { key: "depth", label: "Wave arc depth", min: 0, max: 15, step: 0.5 },
-  { key: "duration", label: "Wave duration", min: 0.5, max: 3, step: 0.1 },
+  { key: "duration", label: "Wave duration", min: 0.5, max: 6, step: 0.1 },
+  { key: "attack", label: "Wave attack (ease-in)", min: 0, max: 1, step: 0.01 },
+  { key: "release", label: "Wave release (ease-out)", min: 0, max: 1, step: 0.01 },
   { key: "glow", label: "Amber edge glow", min: 2, max: 25, step: 1 },
   { key: "drift", label: "Bloom drift spread", min: 5, max: 40, step: 1 },
 ];
+
+// Wavefront spectacle styles (set as data-wavefront on the .sbx root).
+type Wavefront = "crisp" | "chromatic" | "volumetric";
+const WAVEFRONTS: { id: Wavefront; label: string }[] = [
+  { id: "crisp", label: "Crisp Amber Shadow" },
+  { id: "chromatic", label: "Chromatic Prism Fringe" },
+  { id: "volumetric", label: "Volumetric Glass Mist" },
+];
+function isWavefront(v: string | null): v is Wavefront {
+  return v === "crisp" || v === "chromatic" || v === "volumetric";
+}
 
 // ---------------------------------------------------------------------------
 // Evidence (Layer 0) renderers — identical data, shown by both view engines.
@@ -104,7 +124,10 @@ function EvidenceImage({ item }: { item: Evidence }) {
           onError={() => setErrored(true)}
         />
       )}
-      <figcaption>{item.label}</figcaption>
+      <figcaption>
+        {item.eyebrow && <span className="ev-eyebrow">{item.eyebrow}</span>}
+        {item.label}
+      </figcaption>
     </figure>
   );
 }
@@ -168,13 +191,15 @@ function ProjectCard({
 
       {spotlight && <p className="spotlight-chip">Relevant to {lensLabel}</p>}
 
-      <div className="evidence-container">
-        <div className="evidence-grid">
-          {project.evidence.map((ev) => (
-            <EvidenceItem key={ev.id} item={ev} />
-          ))}
+      {project.evidence.length > 0 && (
+        <div className="evidence-container">
+          <div className="evidence-grid">
+            {project.evidence.map((ev) => (
+              <EvidenceItem key={ev.id} item={ev} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="human-insight-callout">
         <p>&ldquo;{project.narrative.insight}&rdquo;</p>
@@ -215,6 +240,7 @@ export default function SandboxV2() {
   // Tuning Lab — live physics controls mapped to :root CSS variables.
   const [tune, setTune] = useState<Record<TuneKey, number>>(TUNE_DEFAULTS);
   const [tuneOpen, setTuneOpen] = useState(false);
+  const [wavefront, setWavefront] = useState<Wavefront>("crisp");
   const clusterRef = useRef<HTMLDivElement>(null);
 
   // Restore persisted choices after mount (avoids hydration mismatch).
@@ -223,9 +249,11 @@ export default function SandboxV2() {
       const id = localStorage.getItem(STORAGE.identity);
       const r = localStorage.getItem(STORAGE.renderer);
       const c = localStorage.getItem(STORAGE.cluster);
+      const w = localStorage.getItem(STORAGE.wavefront);
       if (isKnownIdentity(id)) setIdentityId(id);
       if (r && isRenderer(r)) setRenderer(r);
       if (c && isCluster(c)) setCluster(c);
+      if (isWavefront(w)) setWavefront(w);
     } catch {
       /* localStorage unavailable — fall back to defaults */
     }
@@ -388,6 +416,15 @@ export default function SandboxV2() {
     (Object.keys(TUNE_DEFAULTS) as TuneKey[]).forEach((k) =>
       applyTuneVar(k, TUNE_DEFAULTS[k]),
     );
+  }
+
+  function selectWavefront(value: Wavefront) {
+    setWavefront(value);
+    try {
+      localStorage.setItem(STORAGE.wavefront, value);
+    } catch {
+      /* ignore */
+    }
   }
 
   // Restore Tuning Lab values from storage and apply them to :root on mount.
@@ -580,9 +617,11 @@ export default function SandboxV2() {
       data-renderer={renderer}
       data-perspective={perspective}
       data-theme={theme}
+      data-wavefront={wavefront}
     >
-      {/* Independent glass "typewriter key" artifacts (cluster spit-test).
-          Each key advances its own state on press — no dropdowns yet. */}
+      {/* Independent glass "typewriter key" artifacts. Sequence (left → right):
+          [ ☾ ] | [ Enhanced ] | [ Who are you? ] — identity sits at the right
+          so its dense bloom opens over clean margin space, not the hero copy. */}
       <div
         className="kc-cluster"
         data-cluster={cluster}
@@ -591,8 +630,61 @@ export default function SandboxV2() {
         aria-label="Controls"
         ref={clusterRef}
       >
-        {/* Node 1 — Identity (blooms the audience taxonomy). */}
+        {/* Theme (leftmost; simple toggle, no bloom). */}
+        <button
+          type="button"
+          className="kc kc-theme"
+          onClick={toggleTheme}
+          aria-label={
+            theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+          }
+          title={
+            theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+          }
+        >
+          <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
+        </button>
+
+        {/* Experience (blooms V1–V4). */}
         <div className="kc-slot">
+          <button
+            type="button"
+            className="kc kc-view"
+            aria-haspopup="true"
+            aria-expanded={openBloom === "view"}
+            onClick={() => toggleBloom("view")}
+            aria-label={`Experience: ${activeExperience.label}. Tap to choose.`}
+          >
+            {activeExperience.label}
+          </button>
+          {openBloom === "view" && (
+            <div className="kc-bloom" role="listbox" aria-label="Experience">
+              {EXPERIENCES.map((opt, i) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  role="option"
+                  aria-selected={opt.renderer === renderer}
+                  aria-disabled={!opt.available}
+                  disabled={!opt.available}
+                  className="kc-chip"
+                  data-active={opt.renderer === renderer ? "true" : undefined}
+                  data-soon={!opt.available ? "true" : undefined}
+                  style={{ animationDelay: `${i * 30}ms` }}
+                  onClick={() => selectExperience(opt)}
+                >
+                  {opt.label}
+                  {!opt.available && (
+                    <span className="kc-chip-soon">Upcoming</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Identity (rightmost; blooms the audience taxonomy over the margin). */}
+        <div className="kc-slot kc-slot-identity">
           <button
             type="button"
             className="kc kc-identity"
@@ -606,7 +698,11 @@ export default function SandboxV2() {
             {identity ? identity.label : "Who are you?"}
           </button>
           {openBloom === "identity" && (
-            <div className="kc-bloom" role="listbox" aria-label="Audience">
+            <div
+              className="kc-bloom kc-bloom-right"
+              role="listbox"
+              aria-label="Audience"
+            >
               {IDENTITIES.map((opt, i) => (
                 <button
                   key={opt.id}
@@ -623,61 +719,6 @@ export default function SandboxV2() {
               ))}
             </div>
           )}
-        </div>
-
-        <div className="kc-row2">
-          {/* Node 2 — Experience (blooms V1–V4). */}
-          <div className="kc-slot">
-            <button
-              type="button"
-              className="kc kc-view"
-              aria-haspopup="true"
-              aria-expanded={openBloom === "view"}
-              onClick={() => toggleBloom("view")}
-              aria-label={`Experience: ${activeExperience.label}. Tap to choose.`}
-            >
-              {activeExperience.label}
-            </button>
-            {openBloom === "view" && (
-              <div className="kc-bloom" role="listbox" aria-label="Experience">
-                {EXPERIENCES.map((opt, i) => (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    role="option"
-                    aria-selected={opt.renderer === renderer}
-                    aria-disabled={!opt.available}
-                    disabled={!opt.available}
-                    className="kc-chip"
-                    data-active={opt.renderer === renderer ? "true" : undefined}
-                    data-soon={!opt.available ? "true" : undefined}
-                    style={{ animationDelay: `${i * 30}ms` }}
-                    onClick={() => selectExperience(opt)}
-                  >
-                    {opt.label}
-                    {!opt.available && (
-                      <span className="kc-chip-soon">Upcoming</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Node 3 — Theme (simple toggle, no bloom). */}
-          <button
-            type="button"
-            className="kc kc-theme"
-            onClick={toggleTheme}
-            aria-label={
-              theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-            }
-            title={
-              theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-            }
-          >
-            <span aria-hidden="true">{theme === "dark" ? "☀" : "☾"}</span>
-          </button>
         </div>
       </div>
 
@@ -732,6 +773,21 @@ export default function SandboxV2() {
                 </span>
               </label>
             ))}
+            <label className="tune-row tune-select-row">
+              <span className="tune-name">Wavefront spectacle</span>
+              <select
+                className="tune-select"
+                value={wavefront}
+                onChange={(e) => selectWavefront(e.target.value as Wavefront)}
+                aria-label="Wavefront spectacle style"
+              >
+                {WAVEFRONTS.map((w) => (
+                  <option key={w.id} value={w.id}>
+                    {w.label}
+                  </option>
+                ))}
+              </select>
+            </label>
             <button type="button" className="tune-reset" onClick={resetTune}>
               Reset to defaults
             </button>

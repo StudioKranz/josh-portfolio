@@ -40,6 +40,8 @@ export interface Evidence {
   id: string;
   type: EvidenceType;
   securityTier: SecurityTier;
+  /** Optional uppercase eyebrow shown above the caption. */
+  eyebrow?: string;
   /** Human-readable description of the artifact. Always shown — even gated. */
   label: string;
   /** Path to the artifact. May not yet exist; renderers fall back gracefully. */
@@ -269,18 +271,31 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         id: "rw_01",
         type: "image",
         securityTier: "public",
-        label: "On-device telemetry overlay captured while walking the prototype.",
-        path: "/images/projects/worldtag-telemetry.png",
+        eyebrow: "Field validation",
+        label:
+          "Zone reveal — the relic surfaces as you cross the inner chamber threshold.",
+        path: "/images/projects/relicworld-zone-reveal.png",
       },
       {
         id: "rw_02",
         type: "image",
         securityTier: "public",
-        label: "Nested zone and chamber boundaries rendered in place.",
-        path: "/images/projects/worldtag-boundaries.png",
+        eyebrow: "Field validation",
+        label:
+          "Carrying state — routing toward the nearest boundary exit with the relic.",
+        path: "/images/projects/relicworld-carrying-state.png",
       },
       {
         id: "rw_03",
+        type: "image",
+        securityTier: "public",
+        eyebrow: "Field validation",
+        label:
+          "Retry lockout — a compromised escape triggers the retry-lockout loop.",
+        path: "/images/projects/relicworld-retry-lockout.png",
+      },
+      {
+        id: "rw_04",
         type: "code",
         securityTier: "private",
         label:
@@ -295,6 +310,174 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         "I evolved an iOS prototype from a simple coordinate-proximity check into a three-phase spatial state machine — Explore → Trigger → Escape — with all state local and zero backend. I added asymmetric hysteresis buffers to absorb GPS jitter and used MapKit walking-route polylines as a placement proxy to keep objectives walkable.",
       insight:
         "The primary engineering challenge isn't compiling the game logic — it's translating messy, asynchronous physical geography into clear, bulletproof digital rules that stay synchronized as a human moves through space.",
+    },
+  },
+  {
+    id: "mindmeld",
+    title: "MindMeld",
+    subtitle: "AI systems forget how decisions were made. MindMeld doesn't.",
+    type: "cross-AI prototype",
+    status: "Active prototype",
+    summary:
+      "A user-owned reasoning archive queried live across Claude, Codex, and ChatGPT — preserving why decisions were made, not just what was decided.",
+    thumbLabel: "Cross-AI",
+    maturity: "prototype",
+    maturityLabel: "Active prototype",
+    href: "/work/mindmeld",
+    metadata: {
+      date: "Active prototype",
+      hardware: "Web",
+      tags: ["Claude", "Codex", "ChatGPT"],
+    },
+    perspectives: ["builder", "inventor", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "AI tools record what was decided but lose why — the reasoning evaporates, so you can't audit or build on past decisions across tools.",
+      execution:
+        "I'm prototyping MindMeld: a user-owned reasoning archive queried live across Claude, Codex, and ChatGPT, preserving the why behind each decision rather than only the outcome.",
+      insight:
+        "Owning the reasoning trail — not just the outputs — is what makes cross-AI work accountable and cumulative.",
+    },
+  },
+  {
+    id: "between",
+    title: "Between",
+    subtitle: "Agent-guided, mediated workflows.",
+    type: "deployed web application",
+    status: "Deployed · Next.js + Supabase on Vercel",
+    summary:
+      "Agent-guided, mediated workflows on a deployed Next.js and Supabase foundation.",
+    thumbLabel: "Live demo",
+    maturity: "deployed",
+    maturityLabel: "Deployed",
+    href: "/work/between",
+    metadata: {
+      date: "Deployed",
+      hardware: "Web",
+      tags: ["Next.js", "Supabase", "Agents"],
+    },
+    perspectives: ["builder", "leader", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "High-stakes conversations and workflows often break down without a neutral structure to guide both sides toward a fair outcome.",
+      execution:
+        "I built and deployed Between on a Next.js and Supabase foundation — an agent-guided, mediated workflow that structures the exchange between parties.",
+      insight:
+        "An agent earns trust by mediating the process, not by deciding the outcome — the structure is the product.",
+    },
+  },
+  {
+    id: "mindhub",
+    title: "MindHub",
+    subtitle: "Memory and identity that persist across AI tools.",
+    type: "AI continuity prototype",
+    status: "Early AI continuity prototype",
+    summary:
+      "Memory and identity that persist across AI tools — threads, continuity, retrieval, and governance.",
+    thumbLabel: "Architecture",
+    maturity: "prototype",
+    maturityLabel: "Early AI continuity prototype",
+    href: "/work/mindhub",
+    metadata: {
+      date: "Prototype",
+      hardware: "Web",
+      tags: ["Continuity", "Retrieval", "Governance"],
+    },
+    perspectives: ["builder", "inventor", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "AI tools each keep their own short memory, so context, identity, and the reasoning behind past decisions reset every time you switch between them.",
+      execution:
+        "I prototyped a continuity layer — threads, retrieval, and governance — that lets memory and identity persist across tools rather than resetting with each one.",
+      insight:
+        "Continuity is a governance problem as much as a storage one: what persists, who controls it, and how it's retrieved matter more than raw capacity.",
+    },
+  },
+  {
+    id: "attune",
+    title: "Attune",
+    subtitle: "Tone, consent, and emotional bandwidth as first-class controls.",
+    type: "system concept & interface framework",
+    status: "Design exploration",
+    summary:
+      "Real-time tone controls, emotional consent, and gentle modes — the human side of emotionally-aware technology.",
+    thumbLabel: "System concept",
+    maturity: "exploration",
+    maturityLabel: "Design exploration",
+    href: "/work/attune",
+    metadata: {
+      date: "Design exploration",
+      hardware: "Concept",
+      tags: ["Emotional context", "Consent", "Accessibility"],
+    },
+    perspectives: ["inventor", "creative", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "As software gets more predictive and autonomous, it has no real awareness of a person's emotional bandwidth — so it pushes notifications and demands attention regardless of state.",
+      execution:
+        "I designed Attune: real-time tone controls, explicit emotional consent, and gentle modes that scale back density and pacing when a person needs quiet.",
+      insight:
+        "Consent and tone belong in the core infrastructure, not as an optimization layer bolted on afterward.",
+    },
+  },
+  {
+    id: "arrival-integrity",
+    title: "Arrival Integrity",
+    subtitle: "Protecting the last five minutes of the trip.",
+    type: "maps concept",
+    status: "Design exploration · concept and mockups",
+    summary:
+      "Protecting the last five minutes of a trip — parking, walk time, and a calmer arrival in Apple Maps.",
+    thumbLabel: "Maps concept",
+    maturity: "exploration",
+    maturityLabel: "Design exploration",
+    href: "/work/arrival-integrity",
+    metadata: {
+      date: "Design exploration",
+      hardware: "Concept",
+      tags: ["Maps", "Context", "Wayfinding"],
+    },
+    perspectives: ["inventor", "builder", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "Maps optimize the highway and then abandon you for the hardest part — parking, walking distance, and the messy last five minutes of actually arriving.",
+      execution:
+        "I designed Arrival Integrity: a context-aware layer that recalibrates pacing and guidance as you near the destination threshold, expressed as concept mockups in an Apple Maps idiom.",
+      insight:
+        "The trip isn't over when the route ends; the calm of the arrival is the part people actually remember.",
+    },
+  },
+  {
+    id: "companion-health",
+    title: "Companion Health",
+    subtitle: "Quiet care signals for the beings who can't speak for themselves.",
+    type: "platform concept",
+    status: "Design exploration",
+    summary:
+      "A consent-first wellness platform for pets and caregiving relationships — with PetTag as the hardware endpoint.",
+    thumbLabel: "Platform concept",
+    maturity: "exploration",
+    maturityLabel: "Design exploration",
+    href: "/work/companion-health",
+    metadata: {
+      date: "Design exploration",
+      hardware: "Concept · PetTag",
+      tags: ["Consent-first", "Wellness", "Hardware endpoint"],
+    },
+    perspectives: ["inventor", "creative", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "The beings most in need of care — pets, and people who can't advocate for themselves — can't tell you when something is wrong.",
+      execution:
+        "I explored Companion Health, a consent-first wellness platform with PetTag as the hardware endpoint, surfacing quiet care signals from those relationships.",
+      insight:
+        "Care technology has to earn trust through consent first; the signal is only useful if the relationship around it is respected.",
     },
   },
 ];

@@ -377,6 +377,16 @@
   color: var(--text-muted);
 }
 
+.ev-eyebrow {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+}
+
 /* Gated vault — visible everywhere, contents withheld. Spans the full row. */
 .evidence-grid .gated-asset-vault {
   grid-column: 1 / -1;
@@ -699,15 +709,43 @@
   top: 0;
   left: 0;
   width: 100%;
+  /* Full stage height so the opaque overlay occludes the entire incoming layer
+     until the wave reveals it — no content "pops" ahead of the wavefront. */
+  height: 100%;
   z-index: 2;
-  background: var(--canvas-bg); /* fully occludes the incoming until clipped */
+  background: var(--canvas-bg);
   /* Amber wavefront: traces the clipped (curved) silhouette — bends in sync.
-     The halo blur is tunable (--wave-glow-intensity) over a crisp core. */
+     Crisp core + a tunable halo (--wave-glow-intensity). */
   filter: drop-shadow(0 0 1.5px var(--accent-amber))
     drop-shadow(0 0 var(--wave-glow-intensity, 6px) rgba(212, 175, 55, 0.5));
-  animation: sbx-wave-roll var(--wave-duration, 1.4s)
-    cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  /* Duration + curve are live-tunable from the Tuning Lab. */
+  animation-name: sbx-wave-roll;
+  animation-duration: var(--wave-duration, 1.4s);
+  animation-timing-function: cubic-bezier(
+    var(--wave-attack, 0.76),
+    0,
+    var(--wave-release, 0.24),
+    1
+  );
+  animation-fill-mode: forwards;
   will-change: clip-path, filter;
+}
+
+/* --- Wavefront spectacle styles (data-wavefront on .sbx) ------------------ */
+
+/* Chromatic prism fringe — cyan/magenta refraction split along the boundary. */
+.sbx[data-wavefront="chromatic"] .sbx-layer-out {
+  filter: drop-shadow(-2px 0 1px rgba(0, 200, 255, 0.85))
+    drop-shadow(2px 0 1px rgba(255, 60, 180, 0.85))
+    drop-shadow(0 0 var(--wave-glow-intensity, 6px) var(--accent-amber));
+}
+
+/* Volumetric glass mist — a thick, soft atmospheric glow sweeping the edge. */
+.sbx[data-wavefront="volumetric"] .sbx-layer-out {
+  filter: drop-shadow(
+      0 0 calc(var(--wave-glow-intensity, 6px) * 3) rgba(212, 175, 55, 0.55)
+    )
+    drop-shadow(0 0 40px rgba(255, 255, 255, 0.18));
 }
 
 /* A gentle smile arc (depth = --wave-arc-depth, default 6%) translates from
@@ -761,40 +799,20 @@
   transform: translateX(-50%);
   z-index: 999;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   max-width: calc(100vw - 1.5rem);
 }
 
-.kc-row2 {
-  display: flex;
-  align-items: center;
-}
-
-/* Cluster A — flat horizontal row (row2 collapses into the parent row). */
+/* Sequence is fixed [ ☾ | Enhanced | Who are you? ]; A/B/C vary spacing only. */
 .kc-cluster[data-cluster="a"] {
-  flex-direction: row;
-  align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
 }
-.kc-cluster[data-cluster="a"] .kc-row2 {
-  display: contents;
-}
-
-/* Cluster B — tight constellation (default). */
 .kc-cluster[data-cluster="b"] {
-  gap: 0.6rem;
+  gap: 0.55rem;
 }
-.kc-cluster[data-cluster="b"] .kc-row2 {
-  gap: 0.6rem;
-}
-
-/* Cluster C — wide constellation. */
 .kc-cluster[data-cluster="c"] {
-  gap: 1.4rem;
-}
-.kc-cluster[data-cluster="c"] .kc-row2 {
-  gap: 2.5rem;
+  gap: 1.6rem;
 }
 
 /* The keycap — frosted glass with a beveled, pressable profile. */
@@ -853,18 +871,19 @@
   display: inline-flex;
 }
 
-/* Companions yield the stage: soften and drift radially out from the anchor.
-   Drift magnitude is tunable via --bloom-drift-distance (default 15px). */
-.kc-cluster[data-bloom="identity"] .kc-view,
-.kc-cluster[data-bloom="identity"] .kc-theme {
+/* Companions yield the stage: soften and drift horizontally away from the
+   anchor. Drift magnitude is tunable via --bloom-drift-distance (default 15px).
+   Layout is [ theme | view | identity ] left → right. */
+.kc-cluster[data-bloom="identity"] .kc-theme,
+.kc-cluster[data-bloom="identity"] .kc-view {
   opacity: 0.4;
-  transform: translateY(var(--bloom-drift-distance, 15px));
-}
-.kc-cluster[data-bloom="view"] .kc-identity {
-  opacity: 0.4;
-  transform: translateY(calc(-1 * var(--bloom-drift-distance, 15px)));
+  transform: translateX(calc(-1 * var(--bloom-drift-distance, 15px)));
 }
 .kc-cluster[data-bloom="view"] .kc-theme {
+  opacity: 0.4;
+  transform: translateX(calc(-1 * var(--bloom-drift-distance, 15px)));
+}
+.kc-cluster[data-bloom="view"] .kc-identity {
   opacity: 0.4;
   transform: translateX(var(--bloom-drift-distance, 15px));
 }
@@ -889,6 +908,14 @@
   gap: 0.4rem;
   width: max-content;
   max-width: min(320px, calc(100vw - 2rem));
+}
+
+/* Identity sits at the right edge — open its bloom over the right margin. */
+.kc-bloom-right {
+  left: auto;
+  right: 0;
+  transform: none;
+  justify-content: flex-end;
 }
 
 .kc-chip {
@@ -1110,6 +1137,29 @@
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
   font-size: 0.66rem;
   color: var(--text-bright);
+}
+
+.tune-select-row {
+  grid-template-columns: 1fr;
+}
+
+.tune-select {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 0.1rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: var(--surface-card);
+  color: var(--text-bright);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.tune-select:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
 }
 
 .tune-reset {
