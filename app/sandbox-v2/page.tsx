@@ -134,15 +134,23 @@ function isWavefront(v: string | null): v is Wavefront {
 // Evidence (Layer 0) renderers — identical data, shown by both view engines.
 // ---------------------------------------------------------------------------
 
+// Explicit "asset expected" tile — names the exact path a missing image should
+// live at, so it's actionable (drop the file in) rather than a silent gray box.
+function MissingAsset({ path }: { path: string }) {
+  return (
+    <div className="media-missing" role="note">
+      <span className="mm-label">Image asset expected at</span>
+      <code className="mm-path">{path}</code>
+    </div>
+  );
+}
+
 function EvidenceImage({ item }: { item: Evidence }) {
   const [errored, setErrored] = useState(false);
   return (
     <figure className="evidence-figure">
       {errored ? (
-        <div className="media-placeholder">
-          <span className="ph-label">Image placeholder</span>
-          <span className="ph-sub">{item.label}</span>
-        </div>
+        <MissingAsset path={item.path} />
       ) : (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -160,31 +168,16 @@ function EvidenceImage({ item }: { item: Evidence }) {
   );
 }
 
+// Every artifact is presented fully open — no padlocks, vaults, or gating.
 function EvidenceItem({ item }: { item: Evidence }) {
-  // Gated artifacts stay visible — the description proves depth exists; the
-  // file itself is withheld until an explicit unlock (future phase).
-  if (item.securityTier === "private") {
-    return (
-      <div className="gated-asset-vault">
-        <span className="vault-glyph" aria-hidden="true">
-          🔒
-        </span>
-        <div>
-          <p className="vault-head">Gated evidence · {item.type}</p>
-          <p className="vault-desc">{item.label}</p>
-          <p className="vault-hint">Available for deep evaluation on request.</p>
-        </div>
-      </div>
-    );
-  }
   if (item.type === "image") {
     return <EvidenceImage item={item} />;
   }
-  // Public non-image artifact (no broken frames — render a labeled placeholder).
+  // Non-image artifact — shown openly as a readable, described asset.
   return (
-    <div className="media-placeholder">
-      <span className="ph-label">{item.type}</span>
-      <span className="ph-sub">{item.label}</span>
+    <div className="evidence-artifact">
+      <span className="evidence-artifact-type">{item.type}</span>
+      <p className="evidence-artifact-label">{item.label}</p>
     </div>
   );
 }
@@ -258,37 +251,27 @@ function ProjectCard({
 }
 
 // ---------------------------------------------------------------------------
-// Featured artifact — the project that anchors the absolute top of the V2 feed.
-// Not a boxed card: an open editorial entry leading with the strongest visual.
+// Featured artifact — anchors the top of the V2 feed as a premium, low-profile
+// product brief: a compact horizontal image strip rather than one tall hero.
 // ---------------------------------------------------------------------------
 
-function FeaturedVisual({ project }: { project: SandboxProject }) {
-  const hero =
-    project.featuredImage ??
-    project.evidence.find(
-      (e) => e.type === "image" && e.securityTier === "public",
-    )?.path ??
-    null;
+function FeaturedShot({ item }: { item: Evidence }) {
   const [errored, setErrored] = useState(false);
-
-  if (!hero || errored) {
-    return (
-      <div className="featured-visual media-placeholder">
-        <span className="ph-label">Spatial capture</span>
-        <span className="ph-sub">
-          {project.title} — strongest authentic frame pending.
-        </span>
-      </div>
-    );
-  }
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      className="featured-visual"
-      src={hero}
-      alt={`${project.title} — featured spatial evidence`}
-      onError={() => setErrored(true)}
-    />
+    <div className="featured-shot">
+      {errored ? (
+        <MissingAsset path={item.path} />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={item.path}
+          alt={item.label}
+          title={item.label}
+          loading="lazy"
+          onError={() => setErrored(true)}
+        />
+      )}
+    </div>
   );
 }
 
@@ -298,13 +281,28 @@ function FeaturedCard({ project }: { project: SandboxProject }) {
     project.highlights && project.highlights.length > 0
       ? project.highlights
       : project.metadata.tags;
+  const shots = project.evidence.filter((e) => e.type === "image");
   return (
     <article className="featured-card" data-featured="true">
-      <p className="featured-eyebrow">Featured work</p>
-      <FeaturedVisual project={project} />
-      <div className="featured-body">
+      <div className="featured-head">
+        <p className="featured-eyebrow">Featured work</p>
         <h2 className="featured-title">{project.title}</h2>
         <p className="featured-kicker">{kicker}</p>
+      </div>
+
+      {shots.length > 0 && (
+        <div
+          className="featured-strip"
+          role="group"
+          aria-label={`${project.title} gallery`}
+        >
+          {shots.map((s) => (
+            <FeaturedShot key={s.id} item={s} />
+          ))}
+        </div>
+      )}
+
+      <div className="featured-meta">
         <ul className="featured-highlights">
           {highlights.map((h) => (
             <li key={h}>{h}</li>
@@ -350,6 +348,8 @@ export default function SandboxV2() {
   const [wavefront, setWavefront] = useState<Wavefront>("crisp");
   // Which project anchors the top of the V2 feed (Tuning Lab evaluation control).
   const [featured, setFeatured] = useState<FeaturedId>("roombridge");
+  // Whether the lens-filtered "More Projects" section is expanded.
+  const [moreOpen, setMoreOpen] = useState(false);
   const clusterRef = useRef<HTMLDivElement>(null);
 
   // Restore persisted choices after mount (avoids hydration mismatch).
@@ -724,16 +724,27 @@ export default function SandboxV2() {
     return [...matches, ...rest];
   }, [perspective, matches]);
 
-  // V2 executive feed: pull the chosen featured artifact to the absolute top,
-  // then let the rest flow in lens-sorted order. Every node stays present.
+  // V2 executive feed: pull the chosen featured artifact to the absolute top.
   const featuredProject = useMemo(
     () => PORTFOLIO_DATABASE.find((p) => p.id === featured) ?? ordered[0],
     [featured, ordered],
   );
-  const feedRest = useMemo(
-    () => ordered.filter((p) => p.id !== featuredProject.id),
-    [ordered, featuredProject],
-  );
+
+  // Lens filtering: with a specific audience, the matching high-relevance work
+  // leads the primary list and everything else collapses into "More Projects".
+  // With no lens ("curious"), the whole catalog flows as the primary list.
+  const feedPrimary = useMemo(() => {
+    const pool = perspective === "curious" ? ordered : matches;
+    return pool.filter((p) => p.id !== featuredProject.id);
+  }, [perspective, ordered, matches, featuredProject]);
+
+  const feedMore = useMemo(() => {
+    if (perspective === "curious") return [];
+    return PORTFOLIO_DATABASE.filter(
+      (p) =>
+        !p.perspectives.includes(perspective) && p.id !== featuredProject.id,
+    );
+  }, [perspective, featuredProject]);
 
   // Either renderer, on demand — so the wave can mount both at once.
   function renderMain(r: Renderer) {
@@ -805,11 +816,11 @@ export default function SandboxV2() {
           <p className="sbx-exec-thesis">{MASTER.thesis}</p>
         </header>
 
-        {/* The feed itself leads with the strongest artifact, then the rest of
-            the database flows into the same grid with no hard dividers. */}
+        {/* The feed leads with the strongest artifact, then the lens-matched
+            primary work; non-matching exhibits collapse into "More Projects". */}
         <section className="portfolio-grid portfolio-grid-feed">
           <FeaturedCard project={featuredProject} />
-          {feedRest.map((project) => (
+          {feedPrimary.map((project) => (
             <ProjectCard
               key={project.id}
               project={project}
@@ -821,6 +832,34 @@ export default function SandboxV2() {
             />
           ))}
         </section>
+
+        {feedMore.length > 0 && (
+          <div className="more-projects">
+            <button
+              type="button"
+              className="more-toggle"
+              aria-expanded={moreOpen}
+              onClick={() => setMoreOpen((o) => !o)}
+            >
+              <span aria-hidden="true">📂</span> More Projects ({feedMore.length})
+              <span className="more-chevron" aria-hidden="true">
+                {moreOpen ? "▲" : "▼"}
+              </span>
+            </button>
+            {moreOpen && (
+              <section className="portfolio-grid more-grid">
+                {feedMore.map((project) => (
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    spotlight={false}
+                    lensLabel={activeLens.label}
+                  />
+                ))}
+              </section>
+            )}
+          </div>
+        )}
 
         <footer className="sbx-footer">
           Isolated architecture sandbox — the same Layer 0 / Layer 1 content,

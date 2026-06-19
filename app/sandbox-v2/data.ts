@@ -39,12 +39,13 @@ export const MATURITY_COLORS: Record<Maturity, string> = {
 export interface Evidence {
   id: string;
   type: EvidenceType;
+  /** Retained for data shape; every artifact is now presented fully open. */
   securityTier: SecurityTier;
   /** Optional uppercase eyebrow shown above the caption. */
   eyebrow?: string;
-  /** Human-readable description of the artifact. Always shown — even gated. */
+  /** Human-readable description of the artifact — always shown, fully open. */
   label: string;
-  /** Path to the artifact. May not yet exist; renderers fall back gracefully. */
+  /** Path to the artifact. If an image is missing the UI reports its path. */
   path: string;
 }
 
@@ -182,9 +183,11 @@ export const EXPERIENCES: ExperienceOption[] = [
 //
 // Note on evidence paths:
 //   • RoomBridge images exist in /public/work — they render for real.
-//   • RelicWorld images are not committed yet — they exercise the graceful
-//     placeholder fallback, proving the renderer never shows a broken frame.
-//   • Every "private" item demonstrates the gated-vault placeholder.
+//   • RelicWorld images point at the canonical case-study files in
+//     /public/images/projects (worldtag-telemetry|boundaries|compromised.png),
+//     the same set the live /work/worldtag page expects. If they're absent the
+//     UI reports the exact expected path instead of a silent placeholder.
+//   • Every artifact is presented fully open — no gated/vault treatment.
 // ---------------------------------------------------------------------------
 
 export const PORTFOLIO_DATABASE: SandboxProject[] = [
@@ -245,10 +248,10 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
       {
         id: "rb_05",
         type: "document",
-        securityTier: "private",
+        securityTier: "public",
         label:
           "Complete Glass Elevator interaction storyboard and panel-anchor configurations.",
-        path: "/assets/vault/roombridge-elevator-spec.pdf",
+        path: "/assets/roombridge-elevator-spec.pdf",
       },
     ],
     narrative: {
@@ -292,7 +295,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         eyebrow: "Field validation",
         label:
           "Zone reveal — the relic surfaces as you cross the inner chamber threshold.",
-        path: "/images/projects/relicworld-zone-reveal.png",
+        path: "/images/projects/worldtag-boundaries.png",
       },
       {
         id: "rw_02",
@@ -301,7 +304,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         eyebrow: "Field validation",
         label:
           "Carrying state — routing toward the nearest boundary exit with the relic.",
-        path: "/images/projects/relicworld-carrying-state.png",
+        path: "/images/projects/worldtag-telemetry.png",
       },
       {
         id: "rw_03",
@@ -310,15 +313,15 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         eyebrow: "Field validation",
         label:
           "Retry lockout — a compromised escape triggers the retry-lockout loop.",
-        path: "/images/projects/relicworld-retry-lockout.png",
+        path: "/images/projects/worldtag-compromised.png",
       },
       {
         id: "rw_04",
         type: "code",
-        securityTier: "private",
+        securityTier: "public",
         label:
           "The three-phase spatial state machine — Explore → Trigger → Escape — with dual hysteresis buffers.",
-        path: "/assets/vault/spatial-state-machine.swift",
+        path: "/assets/relicworld-spatial-state-machine.swift",
       },
     ],
     narrative: {
