@@ -25,6 +25,7 @@ const STORAGE = {
   wavefront: "sbx_wavefront",
   scrollStart: "sbx_scrollstart",
   featured: "sbx_featured",
+  featuredManual: "sbx_featured_manual",
   forceAutoWave: "sbx_forceautowave",
 };
 
@@ -33,7 +34,8 @@ type Cluster = "a" | "b" | "c";
 type Bloom = "identity" | "view" | null;
 
 // Featured Artifact Spotlight — which project anchors the top of the V2 feed.
-// Internal evaluation control (Tuning Lab); RoomBridge is the default.
+// In Auto mode it tracks the active "Who are you?" audience; the Tuning Lab
+// selector can manually override (and lock) it to one of these options.
 const FEATURED_OPTIONS = [
   "roombridge",
   "relicworld",
@@ -44,6 +46,24 @@ type FeaturedId = (typeof FEATURED_OPTIONS)[number];
 const FEATURED_IDS: readonly string[] = FEATURED_OPTIONS;
 function isFeatured(v: string | null): v is FeaturedId {
   return v != null && FEATURED_IDS.includes(v);
+}
+
+// Auto-binding: the active audience identity maps to the project that anchors
+// the top of the feed. Returns a project id (may be outside FEATURED_OPTIONS).
+// "Stronger active visual" tie-breaks resolved to: eval audiences → RelicWorld
+// (the only visual-evidence option of that pair), musician → Sonic Experience.
+function autoFeaturedId(identityId: string | null): string {
+  switch (identityId) {
+    case "engineering-manager":
+    case "recruiter":
+    case "hiring-manager":
+      return "relicworld";
+    case "music-collaborator":
+      return "sonic-experience-design";
+    // incubation-team, design-leader, curious-human, product-leader, default:
+    default:
+      return "roombridge";
+  }
 }
 
 function isRenderer(v: string): v is Renderer {
@@ -346,8 +366,10 @@ export default function SandboxV2() {
   const [tune, setTune] = useState<Record<TuneKey, number>>(TUNE_DEFAULTS);
   const [tuneOpen, setTuneOpen] = useState(false);
   const [wavefront, setWavefront] = useState<Wavefront>("crisp");
-  // Which project anchors the top of the V2 feed (Tuning Lab evaluation control).
+  // Featured spotlight: `featured` is the manual choice; `featuredManual` says
+  // whether it overrides the audience auto-binding. Default = Auto (track lens).
   const [featured, setFeatured] = useState<FeaturedId>("roombridge");
+  const [featuredManual, setFeaturedManual] = useState(false);
   // Whether the lens-filtered "More Projects" section is expanded.
   const [moreOpen, setMoreOpen] = useState(false);
   const clusterRef = useRef<HTMLDivElement>(null);
@@ -368,6 +390,8 @@ export default function SandboxV2() {
         setScrollStart(true);
       const f = localStorage.getItem(STORAGE.featured);
       if (isFeatured(f)) setFeatured(f);
+      if (localStorage.getItem(STORAGE.featuredManual) === "true")
+        setFeaturedManual(true);
       if (localStorage.getItem(STORAGE.forceAutoWave) === "true")
         setForceAutoWave(true);
     } catch {
@@ -616,10 +640,23 @@ export default function SandboxV2() {
     }
   }
 
-  function updateFeatured(value: FeaturedId) {
+  // "auto" returns the spotlight to audience auto-binding; any specific id is a
+  // manual override that explicitly wins over the audience mapping.
+  function selectFeatured(value: "auto" | FeaturedId) {
+    if (value === "auto") {
+      setFeaturedManual(false);
+      try {
+        localStorage.setItem(STORAGE.featuredManual, "false");
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
     setFeatured(value);
+    setFeaturedManual(true);
     try {
       localStorage.setItem(STORAGE.featured, value);
+      localStorage.setItem(STORAGE.featuredManual, "true");
     } catch {
       /* ignore */
     }
@@ -724,10 +761,15 @@ export default function SandboxV2() {
     return [...matches, ...rest];
   }, [perspective, matches]);
 
-  // V2 executive feed: pull the chosen featured artifact to the absolute top.
+  // V2 executive feed: the spotlight is a manual override when set, otherwise it
+  // auto-binds to the active audience. It anchors the absolute top of the feed.
+  const effectiveFeaturedId = featuredManual
+    ? featured
+    : autoFeaturedId(identityId);
   const featuredProject = useMemo(
-    () => PORTFOLIO_DATABASE.find((p) => p.id === featured) ?? ordered[0],
-    [featured, ordered],
+    () =>
+      PORTFOLIO_DATABASE.find((p) => p.id === effectiveFeaturedId) ?? ordered[0],
+    [effectiveFeaturedId, ordered],
   );
 
   // Lens filtering: with a specific audience, the matching high-relevance work
@@ -1062,10 +1104,13 @@ export default function SandboxV2() {
               <span className="tune-name">Featured artifact spotlight</span>
               <select
                 className="tune-select"
-                value={featured}
-                onChange={(e) => updateFeatured(e.target.value as FeaturedId)}
+                value={featuredManual ? featured : "auto"}
+                onChange={(e) =>
+                  selectFeatured(e.target.value as "auto" | FeaturedId)
+                }
                 aria-label="Featured artifact anchoring the top of the V2 feed"
               >
+                <option value="auto">Auto (match audience)</option>
                 {FEATURED_OPTIONS.map((id) => (
                   <option key={id} value={id}>
                     {PORTFOLIO_DATABASE.find((p) => p.id === id)?.title ?? id}

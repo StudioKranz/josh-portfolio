@@ -1609,28 +1609,116 @@
   }
 }
 
-/* --- Responsive ----------------------------------------------------------- */
+/* --- Responsive — comprehensive mobile pass (< 768px) --------------------- */
 
-@media (max-width: 560px) {
-  /* Hero tucks just under the floating cluster. */
+@media (max-width: 768px) {
+  /* Tight, intentional spacing under the floating cluster — no empty gaps.
+     Top clears the (possibly wrapped) cluster; bottom clears the fixed
+     switcher / Tuning Lab controls so the last content is never hidden. */
   .sbx-main {
-    padding: 7rem 1.1rem 4rem;
+    padding: 7rem 1.1rem 4.5rem;
   }
 
   .sbx-classic {
-    padding: 7.25rem 1.25rem 3rem;
+    padding: 7rem 1.1rem 4.5rem;
   }
 
+  /* Cluster: let every layout wrap and shrink so nothing overflows the edge. */
+  .kc-cluster {
+    gap: 0.5rem;
+    max-width: calc(100vw - 1rem);
+  }
+  .kc-cluster[data-cluster="a"] {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
   .kc {
-    padding: 0.5rem 0.85rem;
-    font-size: 0.8rem;
+    padding: 0.45rem 0.8rem;
+    font-size: 0.78rem;
   }
-
   .kc-theme {
     width: 38px;
   }
+  /* Keep blooms inside the viewport and centered. */
+  .kc-bloom,
+  .kc-cluster[data-cluster="a"] .kc-bloom-right {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    justify-content: center;
+    max-width: calc(100vw - 1.5rem);
+  }
 
-  .sbx[data-renderer="enhanced"] .portfolio-grid {
+  /* Single-column cards. */
+  .sbx[data-renderer="enhanced"] .portfolio-grid,
+  .sbx[data-renderer="enhanced"] .more-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .sbx[data-renderer="enhanced"] .project-card {
+    padding: 1.4rem;
+  }
+
+  /* Compact V2 + classic header typography. */
+  .sbx-exec-name {
+    font-size: 1.45rem;
+  }
+  .sbx-exec-thesis {
+    font-size: 0.95rem;
+  }
+  .featured-title {
+    font-size: 1.45rem;
+  }
+  .cl-name {
+    font-size: 1.9rem;
+  }
+  .cl-thesis {
+    font-size: 1.05rem;
+  }
+
+  /* Featured strip → swipeable single-image carousel; no margin clipping. */
+  .featured-strip {
+    scroll-snap-type: x mandatory;
+    gap: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .featured-shot {
+    width: 86%;
+    height: 200px;
+    scroll-snap-align: start;
+  }
+
+  /* Highlights + CTA stack cleanly. */
+  .featured-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Keep the Tuning Lab drawer fully on-screen and above the cluster switcher. */
+  .tune-lab {
+    bottom: 0.6rem;
+    right: 0.6rem;
+  }
+  .tune-body {
+    width: min(244px, calc(100vw - 1.4rem));
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .kc-switcher {
+    bottom: 0.6rem;
+    left: 0.6rem;
+  }
+}
+
+@media (max-width: 430px) {
+  /* Smallest phones — carousel shows one full frame with a peek of the next. */
+  .featured-shot {
+    width: 90%;
+    height: 180px;
+  }
+  .sbx-exec-name,
+  .featured-title,
+  .cl-name {
+    font-size: 1.35rem;
   }
 }
