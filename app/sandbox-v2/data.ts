@@ -67,6 +67,8 @@ export interface SandboxProject {
   maturity: Maturity;
   maturityLabel: string;
   href: string;
+  /** Optional custom call-to-action label. Falls back to "Explore {title}". */
+  ctaLabel?: string;
   /** Optional featured-artifact fields used when this project anchors the V2
    *  executive feed. All copy is drawn from existing vetted narrative/status. */
   featuredKicker?: string;
@@ -197,9 +199,10 @@ export const EXPERIENCES: ExperienceOption[] = [
 // Note on evidence paths:
 //   • RoomBridge images exist in /public/work — they render for real.
 //   • RelicWorld images point at the canonical case-study files in
-//     /public/images/projects (worldtag-telemetry|boundaries|compromised.png),
-//     the same set the live /work/worldtag page expects. If they're absent the
-//     UI reports the exact expected path instead of a silent placeholder.
+//     /public/images/projects (relicworld-zone-reveal|carrying-state|
+//     retry-lockout.png), the same verified screenshots the live /work/worldtag
+//     Field Validation gallery renders. If an asset is ever absent the figure
+//     collapses gracefully (no placeholder, no broken frame).
 //   • Every artifact is presented fully open — no gated/vault treatment.
 // ---------------------------------------------------------------------------
 
@@ -308,7 +311,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         eyebrow: "Field validation",
         label:
           "Zone reveal — the relic surfaces as you cross the inner chamber threshold.",
-        path: "/images/projects/worldtag-boundaries.png",
+        path: "/images/projects/relicworld-zone-reveal.png",
       },
       {
         id: "rw_02",
@@ -317,7 +320,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         eyebrow: "Field validation",
         label:
           "Carrying state — routing toward the nearest boundary exit with the relic.",
-        path: "/images/projects/worldtag-telemetry.png",
+        path: "/images/projects/relicworld-carrying-state.png",
       },
       {
         id: "rw_03",
@@ -326,7 +329,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         eyebrow: "Field validation",
         label:
           "Retry lockout — a compromised escape triggers the retry-lockout loop.",
-        path: "/images/projects/worldtag-compromised.png",
+        path: "/images/projects/relicworld-retry-lockout.png",
       },
       {
         id: "rw_04",
@@ -610,6 +613,38 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         "My AI music workflows include hands-on use of custom vocal model tools, including Audimee, and generative AI music tools inside real production (DAW) workflows — bringing voice synthesis and model training into the production loop rather than a separate sandbox.",
       insight:
         "The leverage isn't a one-off generation; it's continuity — a model that carries the producer's intent through the whole arrangement.",
+    },
+  },
+  {
+    // Self-referential meta node: the multi-renderer engine that renders this
+    // very page, entered as a first-class case study in its own catalog.
+    id: "systemic-portfolio-engine",
+    title: "Systemic Portfolio Engine",
+    subtitle:
+      "An adaptive, multi-renderer design environment context-mapped to the reviewer's intent.",
+    type: "design-engineering system",
+    status: "Live production system · the portfolio you're reading now",
+    summary:
+      "An adaptive, multi-renderer design environment context-mapped to the reviewer's intent — the system rendering this page right now.",
+    thumbLabel: "This site",
+    maturity: "deployed",
+    maturityLabel: "Live · this portfolio",
+    href: "/how-i-work",
+    ctaLabel: "Explore the System Architecture",
+    metadata: {
+      date: "Live · 2026",
+      hardware: "Web · Next.js",
+      tags: ["Next.js", "State Routing", "Interaction Design"],
+    },
+    perspectives: ["builder", "inventor", "creative", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "Generic portfolio templates treat all hiring audiences identically, creating dry, high-friction scanning experiences for hyper-specialized design and engineering roles.",
+      execution:
+        "Engineered a custom Next.js environment powered by dynamic layout state routing, horizontal flat wavefront transitions, and context-aware action links that recalibrate the canvas depending on audience selection.",
+      insight:
+        "The most honest portfolio piece is the portfolio itself — a system that adapts how the work is presented to the person who is actually reading it.",
     },
   },
 ];

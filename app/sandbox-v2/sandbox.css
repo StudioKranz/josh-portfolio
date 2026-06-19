@@ -353,6 +353,17 @@
   gap: 0.9rem;
 }
 
+/* Graceful degradation: when every image in a strip is absent it collapses to
+   null, leaving a childless container — hide it so no padded blank space or
+   stray frame survives. (:has wrapper guards the outer container too.) */
+.evidence-grid:empty,
+.featured-strip:empty {
+  display: none;
+}
+.evidence-container:has(.evidence-grid:empty) {
+  display: none;
+}
+
 .evidence-figure {
   margin: 0;
 }
@@ -633,18 +644,21 @@
    RENDERER 2 — ENHANCED  (editorial, gridded case-study cards)
    =========================================================================== */
 
-/* Balanced two-column catalog (CSS masonry): cards flow at their natural height
-   and never stretch into half-blank columns, so the lower feed reads uniform. */
+/* Balanced two-column catalog (CSS Grid): every card in a row shares one common
+   height (align-items: stretch), so identical rows stay perfectly cross-aligned.
+   Each card is a flex column with its tag group + action link pinned to a shared
+   bottom baseline (margin-top: auto), regardless of text-length variation. */
 .sbx[data-renderer="enhanced"] .catalog-columns {
-  column-count: 2;
-  column-gap: 2.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 2.5rem;
   margin-top: 1.5rem;
 }
 
 .sbx[data-renderer="enhanced"] .catalog-columns .project-card {
-  break-inside: avoid;
-  -webkit-column-break-inside: avoid;
-  margin: 0 0 2.5rem;
+  height: 100%;
+  margin: 0;
 }
 
 .sbx[data-renderer="enhanced"] .featured-card {
@@ -1890,22 +1904,54 @@
     padding: 0.45rem 0.65rem;
     font-size: 0.74rem;
   }
-  /* Keep blooms inside the viewport. */
-  .kc-bloom {
-    max-width: calc(100vw - 1.2rem);
-  }
-  .kc-bloom.kc-bloom-theme {
-    left: auto;
-    right: 0;
-    transform: none;
+  /* Mobile selection bloom → a contained, centered modal-style panel. Every
+     bloom (view / identity / theme) drops its keycap-relative anchor and becomes
+     one frosted, vertically-stacked, scroll-gated sheet pinned safely below the
+     status bar and inset from both viewport edges — so nothing can collide with
+     the notch or spill off-screen. High-specificity selectors (with the .sbx
+     ancestor) outrank the desktop right-edge anchors for identity and theme. */
+  .sbx .kc-cluster .kc-bloom,
+  .sbx .kc-theme-nav .kc-bloom {
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 4.6rem);
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    width: min(20rem, calc(100vw - 1.6rem));
+    max-width: min(20rem, calc(100vw - 1.6rem));
+    max-height: min(70vh, calc(100vh - env(safe-area-inset-top, 0px) - 7rem));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.7rem;
+    border-radius: 16px;
+    border: 1px solid var(--glass-border);
+    background: var(--tray-bg);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow: var(--tray-shadow);
   }
 
-  /* Single-column catalog. */
+  /* Full-width, center-aligned chips that wrap cleanly inside the sheet. */
+  .sbx .kc-cluster .kc-bloom .kc-chip,
+  .sbx .kc-theme-nav .kc-bloom .kc-chip {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    white-space: normal;
+  }
+
+  /* Single-column catalog (grid collapses to one full-width track). */
   .sbx[data-renderer="enhanced"] .catalog-columns {
-    column-count: 1;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
   .sbx[data-renderer="enhanced"] .catalog-columns .project-card {
-    margin-bottom: 1.5rem;
+    height: auto;
   }
   .sbx[data-renderer="enhanced"] .project-card {
     padding: 1.4rem;
