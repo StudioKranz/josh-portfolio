@@ -485,15 +485,15 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     title: "Apple Experience Systems",
     subtitle: "Turning long-term human observation into real-world retail systems.",
     type: "operational systems & team leadership",
-    status: "Apple retail · Genius and Product Zone Lead",
+    status: "Apple Retail · Genius and Product Zone Lead · since 2007",
     summary:
-      "Apple retail leadership — Genius and Product Zone Lead — prototyping service interactions, training playbooks, and spatial readiness on the floor.",
+      "Apple Retail professional since 2007, including Genius and Product Zone Lead experience — prototyping service interactions, training playbooks, and spatial readiness.",
     thumbLabel: "Retail systems",
     maturity: "deployed",
     maturityLabel: "Live operational · Apple retail",
     href: "#",
     metadata: {
-      date: "Apple retail",
+      date: "Apple Retail · since 2007",
       hardware: "Genius Bar · sales floor",
       tags: ["Retail systems", "Team training", "Spatial readiness"],
     },
@@ -503,7 +503,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
       problem:
         "Large consumer environments tend to treat support and onboarding as rigid scripts, which misses the subtle human cues that decide how a moment actually lands.",
       execution:
-        "As a Genius and Product Zone Lead, I've treated the floor and the Genius Bar as live test beds — prototyping service interactions, writing position statements and training playbooks for teammates, and supporting readiness and field testing for spatial products including Apple Vision Pro.",
+        "An Apple Retail professional since 2007, including Genius and Product Zone Lead experience, I've treated the sales floor and the Genius Bar as live test beds — prototyping service interactions and writing position statements and training playbooks for teammates. I participated in Apple Vision Pro launch readiness and customer-experience execution in Apple Retail.",
       insight:
         "An operational system is only as strong as its human interface; you scale excellence by giving a team lightweight frameworks to listen and adapt, not a stricter rulebook.",
     },
@@ -513,9 +513,9 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     title: "Sonic Experience Design",
     subtitle: "Engineering the room and the signal so human expression can take over.",
     type: "record production & live sound",
-    status: "Producer, mix engineer, songwriter, bassist",
+    status: "Berklee · producer, mix engineer, songwriter, bassist",
     summary:
-      "Years of music — producing, mix engineering, songwriting, bass, and live production — building the technical and acoustic space for creativity.",
+      "Music background spanning Berklee College of Music, studio tracking, live production, mixing, bass, and songwriting — including work in professional studios such as Conway Studios.",
     thumbLabel: "Studio",
     maturity: "deployed",
     maturityLabel: "Career body of work",
@@ -523,7 +523,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     metadata: {
       date: "Career body of work",
       hardware: "Studio · stage",
-      tags: ["Mix engineering", "Live production", "Bass"],
+      tags: ["Berklee", "Mix engineering", "Bass"],
     },
     perspectives: ["musician", "creative", "curious"],
     evidence: [],
@@ -531,7 +531,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
       problem:
         "Music creation is a vulnerable, high-bandwidth state that stalls the moment the surrounding technical setup feels clinical or high-friction.",
       execution:
-        "As a mix engineer, producer, songwriter, and bass player, I've spent years tracking and mixing in the studio and engineering live production — sculpting the acoustic and technical environment so the gear disappears and the performance leads.",
+        "My music background includes Berklee College of Music, studio tracking, live production, mixing, bass performance, and songwriting, with work in professional studio environments including Conway Studios — sculpting the acoustic and technical environment so the gear disappears and the performance leads.",
       insight:
         "Mixing many live tracks is the same discipline as designing an asynchronous system: track parallel streams, predict their interactions, and shape one visceral result — make the system invisible so the human comes through.",
     },
@@ -543,7 +543,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     type: "AI audio R&D",
     status: "Active R&D · voice synthesis & generative music",
     summary:
-      "Building custom voice models and generative arrangement systems, and testing AI audio continuity inside professional DAWs.",
+      "AI music workflows — hands-on use of custom vocal model tools including Audimee, and generative AI music tools inside real production workflows.",
     thumbLabel: "AI audio",
     maturity: "prototype",
     maturityLabel: "Active R&D",
@@ -551,7 +551,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     metadata: {
       date: "Active R&D",
       hardware: "DAW · local AI",
-      tags: ["Voice synthesis", "Generative music", "Model training"],
+      tags: ["Audimee", "Voice models", "Generative music"],
     },
     perspectives: ["musician", "inventor", "creative", "curious"],
     evidence: [],
@@ -559,7 +559,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
       problem:
         "Generative audio tools mostly sit outside the real production workflow, with no continuity between a producer's intent and the model's output.",
       execution:
-        "I'm building custom vocal models and generative arrangement systems and testing AI audio tooling against real DAW workflows — bringing voice synthesis and model training into the production loop rather than a separate sandbox.",
+        "My AI music workflows include hands-on use of custom vocal model tools, including Audimee, and generative AI music tools inside real production (DAW) workflows — bringing voice synthesis and model training into the production loop rather than a separate sandbox.",
       insight:
         "The leverage isn't a one-off generation; it's continuity — a model that carries the producer's intent through the whole arrangement.",
     },

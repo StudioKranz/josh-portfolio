@@ -237,6 +237,7 @@ export default function SandboxV2() {
   // Wave transition between Classic <-> Enhanced (dual-layer, runs on toggle).
   const [waving, setWaving] = useState(false);
   const [prevRenderer, setPrevRenderer] = useState<Renderer | null>(null);
+  const [introArmed, setIntroArmed] = useState(false);
   // Tuning Lab — live physics controls mapped to :root CSS variables.
   const [tune, setTune] = useState<Record<TuneKey, number>>(TUNE_DEFAULTS);
   const [tuneOpen, setTuneOpen] = useState(false);
@@ -245,20 +246,45 @@ export default function SandboxV2() {
 
   // Restore persisted choices after mount (avoids hydration mismatch).
   useEffect(() => {
+    let savedRenderer: string | null = null;
     try {
       const id = localStorage.getItem(STORAGE.identity);
-      const r = localStorage.getItem(STORAGE.renderer);
+      savedRenderer = localStorage.getItem(STORAGE.renderer);
       const c = localStorage.getItem(STORAGE.cluster);
       const w = localStorage.getItem(STORAGE.wavefront);
       if (isKnownIdentity(id)) setIdentityId(id);
-      if (r && isRenderer(r)) setRenderer(r);
+      if (savedRenderer && isRenderer(savedRenderer)) setRenderer(savedRenderer);
       if (c && isCluster(c)) setCluster(c);
       if (isWavefront(w)) setWavefront(w);
     } catch {
       /* localStorage unavailable — fall back to defaults */
     }
     setHydrated(true);
+
+    // Intro-only wave: a first cold open (no saved view) opens in V1 Classic and
+    // sweeps to V2 Enhanced exactly once. Returning visits open directly in the
+    // saved view; manual switching is always instant.
+    const firstVisit = !(savedRenderer && isRenderer(savedRenderer));
+    if (firstVisit) {
+      if (prefersReducedMotion()) {
+        setRenderer("enhanced"); // arrive in V2 without the animation
+      } else {
+        setIntroArmed(true);
+      }
+    }
   }, []);
+
+  // Fire the one-time intro sweep shortly after a first cold open.
+  useEffect(() => {
+    if (!introArmed) return;
+    const t = setTimeout(() => {
+      setPrevRenderer("classic");
+      setRenderer("enhanced");
+      setWaving(true);
+      setIntroArmed(false);
+    }, 700);
+    return () => clearTimeout(t);
+  }, [introArmed]);
 
   // Persist the chosen identity site-wide.
   useEffect(() => {
@@ -357,19 +383,8 @@ export default function SandboxV2() {
     if (!opt.available || !opt.renderer) return;
     setOpenBloom(null);
     if (opt.renderer === renderer) return; // already there — no-op
-    if (waving) {
-      // mid-transition: just settle on the new renderer without re-waving
-      setRenderer(opt.renderer);
-      return;
-    }
-    if (prefersReducedMotion()) {
-      setRenderer(opt.renderer); // honor reduced motion: instant swap
-      return;
-    }
-    // Explicit toggle → run the reinterpretation wave.
-    setPrevRenderer(renderer);
+    // Manual switching is instant; the wave is reserved for the intro only.
     setRenderer(opt.renderer);
-    setWaving(true);
   }
 
   // Tear down the dual-layer once the scan line finishes.
