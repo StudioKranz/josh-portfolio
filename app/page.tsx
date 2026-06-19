@@ -24,11 +24,11 @@ export default function Home() {
         </p>
         <p className="mt-6 text-[13px] text-muted">
           <Link href="/why" className="underline-offset-4 hover:underline">
-            Why this work
+            Core Philosophy
           </Link>
           <span className="mx-2 text-faint">·</span>
           <Link href="/how-i-work" className="underline-offset-4 hover:underline">
-            How I work
+            Inside My Process
           </Link>
         </p>
       </header>

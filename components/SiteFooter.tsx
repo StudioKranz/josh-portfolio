@@ -7,10 +7,10 @@ export default function SiteFooter() {
         Work
       </Link>
       <Link href="/how-i-work" className="transition-colors hover:text-ink">
-        How I work
+        Inside My Process
       </Link>
       <Link href="/why" className="transition-colors hover:text-ink">
-        Why this work
+        Core Philosophy
       </Link>
       <a href="/Josh_Rosenkranz_Resume.pdf" className="transition-colors hover:text-ink">
         Résumé

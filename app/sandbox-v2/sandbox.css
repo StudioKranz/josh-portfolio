@@ -1242,10 +1242,27 @@
   box-shadow: var(--keycap-shadow-active);
 }
 
-/* Caret glyph inside the Portfolio / identity keycaps. */
+/* Caret glyph inside the Portfolio / identity / view keycaps. */
 .kc-caret {
   font-size: 0.7em;
   opacity: 0.7;
+}
+
+/* Mode toggle affordance — make the view keycap read as an engaged mechanical
+   switch: a live status dot, a subtle inset "pressed" face, and the caret. */
+.kc-toggle {
+  gap: 0.5rem;
+  box-shadow: var(--keycap-shadow), inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.16);
+}
+
+.kc-toggle-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--accent-amber);
+  box-shadow: 0 0 7px rgba(212, 175, 55, 0.65);
 }
 
 /* --- Zoned nav: Portfolio (left) and Theme (right) float independently ----- */
@@ -1271,8 +1288,10 @@
   font-size: 0.95rem;
 }
 
-/* The theme bloom opens over the right margin (anchored to the right keycap). */
-.kc-bloom-theme {
+/* The theme bloom opens over the right margin (anchored to the right keycap).
+   Double-class to outrank the base .kc-bloom centering defined later in file —
+   otherwise the third chip (Auto) gets pushed off the right edge. */
+.kc-bloom.kc-bloom-theme {
   left: auto;
   right: 0;
   transform: none;
@@ -1467,8 +1486,16 @@
 }
 
 .kc-chip[data-active="true"] {
-  border-color: rgba(212, 175, 55, 0.55);
+  border-color: rgba(212, 175, 55, 0.6);
+  background: rgba(212, 175, 55, 0.14);
   color: var(--accent-amber);
+  font-weight: 700;
+}
+
+/* Selected chip carries a leading check so the active state is unmistakable. */
+.kc-chip[data-active="true"]::before {
+  content: "✓";
+  font-size: 0.7em;
 }
 
 .kc-chip[data-soon="true"] {
@@ -1837,7 +1864,7 @@
   .kc-bloom {
     max-width: calc(100vw - 1.2rem);
   }
-  .kc-bloom-theme {
+  .kc-bloom.kc-bloom-theme {
     left: auto;
     right: 0;
     transform: none;

@@ -172,8 +172,18 @@ export interface ExperienceOption {
 }
 
 export const EXPERIENCES: ExperienceOption[] = [
-  { id: "classic", label: "Detailed Story", renderer: "classic", available: true },
-  { id: "enhanced", label: "Executive Brief", renderer: "enhanced", available: true },
+  {
+    id: "classic",
+    label: "📖 Full Narrative View",
+    renderer: "classic",
+    available: true,
+  },
+  {
+    id: "enhanced",
+    label: "⚡ Quick Executive Brief",
+    renderer: "enhanced",
+    available: true,
+  },
   { id: "museum", label: "Museum", available: false },
   { id: "roombridge", label: "Spatial Room", available: false },
 ];

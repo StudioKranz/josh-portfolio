@@ -846,11 +846,11 @@ export default function SandboxV2() {
             <p className="cl-thesis">{MASTER.thesis}</p>
             <p className="cl-capabilities">{MASTER.capabilities}</p>
             <p className="cl-links">
-              <a href="/why">Why this work</a>
+              <a href="/why">Core Philosophy</a>
               <span className="sep" aria-hidden="true">
                 ·
               </span>
-              <a href="/how-i-work">How I work</a>
+              <a href="/how-i-work">Inside My Process</a>
             </p>
           </header>
 
@@ -879,8 +879,8 @@ export default function SandboxV2() {
 
           <footer className="cl-footer">
             <a href="/">Work</a>
-            <a href="/how-i-work">How I work</a>
-            <a href="/why">Why this work</a>
+            <a href="/how-i-work">Inside My Process</a>
+            <a href="/why">Core Philosophy</a>
             <a href="/Josh_Rosenkranz_Resume.pdf">Résumé</a>
             <a href="mailto:joshrosenkranz@mac.com">joshrosenkranz@mac.com</a>
             <a
@@ -904,11 +904,11 @@ export default function SandboxV2() {
           <p className="sbx-exec-role">{MASTER.role}</p>
           <p className="sbx-exec-thesis">{MASTER.thesis}</p>
           <p className="sbx-exec-links">
-            <a href="/why">Why this work</a>
+            <a href="/why">Core Philosophy</a>
             <span className="sep" aria-hidden="true">
               ·
             </span>
-            <a href="/how-i-work">How I work</a>
+            <a href="/how-i-work">Inside My Process</a>
           </p>
         </header>
 
@@ -1014,18 +1014,22 @@ export default function SandboxV2() {
         <div className="kc-slot">
           <button
             type="button"
-            className="kc kc-view"
+            className="kc kc-view kc-toggle"
             data-invite={inviteActive ? "true" : undefined}
             aria-haspopup="true"
             aria-expanded={openBloom === "view"}
             onClick={() => toggleBloom("view")}
-            aria-label={`Experience: ${activeExperience.label}. Tap to choose.`}
+            aria-label={`View mode: ${activeExperience.label}. Tap to switch.`}
           >
+            <span className="kc-toggle-dot" aria-hidden="true" />
             {activeExperience.label}
+            <span className="kc-caret" aria-hidden="true">
+              ▾
+            </span>
           </button>
           {inviteActive && (
             <div className="kc-invite" role="status">
-              Try the Executive Brief for a fast, high-signal tour
+              Try the Quick Executive Brief for a fast, high-signal tour
             </div>
           )}
           {openBloom === "view" && (
@@ -1242,7 +1246,7 @@ export default function SandboxV2() {
                 Force Auto-Wave on Cold Open
               </span>
               <span className="tune-check-hint">
-                Off = invitation pulse (default). On = auto-sweep into the
+                Off = invitation pulse (default). On = auto-sweep into the Quick
                 Executive Brief.
               </span>
             </label>
@@ -1258,8 +1262,8 @@ export default function SandboxV2() {
                 Start auto-wave on scroll
               </span>
               <span className="tune-check-hint">
-                Applies only when Auto-Wave is on — holds in the Detailed Story
-                until first scroll.
+                Applies only when Auto-Wave is on — holds in the Full Narrative
+                View until first scroll.
               </span>
             </label>
             <button

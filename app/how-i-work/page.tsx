@@ -5,7 +5,7 @@ import Section from "@/components/Section";
 import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "How I work — Josh Rosenkranz",
+  title: "Inside My Process — Josh Rosenkranz",
   description:
     "An AI-assisted rapid prototyping workflow that moves ideas from “what if” to “here, try this.”",
 };
@@ -40,11 +40,14 @@ const STEPS = [
 
 export default function HowIWork() {
   return (
-    <Container className="pt-10">
-      <BackLink />
-      <header className="mt-8">
+    <>
+      <div className="site-nav">
+        <BackLink />
+      </div>
+      <Container className="pt-24">
+      <header>
         <h1 className="text-[34px] font-semibold leading-tight tracking-tight text-ink">
-          How I work
+          Inside My Process
         </h1>
         <p className="mt-2 text-[17px] text-muted">
           Moving an idea from “what if” to “here, try this.”
@@ -92,6 +95,7 @@ export default function HowIWork() {
       </Section>
 
       <SiteFooter />
-    </Container>
+      </Container>
+    </>
   );
 }
