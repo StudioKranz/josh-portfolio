@@ -174,13 +174,13 @@ export interface ExperienceOption {
 export const EXPERIENCES: ExperienceOption[] = [
   {
     id: "classic",
-    label: "📖 Full Narrative View",
+    label: "Narrative History",
     renderer: "classic",
     available: true,
   },
   {
     id: "enhanced",
-    label: "⚡ Quick Executive Brief",
+    label: "Evolutionary Brief",
     renderer: "enhanced",
     available: true,
   },

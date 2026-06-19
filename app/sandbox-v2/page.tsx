@@ -551,6 +551,10 @@ export default function SandboxV2() {
     }
   }
 
+  function dismissInvite() {
+    setInvite(false);
+  }
+
   function toggleBloom(node: Exclude<Bloom, null>) {
     if (node === "view") setInvite(false); // engaging the control answers the invite
     setOpenBloom((prev) => (prev === node ? null : node));
@@ -981,6 +985,7 @@ export default function SandboxV2() {
       data-wavefront={wavefront}
       data-cluster={cluster}
       data-dim={openBloom ? "true" : undefined}
+      data-invite={inviteActive ? "true" : undefined}
     >
       {/* Persistent glass header, three zones:
           LEFT  → Portfolio (scroll-to-top)
@@ -1021,15 +1026,21 @@ export default function SandboxV2() {
             onClick={() => toggleBloom("view")}
             aria-label={`View mode: ${activeExperience.label}. Tap to switch.`}
           >
-            <span className="kc-toggle-dot" aria-hidden="true" />
             {activeExperience.label}
-            <span className="kc-caret" aria-hidden="true">
-              ▾
-            </span>
           </button>
           {inviteActive && (
             <div className="kc-invite" role="status">
-              Try the Quick Executive Brief for a fast, high-signal tour
+              <span className="kc-invite-text">
+                Experience the evolution — switch to the Evolutionary Brief for
+                high-density systemic evidence.
+              </span>
+              <button
+                type="button"
+                className="kc-invite-dismiss"
+                onClick={dismissInvite}
+              >
+                Dismiss
+              </button>
             </div>
           )}
           {openBloom === "view" && (
@@ -1063,6 +1074,7 @@ export default function SandboxV2() {
           <button
             type="button"
             className="kc kc-identity"
+            data-chosen={identity ? "true" : undefined}
             aria-haspopup="true"
             aria-expanded={openBloom === "identity"}
             onClick={() => toggleBloom("identity")}
@@ -1070,16 +1082,7 @@ export default function SandboxV2() {
               identity ? identity.label : "not chosen"
             }. Tap to choose.`}
           >
-            {identity ? (
-              <>
-                {identity.label}{" "}
-                <span className="kc-caret" aria-hidden="true">
-                  ▾
-                </span>
-              </>
-            ) : (
-              "Who are you?"
-            )}
+            {identity ? identity.label : "Who are you?"}
           </button>
           {openBloom === "identity" && (
             <div
@@ -1120,12 +1123,7 @@ export default function SandboxV2() {
           aria-label={`Theme: ${themeMode}. Tap to choose.`}
           title="Theme"
         >
-          <span aria-hidden="true">
-            {themeMode === "auto" ? "💻" : theme === "dark" ? "🌙" : "☀️"}
-          </span>
-          <span className="kc-caret" aria-hidden="true">
-            ▾
-          </span>
+          {THEME_MODES.find((m) => m.id === themeMode)?.label ?? "Theme"}
         </button>
         {openBloom === "theme" && (
           <div className="kc-bloom kc-bloom-theme" role="listbox" aria-label="Theme">
@@ -1143,7 +1141,7 @@ export default function SandboxV2() {
                   setOpenBloom(null);
                 }}
               >
-                <span aria-hidden="true">{m.icon}</span> {m.label}
+                {m.label}
               </button>
             ))}
           </div>

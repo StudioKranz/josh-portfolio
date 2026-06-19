@@ -1113,6 +1113,15 @@
   pointer-events: none;
 }
 
+/* First-visit invitation: recede the canvas so all focus lands on the control
+   bar + the evolution callout. Controls sit above this (separate z-layer). */
+.sbx[data-invite="true"] .sbx-main,
+.sbx[data-invite="true"] .sbx-classic {
+  filter: blur(6px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
 /* A clean, uniform HORIZONTAL wavefront that starts at the absolute top ceiling
    (y:0) and travels straight down. The optional --wave-arc-depth (default 0 =
    perfectly flat) adds only a subtle, scaled bow — never an aggressive plunging
@@ -1248,21 +1257,19 @@
   opacity: 0.7;
 }
 
-/* Mode toggle affordance — make the view keycap read as an engaged mechanical
-   switch: a live status dot, a subtle inset "pressed" face, and the caret. */
+/* Mode toggle affordance — purely typographic + structural (no symbols): the
+   engaged view keycap carries a subtle inset "pressed" face and a quiet active
+   fill so it reads as a mechanical switch, not a flat title. */
 .kc-toggle {
-  gap: 0.5rem;
+  background: var(--keycap-bg-hover);
   box-shadow: var(--keycap-shadow), inset 0 1px 1px rgba(255, 255, 255, 0.08),
-    inset 0 -2px 4px rgba(0, 0, 0, 0.16);
+    inset 0 -2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.kc-toggle-dot {
-  flex: none;
-  width: 7px;
-  height: 7px;
-  border-radius: 999px;
-  background: var(--accent-amber);
-  box-shadow: 0 0 7px rgba(212, 175, 55, 0.65);
+/* Chosen audience reads as engaged with the same quiet active fill. */
+.kc-identity[data-chosen="true"] {
+  background: var(--keycap-bg-hover);
+  box-shadow: var(--keycap-shadow), inset 0 -2px 5px rgba(0, 0, 0, 0.18);
 }
 
 /* --- Zoned nav: Portfolio (left) and Theme (right) float independently ----- */
@@ -1355,25 +1362,53 @@
 
 .kc-invite {
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + 14px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 1000;
-  max-width: min(78vw, 19rem);
-  white-space: nowrap;
-  padding: 0.4rem 0.8rem;
-  border-radius: 999px;
+  width: max-content;
+  max-width: min(84vw, 19rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
   border: 1px solid rgba(212, 175, 55, 0.4);
   background: var(--tray-bg);
-  backdrop-filter: blur(18px) saturate(180%);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  box-shadow: var(--glass-shadow);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: var(--tray-shadow);
   color: var(--text-bright);
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.04em;
-  pointer-events: none;
+  pointer-events: auto;
   animation: kc-invite-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.kc-invite-text {
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.kc-invite-dismiss {
+  align-self: flex-end;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.kc-invite-dismiss:hover {
+  color: var(--text-bright);
+}
+
+.kc-invite-dismiss:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
 }
 
 @keyframes kc-invite-in {
@@ -1485,17 +1520,12 @@
   outline-offset: 2px;
 }
 
+/* Active chip — communicated purely through fill + weight (no symbols). */
 .kc-chip[data-active="true"] {
   border-color: rgba(212, 175, 55, 0.6);
-  background: rgba(212, 175, 55, 0.14);
+  background: rgba(212, 175, 55, 0.16);
   color: var(--accent-amber);
   font-weight: 700;
-}
-
-/* Selected chip carries a leading check so the active state is unmistakable. */
-.kc-chip[data-active="true"]::before {
-  content: "✓";
-  font-size: 0.7em;
 }
 
 .kc-chip[data-soon="true"] {
