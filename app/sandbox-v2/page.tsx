@@ -366,6 +366,9 @@ export default function SandboxV2() {
   const [featuredManual, setFeaturedManual] = useState(false);
   // Whether the lens-filtered "More Projects" section is expanded.
   const [moreOpen, setMoreOpen] = useState(false);
+  // Bumped on each audience selection to scroll the feed into focus + replay the
+  // featured artifact's entry-flash (confidence cue that the engine responded).
+  const [feedSignal, setFeedSignal] = useState(0);
   const clusterRef = useRef<HTMLDivElement>(null);
 
   // Restore persisted choices after mount (avoids hydration mismatch).
@@ -539,6 +542,9 @@ export default function SandboxV2() {
   function selectIdentity(id: string) {
     setIdentityId(id); // persisted by effect
     setOpenBloom(null);
+    setInvite(false);
+    // Drive the scroll-to-feed + featured entry-flash (effect below).
+    setFeedSignal((n) => n + 1);
   }
 
   function selectExperience(opt: ExperienceOption) {
@@ -724,6 +730,20 @@ export default function SandboxV2() {
     };
   }, [openBloom]);
 
+  // On an audience selection, smoothly center the feed (V2 only). The featured
+  // card replays its entry-flash via its key. Reduced motion stays instant.
+  useEffect(() => {
+    if (feedSignal === 0) return; // skip the initial mount
+    if (prefersReducedMotion()) return;
+    const t = setTimeout(() => {
+      const el = document.querySelector(".featured-card");
+      if (!el) return; // no feed in V1 Classic
+      const y = el.getBoundingClientRect().top + window.scrollY - 120;
+      window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+    }, 60);
+    return () => clearTimeout(t);
+  }, [feedSignal]);
+
   // Node 1 maps the chosen audience identity to an underlying lens; the
   // renderers sort/spotlight by that lens exactly as before.
   const identity =
@@ -849,12 +869,22 @@ export default function SandboxV2() {
           <h1 className="sbx-exec-name">{MASTER.name}</h1>
           <p className="sbx-exec-role">{MASTER.role}</p>
           <p className="sbx-exec-thesis">{MASTER.thesis}</p>
+          <p className="sbx-exec-links">
+            <a href="/why">Why this work</a>
+            <span className="sep" aria-hidden="true">
+              ·
+            </span>
+            <a href="/how-i-work">How I work</a>
+          </p>
         </header>
 
         {/* The feed leads with the strongest artifact; the lens-matched primary
             work flows beneath in a balanced two-column catalog (natural card
             heights, no stretched half-blanks). */}
-        <FeaturedCard project={featuredProject} />
+        <FeaturedCard
+          key={`feat-${featuredProject.id}-${feedSignal}`}
+          project={featuredProject}
+        />
 
         {feedPrimary.length > 0 && (
           <section className="catalog-columns">

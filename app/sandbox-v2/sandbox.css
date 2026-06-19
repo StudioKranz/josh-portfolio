@@ -194,6 +194,30 @@
   color: var(--text-body);
 }
 
+/* Tight, low-profile process anchors beneath the designation. */
+.sbx-exec-links {
+  margin: 0.7rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.sbx-exec-links a {
+  color: var(--text-bright);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.sbx-exec-links a:hover {
+  border-bottom-color: var(--accent-amber);
+}
+
+.sbx-exec-links .sep {
+  margin: 0 0.55rem;
+  color: var(--hairline);
+}
+
 .sbx-name {
   font-size: clamp(2rem, 4vw, 2.75rem);
   font-weight: 700;
@@ -626,6 +650,20 @@
 .sbx[data-renderer="enhanced"] .featured-card {
   margin-top: 1rem;
   margin-bottom: 2.25rem;
+  /* Elegant entry-flash — replays on each audience selection (keyed remount),
+     confirming the engine responded. Disabled under prefers-reduced-motion. */
+  animation: featured-enter 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes featured-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .sbx[data-renderer="enhanced"] .project-card {
@@ -926,6 +964,33 @@
 .featured-cta:focus-visible {
   outline: 2px solid var(--accent-cyan);
   outline-offset: 2px;
+}
+
+/* Desktop: Apple-style centered focus — a narrower, centered featured module
+   with a centered headline + visual strip, while the supporting highlights
+   (body) stay left-aligned for natural scanning. */
+@media (min-width: 769px) {
+  .featured-card {
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .featured-head {
+    text-align: center;
+    align-items: center;
+  }
+  .featured-strip {
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  .featured-shot {
+    width: clamp(150px, 20%, 196px);
+    height: 150px;
+  }
+  .featured-meta {
+    justify-content: flex-start;
+  }
 }
 
 /* --- Lens-filtered "More Projects" collapse -------------------------------
@@ -1752,6 +1817,37 @@
   .featured-meta {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  /* Highlights become a compact inline string (· separated) — no bulky pills. */
+  .featured-highlights {
+    flex: none;
+    display: block;
+    gap: 0;
+    font-size: 0.76rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+  .featured-highlights li {
+    display: inline;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: inherit;
+    color: inherit;
+  }
+  .featured-highlights li::before {
+    content: "·";
+    width: auto;
+    height: auto;
+    margin: 0 0.4rem;
+    background: none;
+    border-radius: 0;
+    color: var(--accent-amber);
+  }
+  .featured-highlights li:first-child::before {
+    content: "";
+    margin: 0;
   }
 
   /* Keep the Tuning Lab drawer fully on-screen and above the cluster switcher. */
