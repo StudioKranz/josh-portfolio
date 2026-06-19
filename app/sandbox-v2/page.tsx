@@ -24,11 +24,26 @@ const STORAGE = {
   tune: "sbx_tune",
   wavefront: "sbx_wavefront",
   scrollStart: "sbx_scrollstart",
+  featured: "sbx_featured",
 };
 
 type Theme = "light" | "dark";
 type Cluster = "a" | "b" | "c";
 type Bloom = "identity" | "view" | null;
+
+// Featured Artifact Spotlight — which project anchors the top of the V2 feed.
+// Internal evaluation control (Tuning Lab); RoomBridge is the default.
+const FEATURED_OPTIONS = [
+  "roombridge",
+  "relicworld",
+  "attune",
+  "apple-experience-systems",
+] as const;
+type FeaturedId = (typeof FEATURED_OPTIONS)[number];
+const FEATURED_IDS: readonly string[] = FEATURED_OPTIONS;
+function isFeatured(v: string | null): v is FeaturedId {
+  return v != null && FEATURED_IDS.includes(v);
+}
 
 function isRenderer(v: string): v is Renderer {
   return v === "classic" || v === "enhanced";
@@ -236,6 +251,67 @@ function ProjectCard({
 }
 
 // ---------------------------------------------------------------------------
+// Featured artifact — the project that anchors the absolute top of the V2 feed.
+// Not a boxed card: an open editorial entry leading with the strongest visual.
+// ---------------------------------------------------------------------------
+
+function FeaturedVisual({ project }: { project: SandboxProject }) {
+  const hero =
+    project.featuredImage ??
+    project.evidence.find(
+      (e) => e.type === "image" && e.securityTier === "public",
+    )?.path ??
+    null;
+  const [errored, setErrored] = useState(false);
+
+  if (!hero || errored) {
+    return (
+      <div className="featured-visual media-placeholder">
+        <span className="ph-label">Spatial capture</span>
+        <span className="ph-sub">
+          {project.title} — strongest authentic frame pending.
+        </span>
+      </div>
+    );
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      className="featured-visual"
+      src={hero}
+      alt={`${project.title} — featured spatial evidence`}
+      onError={() => setErrored(true)}
+    />
+  );
+}
+
+function FeaturedCard({ project }: { project: SandboxProject }) {
+  const kicker = project.featuredKicker ?? project.subtitle;
+  const highlights =
+    project.highlights && project.highlights.length > 0
+      ? project.highlights
+      : project.metadata.tags;
+  return (
+    <article className="featured-card" data-featured="true">
+      <p className="featured-eyebrow">Featured work</p>
+      <FeaturedVisual project={project} />
+      <div className="featured-body">
+        <h2 className="featured-title">{project.title}</h2>
+        <p className="featured-kicker">{kicker}</p>
+        <ul className="featured-highlights">
+          {highlights.map((h) => (
+            <li key={h}>{h}</li>
+          ))}
+        </ul>
+        <a className="featured-cta" href={project.href}>
+          Explore <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </article>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // The page — control surface + renderer.
 // ---------------------------------------------------------------------------
 
@@ -258,6 +334,8 @@ export default function SandboxV2() {
   const [tune, setTune] = useState<Record<TuneKey, number>>(TUNE_DEFAULTS);
   const [tuneOpen, setTuneOpen] = useState(false);
   const [wavefront, setWavefront] = useState<Wavefront>("crisp");
+  // Which project anchors the top of the V2 feed (Tuning Lab evaluation control).
+  const [featured, setFeatured] = useState<FeaturedId>("roombridge");
   const clusterRef = useRef<HTMLDivElement>(null);
 
   // Restore persisted choices after mount (avoids hydration mismatch).
@@ -274,6 +352,8 @@ export default function SandboxV2() {
       if (isWavefront(w)) setWavefront(w);
       if (localStorage.getItem(STORAGE.scrollStart) === "true")
         setScrollStart(true);
+      const f = localStorage.getItem(STORAGE.featured);
+      if (isFeatured(f)) setFeatured(f);
     } catch {
       /* localStorage unavailable — fall back to defaults */
     }
@@ -419,7 +499,17 @@ export default function SandboxV2() {
     if (!opt.available || !opt.renderer) return;
     setOpenBloom(null);
     if (opt.renderer === renderer) return; // already there — no-op
-    // Manual switching is instant; the wave is reserved for the intro only.
+
+    // V1 -> V2 plays the dramatic rolling-arc reinterpretation sweep.
+    // V2 -> V1 is instant and animation-free for a fast, high-performance exit.
+    const enteringEnhanced =
+      renderer === "classic" && opt.renderer === "enhanced";
+    if (enteringEnhanced && !prefersReducedMotion()) {
+      setPrevRenderer("classic");
+      setRenderer("enhanced");
+      setWaving(true);
+      return;
+    }
     setRenderer(opt.renderer);
   }
 
@@ -497,6 +587,26 @@ export default function SandboxV2() {
     }
   }
 
+  function updateFeatured(value: FeaturedId) {
+    setFeatured(value);
+    try {
+      localStorage.setItem(STORAGE.featured, value);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  // Clear the onboarding flag and reload so the first-visit intro replays —
+  // a quick loop for evaluating the cold-open sweep with the current settings.
+  function resetFirstVisit() {
+    try {
+      localStorage.removeItem(STORAGE.renderer);
+    } catch {
+      /* ignore */
+    }
+    window.location.reload();
+  }
+
   // Restore Tuning Lab values from storage and apply them to :root on mount.
   useEffect(() => {
     let restored: Record<TuneKey, number> = TUNE_DEFAULTS;
@@ -562,22 +672,16 @@ export default function SandboxV2() {
     return [...matches, ...rest];
   }, [perspective, matches]);
 
-  const lensIntro =
-    perspective === "curious" ? (
-      <>Showing every exhibit. Pick a lens to re-sort by who the work matters to.</>
-    ) : matches.length > 0 ? (
-      <>
-        Lens: <strong>{activeLens.label}</strong> — spotlighting {matches.length}{" "}
-        {matches.length === 1 ? "exhibit" : "exhibits"} most relevant to this
-        view. {activeLens.blurb}
-      </>
-    ) : (
-      <>
-        Lens: <strong>{activeLens.label}</strong> — no exhibits are tagged for
-        this view yet. {activeLens.blurb} (Apple Experience Systems and Sonic
-        Experience Design are next in the build queue.)
-      </>
-    );
+  // V2 executive feed: pull the chosen featured artifact to the absolute top,
+  // then let the rest flow in lens-sorted order. Every node stays present.
+  const featuredProject = useMemo(
+    () => PORTFOLIO_DATABASE.find((p) => p.id === featured) ?? ordered[0],
+    [featured, ordered],
+  );
+  const feedRest = useMemo(
+    () => ordered.filter((p) => p.id !== featuredProject.id),
+    [ordered, featuredProject],
+  );
 
   // Either renderer, on demand — so the wave can mount both at once.
   function renderMain(r: Renderer) {
@@ -640,25 +744,20 @@ export default function SandboxV2() {
     }
     return (
       <main className="sbx-main">
-        <header className="sbx-header">
-          <h1 className="sbx-name">{MASTER.name}</h1>
-          <p className="sbx-role">{MASTER.role}</p>
-          <p className="sbx-thesis">{MASTER.thesis}</p>
-          <p className="sbx-lens-intro">{lensIntro}</p>
+        {/* Executive split: V2 compresses the intro to a single razor-thin
+            designation so the featured artifact lands in the first viewport. */}
+        <header className="sbx-header sbx-header-exec">
+          <p className="sbx-designation">
+            <span className="sbx-designation-name">{MASTER.name}</span> — Builder
+            of spatial, AI, and experience systems.
+          </p>
         </header>
 
-        <div className="sbx-banner">
-          <b>Phase 1 proof of concept.</b> One content source, multiple
-          renderers. Tap the floating glass keys to choose an <b>audience</b>{" "}
-          and an <b>experience</b> (V1–V4); choices persist across reloads.
-          RoomBridge&rsquo;s images are real; RelicWorld&rsquo;s are
-          intentionally absent to show the graceful placeholder, and every 🔒
-          item shows the gated-vault treatment.
-        </div>
-
-        <h2 className="sbx-grid-label">Selected work</h2>
-        <section className="portfolio-grid">
-          {ordered.map((project) => (
+        {/* The feed itself leads with the strongest artifact, then the rest of
+            the database flows into the same grid with no hard dividers. */}
+        <section className="portfolio-grid portfolio-grid-feed">
+          <FeaturedCard project={featuredProject} />
+          {feedRest.map((project) => (
             <ProjectCard
               key={project.id}
               project={project}
@@ -688,6 +787,7 @@ export default function SandboxV2() {
       data-perspective={perspective}
       data-theme={theme}
       data-wavefront={wavefront}
+      data-cluster={cluster}
       data-dim={openBloom ? "true" : undefined}
     >
       {/* Independent glass "typewriter key" artifacts. Sequence (left → right):
@@ -859,6 +959,21 @@ export default function SandboxV2() {
                 ))}
               </select>
             </label>
+            <label className="tune-row tune-select-row">
+              <span className="tune-name">Featured artifact spotlight</span>
+              <select
+                className="tune-select"
+                value={featured}
+                onChange={(e) => updateFeatured(e.target.value as FeaturedId)}
+                aria-label="Featured artifact anchoring the top of the V2 feed"
+              >
+                {FEATURED_OPTIONS.map((id) => (
+                  <option key={id} value={id}>
+                    {PORTFOLIO_DATABASE.find((p) => p.id === id)?.title ?? id}
+                  </option>
+                ))}
+              </select>
+            </label>
             <label className="tune-row tune-check-row">
               <input
                 type="checkbox"
@@ -874,6 +989,13 @@ export default function SandboxV2() {
                 First visit only — holds in V1 until the first scroll.
               </span>
             </label>
+            <button
+              type="button"
+              className="tune-firstvisit"
+              onClick={resetFirstVisit}
+            >
+              <span aria-hidden="true">🔄</span> Reset First Visit State
+            </button>
             <button type="button" className="tune-reset" onClick={resetTune}>
               Reset to defaults
             </button>

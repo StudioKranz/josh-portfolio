@@ -66,6 +66,11 @@ export interface SandboxProject {
   maturity: Maturity;
   maturityLabel: string;
   href: string;
+  /** Optional featured-artifact fields used when this project anchors the V2
+   *  executive feed. All copy is drawn from existing vetted narrative/status. */
+  featuredKicker?: string;
+  featuredImage?: string;
+  highlights?: string[];
   metadata: {
     date: string;
     hardware: string;
@@ -195,6 +200,13 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     maturity: "prototype",
     maturityLabel: "Early visionOS prototype",
     href: "/work/roombridge",
+    featuredKicker: "Spatial computing prototype for Apple Vision Pro",
+    featuredImage: "/work/roombridge-surfaces.png",
+    highlights: [
+      "Built and tested on device",
+      "32 spatial planes mapped in prototype capture",
+      "Room-scale transformation system",
+    ],
     metadata: {
       date: "June 2025",
       hardware: "Apple Vision Pro",
@@ -260,6 +272,12 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     maturity: "prototype",
     maturityLabel: "Earlier prototype",
     href: "/work/worldtag",
+    featuredKicker: "Location-based spatial gameplay prototype for iOS",
+    highlights: [
+      "Three-phase spatial state machine",
+      "Asymmetric hysteresis absorbs GPS jitter",
+      "Deterministic and fully on-device — no backend",
+    ],
     metadata: {
       date: "Earlier prototype · revisited 2026",
       hardware: "iPhone · iOS",
@@ -408,6 +426,12 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     maturity: "exploration",
     maturityLabel: "Design exploration",
     href: "/work/attune",
+    featuredKicker: "Emotional-context system concept & interface framework",
+    highlights: [
+      "Real-time tone controls",
+      "Explicit emotional consent",
+      "Gentle modes that scale back density and pacing",
+    ],
     metadata: {
       date: "Design exploration",
       hardware: "Concept",
@@ -492,6 +516,12 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     maturity: "deployed",
     maturityLabel: "Live operational · Apple retail",
     href: "#",
+    featuredKicker: "Operational systems & team leadership in Apple Retail",
+    highlights: [
+      "Apple Retail professional since 2007",
+      "Genius and Product Zone Lead experience",
+      "Vision Pro launch readiness participation",
+    ],
     metadata: {
       date: "Apple Retail · since 2007",
       hardware: "Genius Bar · sales floor",

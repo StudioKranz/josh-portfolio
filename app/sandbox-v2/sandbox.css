@@ -146,13 +146,45 @@
 .sbx-main {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 7.75rem 1.5rem 5rem; /* tighter top: hero sits close under the cluster */
+  /* Top padding tracks the fixed cluster's height per A/B/C layout, so the thin
+     V2 designation sits just under the keys with no dead-air gap on any layout. */
+  padding: var(--v2-top, 6.5rem) 1.5rem 5rem;
+}
+
+/* Cluster reserve: A is one row, B/C are two-row constellations. */
+.sbx[data-cluster="a"] {
+  --v2-top: 4.75rem;
+}
+.sbx[data-cluster="b"] {
+  --v2-top: 7.1rem;
+}
+.sbx[data-cluster="c"] {
+  --v2-top: 7.6rem;
 }
 
 .sbx-header {
   max-width: 44rem;
   margin-left: auto;
   margin-right: auto; /* center the editorial hero column; text stays left */
+}
+
+/* --- V2 executive designation — a single razor-thin intro line ------------- */
+.sbx-header-exec {
+  max-width: 60rem;
+}
+
+.sbx-designation {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.7vw, 1.2rem);
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--text-muted);
+}
+
+.sbx-designation-name {
+  color: var(--text-bright);
+  font-weight: 700;
 }
 
 .sbx-name {
@@ -684,6 +716,131 @@
 .sbx[data-renderer="enhanced"] .project-card[data-spotlight="true"] {
   border-color: var(--spotlight-border);
   box-shadow: var(--spotlight-shadow);
+}
+
+/* --- Featured artifact — the V2 feed's full-width lead entry --------------- */
+/* Pull the feed tight to the thin hero so the visual lands in view 1. */
+.sbx[data-renderer="enhanced"] .portfolio-grid-feed {
+  margin-top: 1.25rem;
+}
+
+/* Open editorial block (not a boxed card): spans the full grid, leads visual. */
+.featured-card {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 0;
+}
+
+.featured-eyebrow {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-amber);
+}
+
+.featured-visual {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 56vh;
+  border-radius: 16px;
+}
+
+img.featured-visual {
+  display: block;
+  object-fit: cover;
+  background: var(--img-bg);
+  border: 1px solid var(--hairline);
+}
+
+/* Placeholder variant keeps the frosted mesh (and its flex centering) but
+   matches the large frame with a defined height, not the 16:9 image ratio. */
+.featured-visual.media-placeholder {
+  display: flex;
+  border-radius: 16px;
+  aspect-ratio: auto;
+  min-height: 300px;
+  max-height: 44vh;
+}
+
+.featured-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.featured-title {
+  margin: 0;
+  font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-bright);
+}
+
+.featured-kicker {
+  margin: 0;
+  font-size: clamp(1rem, 1.6vw, 1.15rem);
+  color: var(--text-muted);
+}
+
+.featured-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.7rem;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.featured-highlights li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--spotlight-border);
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.06);
+  font-size: 0.78rem;
+  color: var(--text-body);
+}
+
+.featured-highlights li::before {
+  content: "";
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--accent-amber);
+}
+
+.featured-cta {
+  align-self: flex-start;
+  margin-top: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 10px;
+  border: 1px solid var(--accent-amber);
+  color: var(--accent-amber);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.featured-cta:hover {
+  background: var(--accent-amber);
+  color: var(--canvas-bg);
+}
+
+.featured-cta:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
 }
 
 /* ===========================================================================
@@ -1236,6 +1393,36 @@
   font-size: 0.58rem;
   line-height: 1.4;
   color: var(--text-muted);
+}
+
+/* Hard reset for onboarding-loop testing — clears first-visit flag + reloads. */
+.tune-firstvisit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: var(--surface-card);
+  color: var(--text-bright);
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.tune-firstvisit:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.tune-firstvisit:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
 }
 
 .tune-reset {
