@@ -5,7 +5,7 @@ import BackLink from "@/components/BackLink";
 import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Why this work — Josh Rosenkranz",
+  title: "Core Philosophy — Josh Rosenkranz",
   description:
     "The throughline across every project: most technology asks what you're doing. This work asks what the experience is like.",
 };
@@ -55,11 +55,14 @@ const PROJECTS = [
 
 export default function Why() {
   return (
-    <Container className="pt-10">
-      <BackLink />
-      <header className="mt-8">
+    <>
+      <div className="site-nav">
+        <BackLink />
+      </div>
+      <Container className="pt-24">
+      <header>
         <h1 className="text-[34px] font-semibold leading-tight tracking-tight text-ink">
-          Why this work
+          Core Philosophy
         </h1>
         <p className="mt-2 text-[17px] text-muted">
           One person, the same human problems, from different angles.
@@ -117,6 +120,7 @@ export default function Why() {
       </p>
 
       <SiteFooter />
-    </Container>
+      </Container>
+    </>
   );
 }

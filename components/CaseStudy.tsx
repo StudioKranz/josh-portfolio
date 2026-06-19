@@ -21,22 +21,28 @@ export default function CaseStudy({
   children: ReactNode;
 }) {
   return (
-    <Container className="pt-10">
-      <BackLink />
-      <header className="mt-8">
-        <MaturityTag maturity={maturity} label={maturityLabel} />
-        <h1 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight text-ink">
-          {name}
-        </h1>
-        {eyebrow && (
-          <p className="mt-2 text-[11px] font-medium uppercase tracking-[0.16em] text-faint">
-            {eyebrow}
-          </p>
-        )}
-        <p className="mt-2 text-[17px] text-muted">{tagline}</p>
-      </header>
-      {children}
-      <SiteFooter />
-    </Container>
+    <>
+      {/* Persistent universal glass header — fixed, centered, matches the
+          sandbox control bar's placement for cross-site continuity. */}
+      <div className="site-nav">
+        <BackLink />
+      </div>
+      <Container className="pt-24">
+        <header>
+          <MaturityTag maturity={maturity} label={maturityLabel} />
+          <h1 className="mt-3 text-[34px] font-semibold leading-tight tracking-tight text-ink">
+            {name}
+          </h1>
+          {eyebrow && (
+            <p className="mt-2 text-[11px] font-medium uppercase tracking-[0.16em] text-faint">
+              {eyebrow}
+            </p>
+          )}
+          <p className="mt-2 text-[17px] text-muted">{tagline}</p>
+        </header>
+        {children}
+        <SiteFooter />
+      </Container>
+    </>
   );
 }

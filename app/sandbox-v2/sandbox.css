@@ -1,0 +1,2007 @@
+/* ===========================================================================
+   Multi-Renderer Portfolio Engine — Phase 1 Sandbox styles.
+
+   Everything is namespaced under `.sbx` so this prototype is fully isolated
+   from the live site. Two independent axes drive presentation, both set on the
+   `.sbx` root:
+     • data-renderer = classic | enhanced   (layout)
+     • data-theme    = light | dark          (color scheme)
+
+   Color tokens live ONLY inside the two theme scopes, so the production
+   homepage and global stylesheet are never affected.
+   =========================================================================== */
+
+.sbx {
+  min-height: 100vh;
+  background-color: var(--canvas-bg);
+  color: var(--text-body);
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica,
+    Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.sbx *,
+.sbx *::before,
+.sbx *::after {
+  box-sizing: border-box;
+}
+
+/* --- Theme scope: DARK (default stage) ----------------------------------- */
+.sbx[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas-bg: #121315;
+  --surface-card: #1a1c1e;
+  --surface-raised: #202325;
+  --text-muted: #8e939c;
+  --text-body: #c5c9d0;
+  --text-bright: #f5f6f7;
+  --accent-amber: #d4af37;
+  --accent-cyan: #a2e8dd;
+  --text-faint: #6b7079;
+  --line: rgba(255, 255, 255, 0.09);
+  --surface-thumb: #202325;
+  --hairline: rgba(255, 255, 255, 0.08);
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  --spotlight-border: rgba(212, 175, 55, 0.35);
+  --spotlight-shadow: 0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(212, 175, 55, 0.15);
+  --placeholder-border: rgba(255, 255, 255, 0.16);
+  --placeholder-stripe-a: rgba(255, 255, 255, 0.02);
+  --placeholder-stripe-b: rgba(255, 255, 255, 0.04);
+  --hover-bg: rgba(255, 255, 255, 0.06);
+  --glass-bg: rgba(26, 28, 30, 0.55);
+  --glass-bg-hover: rgba(26, 28, 30, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --glass-shadow-hover: 0 10px 40px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  --divider: rgba(255, 255, 255, 0.15);
+  --tray-bg: rgba(20, 22, 24, 0.92);
+  --tray-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
+  --subhint-bg: rgba(18, 19, 21, 0.6);
+  --img-bg: #000;
+  --keycap-bg: rgba(255, 255, 255, 0.06);
+  --keycap-bg-hover: rgba(255, 255, 255, 0.1);
+  --keycap-border: rgba(255, 255, 255, 0.14);
+  --keycap-shelf: rgba(255, 255, 255, 0.22);
+  --keycap-text: #f5f6f7;
+  --keycap-shadow: 0 4px 12px rgba(0, 0, 0, 0.35),
+    inset 0 1px 1px rgba(255, 255, 255, 0.18),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.25);
+  --keycap-shadow-active: 0 2px 6px rgba(0, 0, 0, 0.45),
+    inset 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* --- Theme scope: LIGHT (editorial paper) -------------------------------- */
+.sbx[data-theme="light"] {
+  color-scheme: light;
+  --canvas-bg: #f9f9fa;
+  --surface-card: #ffffff;
+  --surface-raised: #f1f1f3;
+  --text-muted: #6e737a;
+  --text-body: #2c2e31;
+  --text-bright: #121315;
+  --accent-amber: #9a7b16; /* deeper gold for readable text/borders on white */
+  --accent-cyan: #3e8e82;
+  --text-faint: #9a9a9a;
+  --line: #e7e6e2;
+  --surface-thumb: #f6f5f1;
+  --hairline: rgba(0, 0, 0, 0.1);
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-shadow: 0 12px 30px rgba(20, 20, 30, 0.08);
+  --spotlight-border: rgba(154, 123, 22, 0.45);
+  --spotlight-shadow: 0 12px 30px rgba(20, 20, 30, 0.08),
+    0 0 0 1px rgba(154, 123, 22, 0.25);
+  --placeholder-border: rgba(0, 0, 0, 0.16);
+  --placeholder-stripe-a: rgba(0, 0, 0, 0.02);
+  --placeholder-stripe-b: rgba(0, 0, 0, 0.045);
+  --hover-bg: rgba(0, 0, 0, 0.05);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-bg-hover: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: 0 4px 30px rgba(20, 20, 30, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --glass-shadow-hover: 0 10px 40px rgba(20, 20, 30, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --divider: rgba(0, 0, 0, 0.12);
+  --tray-bg: rgba(250, 250, 251, 0.95);
+  --tray-shadow: 0 18px 50px rgba(20, 20, 30, 0.18);
+  --subhint-bg: rgba(255, 255, 255, 0.7);
+  --img-bg: #e9e9ec;
+  --keycap-bg: rgba(255, 255, 255, 0.55);
+  --keycap-bg-hover: rgba(255, 255, 255, 0.8);
+  --keycap-border: rgba(0, 0, 0, 0.1);
+  --keycap-shelf: rgba(0, 0, 0, 0.18);
+  --keycap-text: #1b1b1b;
+  --keycap-shadow: 0 4px 12px rgba(20, 20, 30, 0.14),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.08);
+  --keycap-shadow-active: 0 2px 6px rgba(20, 20, 30, 0.2),
+    inset 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+/* Smooth "stage lighting" shifts on the surfaces that change with the theme. */
+.sbx .project-card,
+.sbx .human-insight-callout,
+.sbx .tech-tag,
+.sbx .kc,
+.sbx .kc-switcher,
+.sbx .media-missing,
+.sbx .evidence-artifact,
+.sbx .sbx-footer {
+  transition: background-color 0.4s ease, border-color 0.4s ease,
+    box-shadow 0.4s ease, color 0.4s ease;
+}
+
+/* --- Layout shell --------------------------------------------------------- */
+
+.sbx-main {
+  max-width: 1400px;
+  margin: 0 auto;
+  /* Top padding tracks the fixed cluster's height per A/B/C layout, so the thin
+     V2 designation sits just under the keys with no dead-air gap on any layout. */
+  padding: var(--v2-top, 6.5rem) 1.5rem 5rem;
+}
+
+/* Cluster reserve: A is one row, B/C are two-row constellations. */
+.sbx[data-cluster="a"] {
+  --v2-top: 4.5rem;
+}
+.sbx[data-cluster="b"] {
+  --v2-top: 7.1rem;
+}
+.sbx[data-cluster="c"] {
+  --v2-top: 7.6rem;
+}
+
+.sbx-header {
+  max-width: 44rem;
+  margin-left: auto;
+  margin-right: auto; /* center the editorial hero column; text stays left */
+}
+
+/* --- V2 executive header — a compact-but-present introduction --------------
+   A premium middle ground: name still prominent, role + a tight discipline
+   summary retained, but on tighter margins and a smaller type scale than V1 so
+   the featured artifact still sits high in the first viewport. */
+.sbx-header-exec {
+  max-width: 46rem;
+}
+
+.sbx-exec-name {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-bright);
+}
+
+.sbx-exec-role {
+  margin: 0.3rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.sbx-exec-thesis {
+  margin: 0.6rem 0 0;
+  max-width: 40rem;
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+  line-height: 1.5;
+  color: var(--text-body);
+}
+
+/* Tight, low-profile process anchors beneath the designation. */
+.sbx-exec-links {
+  margin: 0.7rem 0 0;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.sbx-exec-links a {
+  color: var(--text-bright);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.sbx-exec-links a:hover {
+  border-bottom-color: var(--accent-amber);
+}
+
+.sbx-exec-links .sep {
+  margin: 0 0.55rem;
+  color: var(--hairline);
+}
+
+.sbx-name {
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-bright);
+  margin: 0;
+}
+
+.sbx-role {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.sbx-thesis {
+  margin: 1.5rem 0 0;
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--text-bright);
+}
+
+.sbx-lens-intro {
+  margin: 1.25rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--text-muted);
+}
+
+.sbx-lens-intro strong {
+  color: var(--accent-amber);
+  font-weight: 600;
+}
+
+/* --- Proof-of-concept banner --------------------------------------------- */
+
+.sbx-banner {
+  max-width: 44rem;
+  margin: 2.5rem auto 0; /* align with the centered hero column */
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--accent-cyan);
+  border-radius: 10px;
+  background: var(--hover-bg);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.sbx-banner b {
+  color: var(--text-body);
+  font-weight: 600;
+}
+
+/* --- Section heading above the grid -------------------------------------- */
+
+.sbx-grid-label {
+  margin: 3rem 0 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ===========================================================================
+   CARD MARKUP (rendered identically in both modes — CSS does the rest)
+   =========================================================================== */
+
+.project-card {
+  position: relative;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.project-type-badge {
+  text-transform: uppercase;
+}
+
+.project-card h2 {
+  color: var(--text-bright);
+  margin: 0;
+}
+
+.editorial-subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--text-muted);
+}
+
+.status-line {
+  margin: 0.75rem 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.narrative-body h4 {
+  margin: 1.5rem 0 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.narrative-body p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.human-insight-callout {
+  margin: 1.75rem 0;
+}
+
+.human-insight-callout p {
+  margin: 0;
+}
+
+/* --- Evidence (Layer 0) --------------------------------------------------- */
+
+.evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.9rem;
+}
+
+.evidence-figure {
+  margin: 0;
+}
+
+.evidence-figure img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  display: block;
+  object-fit: cover;
+  background: var(--img-bg);
+  border: 1px solid var(--hairline);
+}
+
+/* Missing image — an explicit, actionable callout naming the expected path
+   (never a silent generic gray placeholder). Dashed = "drop the file here". */
+.media-missing {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.75rem;
+  text-align: center;
+  border: 1px dashed var(--placeholder-border);
+  background: var(--hover-bg);
+}
+
+.media-missing .mm-label {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.media-missing .mm-path {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: var(--accent-amber);
+  word-break: break-all;
+  max-width: 30ch;
+}
+
+/* Non-image artifact — presented openly as a readable, described asset. */
+.evidence-artifact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--accent-cyan);
+  border-radius: 10px;
+  background: var(--hover-bg);
+}
+
+.evidence-artifact .evidence-artifact-type {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+}
+
+.evidence-artifact .evidence-artifact-label {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--text-body);
+}
+
+.evidence-figure figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.ev-eyebrow {
+  display: block;
+  margin-bottom: 0.2rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
+}
+
+/* --- Tech tags ------------------------------------------------------------ */
+
+.tech-tags {
+  margin-top: 1.5rem;
+}
+
+.tech-tag {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+
+/* ===========================================================================
+   RENDERER 1 — CLASSIC  (mirrors the live production homepage)
+
+   Layout, type scale, content width (44rem), and project rows are matched to
+   app/page.tsx so the baseline clearly reads as today's published portfolio.
+   =========================================================================== */
+
+.sbx-classic {
+  max-width: 44rem; /* matches Tailwind max-w-content; centered, text left */
+  margin: 0 auto;
+  padding: 7.75rem 1.5rem 3rem; /* tighter top: hero sits close under the cluster */
+}
+
+.cl-name {
+  margin: 0;
+  font-size: 2.5rem; /* 40px */
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text-bright);
+}
+
+.cl-role {
+  margin: 0.75rem 0 0;
+  font-size: 0.9375rem; /* 15px */
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.cl-thesis {
+  margin: 1.75rem 0 0;
+  max-width: 34rem;
+  font-size: 1.1875rem; /* 19px */
+  line-height: 2rem;
+  color: var(--text-bright);
+}
+
+.cl-capabilities {
+  margin: 1.25rem 0 0;
+  max-width: 40rem;
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.5rem;
+  color: var(--text-faint);
+}
+
+.cl-links {
+  margin: 1.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.cl-links a {
+  color: inherit;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+
+.cl-links a:hover {
+  text-decoration: underline;
+}
+
+.cl-links .sep {
+  margin: 0 0.5rem;
+  color: var(--text-faint);
+}
+
+.cl-section-label {
+  margin: 5rem 0 0;
+  font-size: 0.6875rem; /* 11px */
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--text-faint);
+}
+
+.cl-list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+}
+
+.cl-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--line);
+  text-decoration: none;
+  color: inherit;
+}
+
+.cl-thumb {
+  flex: none;
+  width: 120px;
+  height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--surface-thumb);
+  font-size: 0.625rem; /* 10px */
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+
+.cl-row-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.cl-row-name {
+  display: block;
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  color: var(--text-bright);
+  text-underline-offset: 4px;
+}
+
+.cl-row:hover .cl-row-name {
+  text-decoration: underline;
+}
+
+.cl-row-summary {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8125rem; /* 13px */
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+.cl-maturity {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .cl-maturity {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+}
+
+.cl-maturity .dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 999px;
+}
+
+.cl-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 6rem;
+  padding: 1.5rem 0 1rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.cl-footer a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.cl-footer a:hover {
+  color: var(--text-bright);
+}
+
+/* ===========================================================================
+   RENDERER 2 — ENHANCED  (editorial, gridded case-study cards)
+   =========================================================================== */
+
+/* Balanced two-column catalog (CSS masonry): cards flow at their natural height
+   and never stretch into half-blank columns, so the lower feed reads uniform. */
+.sbx[data-renderer="enhanced"] .catalog-columns {
+  column-count: 2;
+  column-gap: 2.5rem;
+  margin-top: 1.5rem;
+}
+
+.sbx[data-renderer="enhanced"] .catalog-columns .project-card {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  margin: 0 0 2.5rem;
+}
+
+.sbx[data-renderer="enhanced"] .featured-card {
+  margin-top: 1rem;
+  margin-bottom: 2.25rem;
+  /* Elegant entry-flash — replays on each audience selection (keyed remount),
+     confirming the engine responded. Disabled under prefers-reduced-motion. */
+  animation: featured-enter 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes featured-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sbx[data-renderer="enhanced"] .project-card {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  background: var(--surface-card);
+  box-shadow: var(--card-shadow);
+}
+
+.sbx[data-renderer="enhanced"] .card-titles {
+  margin-top: 1rem;
+}
+
+/* Catalog title — smaller than the featured showcase for a clean hierarchy. */
+.sbx[data-renderer="enhanced"] .project-card h2 {
+  font-size: clamp(1.3rem, 2.2vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Uniform catalog rhythm: a compact, fixed-height horizontal evidence strip so
+   image-heavy and image-light cards share the same modest media footprint. */
+.sbx[data-renderer="enhanced"] .evidence-container {
+  margin-top: 1rem;
+}
+
+.sbx[data-renderer="enhanced"] .evidence-grid {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding-bottom: 0.3rem;
+  scrollbar-width: thin;
+}
+
+.sbx[data-renderer="enhanced"] .evidence-figure {
+  flex: 0 0 auto;
+  width: 150px;
+}
+
+.sbx[data-renderer="enhanced"] .evidence-figure img,
+.sbx[data-renderer="enhanced"] .evidence-grid .media-missing {
+  height: 92px;
+  aspect-ratio: auto;
+}
+
+/* Clean filmstrip thumbnails in the catalog — keep the delta vs text-only cards
+   small so rows never open an awkward half-blank gap. Full labels live on the
+   case-study page; the featured showcase carries the detailed captions. */
+.sbx[data-renderer="enhanced"] .evidence-figure figcaption {
+  display: none;
+}
+
+.sbx[data-renderer="enhanced"] .evidence-grid .media-missing .mm-path {
+  font-size: 0.6rem;
+}
+
+.sbx[data-renderer="enhanced"] .evidence-grid .evidence-artifact {
+  flex: 0 0 auto;
+  width: 220px;
+  height: 92px;
+  overflow: hidden;
+}
+
+.sbx[data-renderer="enhanced"] .evidence-artifact-label {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Bound the narrative blocks so the lower feed keeps a consistent rhythm; the
+   full case study lives behind "Read case study →". */
+.sbx[data-renderer="enhanced"] .narrative-body p {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Personal reflection — a warm, editorial pull-quote (no system-label bar). */
+.sbx[data-renderer="enhanced"] .human-insight-callout {
+  position: relative;
+  margin: 1.5rem 0 0;
+  padding: 0 0 0 1.75rem;
+  border: 0;
+}
+
+.sbx[data-renderer="enhanced"] .human-insight-callout::before {
+  content: "\201C";
+  position: absolute;
+  left: -0.1rem;
+  top: 0.15rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--accent-amber);
+  opacity: 0.4;
+}
+
+.sbx[data-renderer="enhanced"] .human-insight-callout p {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.sbx[data-theme="dark"] .human-insight-callout p {
+  color: #e7dbc6;
+}
+
+.sbx[data-theme="light"] .human-insight-callout p {
+  color: #5b4a34;
+}
+
+.sbx[data-renderer="enhanced"] .tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.sbx[data-renderer="enhanced"] .tech-tag {
+  font-size: 0.72rem;
+  color: var(--accent-cyan);
+  background: rgba(162, 232, 221, 0.06);
+  border: 1px solid rgba(162, 232, 221, 0.18);
+  padding: 0.25rem 0.6rem;
+  border-radius: 5px;
+}
+
+/* Spotlight ring for projects matching the active lens. */
+.sbx[data-renderer="enhanced"] .project-card[data-spotlight="true"] {
+  border-color: var(--spotlight-border);
+  box-shadow: var(--spotlight-shadow);
+}
+
+/* Per-card action link out to the dedicated case-study page. */
+.sbx[data-renderer="enhanced"] .card-cta {
+  align-self: flex-start;
+  margin-top: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  text-decoration: none;
+  transition: gap 0.2s ease, color 0.2s ease;
+}
+
+.sbx[data-renderer="enhanced"] .card-cta:hover {
+  gap: 0.6rem;
+  text-decoration: underline;
+}
+
+.sbx[data-renderer="enhanced"] .card-cta:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* --- Featured artifact — compact, low-profile product brief --------------- */
+/* Open editorial block (not a boxed card). A short horizontal image strip keeps
+   the visual present without dominating; sits just under the thin header. */
+.featured-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin: 0 0 0.5rem;
+}
+
+.featured-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.featured-eyebrow {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-amber);
+}
+
+.featured-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-bright);
+}
+
+.featured-kicker {
+  margin: 0;
+  font-size: clamp(0.92rem, 1.4vw, 1.05rem);
+  color: var(--text-muted);
+}
+
+/* Low-profile horizontal image strip — scrolls on narrow viewports. */
+.featured-strip {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding-bottom: 0.3rem;
+  scrollbar-width: thin;
+}
+
+.featured-shot {
+  flex: 0 0 auto;
+  width: clamp(160px, 22vw, 240px);
+  height: 162px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.featured-shot img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  background: var(--img-bg);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+}
+
+.featured-shot .media-missing {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 12px;
+}
+
+.featured-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.featured-highlights {
+  flex: 1 1 16rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.7rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.featured-highlights li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--spotlight-border);
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.06);
+  font-size: 0.78rem;
+  color: var(--text-body);
+}
+
+.featured-highlights li::before {
+  content: "";
+  flex: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--accent-amber);
+}
+
+.featured-cta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid var(--accent-amber);
+  color: var(--accent-amber);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.featured-cta:hover {
+  background: var(--accent-amber);
+  color: var(--canvas-bg);
+}
+
+.featured-cta:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* Desktop: Apple-style centered focus — a narrower, centered featured module
+   with a centered headline + visual strip, while the supporting highlights
+   (body) stay left-aligned for natural scanning. */
+@media (min-width: 769px) {
+  .featured-card {
+    max-width: 880px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .featured-head {
+    text-align: center;
+    align-items: center;
+  }
+  .featured-strip {
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+  .featured-shot {
+    width: clamp(150px, 20%, 196px);
+    height: 150px;
+  }
+  .featured-meta {
+    justify-content: flex-start;
+  }
+}
+
+/* --- Lens-filtered "More Projects" collapse -------------------------------
+   Rendered inside .sbx-main, which already centers + pads the column. */
+.more-projects {
+  margin-top: 2.5rem;
+}
+
+.more-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--card-border);
+  background: var(--surface-card);
+  color: var(--text-bright);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.more-toggle:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.more-toggle:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.more-toggle .more-chevron {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+/* ===========================================================================
+   EXPERIENCE WAVE — Classic <-> Enhanced reinterpretation
+
+   Dual-layer: the incoming renderer is in normal flow (it defines the final
+   height, so there's no reflow when the wave ends). The outgoing renderer is
+   an opaque overlay on top, clipped away by a gentle 9-point sine arc that
+   rolls down the page (ease-in-out, ~1.4s). The amber wavefront is a
+   drop-shadow on the clipped layer, so it traces the curved silhouette and
+   bends with the arc for free. Side/lower polygon bounds sit just off-screen,
+   so only the curved top edge is ever visible.
+   =========================================================================== */
+
+.sbx-stage {
+  position: relative;
+  overflow: hidden; /* contain the off-screen polygon bounds + taller overlay */
+}
+
+.sbx-layer-in {
+  position: relative;
+  z-index: 1;
+}
+
+.sbx-layer-out {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* Full stage height so the opaque overlay occludes the entire incoming layer
+     until the wave reveals it — no content "pops" ahead of the wavefront. */
+  height: 100%;
+  z-index: 2;
+  background: var(--canvas-bg);
+  /* Amber wavefront: traces the clipped (curved) silhouette — bends in sync.
+     Crisp core + a tunable halo (--wave-glow-intensity). */
+  filter: drop-shadow(0 0 1.5px var(--accent-amber))
+    drop-shadow(0 0 var(--wave-glow-intensity, 6px) rgba(212, 175, 55, 0.5));
+  /* Duration + curve are live-tunable from the Tuning Lab. */
+  animation-name: sbx-wave-roll;
+  animation-duration: var(--wave-duration, 1.4s);
+  animation-timing-function: cubic-bezier(
+    var(--wave-attack, 0.76),
+    0,
+    var(--wave-release, 0.24),
+    1
+  );
+  animation-fill-mode: forwards;
+  pointer-events: none; /* the overlay never intercepts input mid-sweep */
+  will-change: clip-path, filter;
+}
+
+/* --- Wavefront spectacle styles (data-wavefront on .sbx) ------------------ */
+
+/* Chromatic prism fringe — bold magenta/cyan RGB split straddling the edge. */
+.sbx[data-wavefront="chromatic"] .sbx-layer-out {
+  filter: drop-shadow(-3px -2px 2px rgba(255, 0, 128, 0.85))
+    drop-shadow(3px -2px 2px rgba(0, 225, 255, 0.85))
+    drop-shadow(0 0 calc(var(--wave-glow-intensity, 6px) + 2px)
+      rgba(214, 175, 55, 0.6));
+}
+
+/* Volumetric glass mist — a thick, soft atmospheric glow sweeping the edge. */
+.sbx[data-wavefront="volumetric"] .sbx-layer-out {
+  filter: drop-shadow(
+      0 0 calc(var(--wave-glow-intensity, 6px) * 3.5) rgba(212, 175, 55, 0.6)
+    )
+    drop-shadow(0 -2px 26px rgba(255, 255, 255, 0.4)) saturate(180%);
+}
+
+/* --- Bloom focus: recede the narrative content behind an open bloom --------
+   Applied only to the static content blocks — never the animating wave layers
+   (so the wave spectacle stays razor-crisp) and never the controls. */
+.sbx-main,
+.sbx-classic {
+  transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sbx[data-dim="true"] .sbx-main,
+.sbx[data-dim="true"] .sbx-classic {
+  filter: blur(8px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* First-visit invitation: recede the canvas so all focus lands on the control
+   bar + the evolution callout. Controls sit above this (separate z-layer). */
+.sbx[data-invite="true"] .sbx-main,
+.sbx[data-invite="true"] .sbx-classic {
+  filter: blur(6px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+/* A clean, uniform HORIZONTAL wavefront that starts at the absolute top ceiling
+   (y:0) and travels straight down. The optional --wave-arc-depth (default 0 =
+   perfectly flat) adds only a subtle, scaled bow — never an aggressive plunging
+   V. Each point: flat baseline + a gently weighted, down-scaled depth term. */
+@keyframes sbx-wave-roll {
+  from {
+    clip-path: polygon(
+      -5% 0%,
+      8.75% calc(0% + 0.134 * var(--wave-arc-depth, 0%)),
+      22.5% calc(0% + 0.247 * var(--wave-arc-depth, 0%)),
+      36.25% calc(0% + 0.323 * var(--wave-arc-depth, 0%)),
+      50% calc(0% + 0.35 * var(--wave-arc-depth, 0%)),
+      63.75% calc(0% + 0.323 * var(--wave-arc-depth, 0%)),
+      77.5% calc(0% + 0.247 * var(--wave-arc-depth, 0%)),
+      91.25% calc(0% + 0.134 * var(--wave-arc-depth, 0%)),
+      105% 0%,
+      105% 300%,
+      -5% 300%
+    );
+  }
+  to {
+    clip-path: polygon(
+      -5% 102%,
+      8.75% calc(102% + 0.134 * var(--wave-arc-depth, 0%)),
+      22.5% calc(102% + 0.247 * var(--wave-arc-depth, 0%)),
+      36.25% calc(102% + 0.323 * var(--wave-arc-depth, 0%)),
+      50% calc(102% + 0.35 * var(--wave-arc-depth, 0%)),
+      63.75% calc(102% + 0.323 * var(--wave-arc-depth, 0%)),
+      77.5% calc(102% + 0.247 * var(--wave-arc-depth, 0%)),
+      91.25% calc(102% + 0.134 * var(--wave-arc-depth, 0%)),
+      105% 102%,
+      105% 300%,
+      -5% 300%
+    );
+  }
+}
+
+/* ===========================================================================
+   CONTROL SURFACE — independent glass "typewriter key" artifacts
+
+   Three unlinked keycaps float over the page. The A/B/C cluster attribute on
+   the wrapper swaps their spatial arrangement (temporary layout spit-test).
+   Each key advances its own state on press; menus/bloom come later.
+   =========================================================================== */
+
+.kc-cluster {
+  position: fixed;
+  top: 1.1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999; /* always above content + the blurred narrative layer */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  max-width: calc(100vw - 1.5rem);
+}
+
+/* A/B/C are visibly distinct arrangements of the same three keys.
+   A — one clean horizontal row.
+   B — tight constellation: identity lifted onto a centered top row.
+   C — wide constellation: same stacked shape, generously spread. */
+.kc-cluster[data-cluster="a"] {
+  flex-wrap: nowrap;
+  gap: 1rem;
+}
+.kc-cluster[data-cluster="b"] {
+  column-gap: 0.6rem;
+  row-gap: 0.5rem;
+}
+.kc-cluster[data-cluster="c"] {
+  column-gap: 2.4rem;
+  row-gap: 0.9rem;
+}
+
+/* Constellations (B/C) float the identity key onto its own centered top row
+   and nest the theme + view keys beneath it; A keeps all three inline. */
+.kc-cluster[data-cluster="b"] .kc-slot-identity,
+.kc-cluster[data-cluster="c"] .kc-slot-identity {
+  order: -1;
+  flex-basis: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* The keycap — frosted glass with a beveled, pressable profile. */
+.kc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 1.1rem;
+  border-radius: 14px;
+  background: var(--keycap-bg);
+  color: var(--keycap-text);
+  border: 1px solid var(--keycap-border);
+  border-bottom: 2px solid var(--keycap-shelf); /* mechanical shelf */
+  box-shadow: var(--keycap-shadow);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease,
+    color 0.3s ease;
+}
+
+.kc:hover {
+  background: var(--keycap-bg-hover);
+  border-color: rgba(212, 175, 55, 0.35);
+  transform: translateY(-1px);
+}
+
+.kc:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* Tactile press — the cap travels down and the shelf shortens. */
+.kc:active {
+  transform: translateY(1.5px);
+  border-bottom-width: 1px;
+  box-shadow: var(--keycap-shadow-active);
+}
+
+/* Caret glyph inside the Portfolio / identity / view keycaps. */
+.kc-caret {
+  font-size: 0.7em;
+  opacity: 0.7;
+}
+
+/* Mode toggle affordance — purely typographic + structural (no symbols): the
+   engaged view keycap carries a subtle inset "pressed" face and a quiet active
+   fill so it reads as a mechanical switch, not a flat title. */
+.kc-toggle {
+  background: var(--keycap-bg-hover);
+  box-shadow: var(--keycap-shadow), inset 0 1px 1px rgba(255, 255, 255, 0.08),
+    inset 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Chosen audience reads as engaged with the same quiet active fill. */
+.kc-identity[data-chosen="true"] {
+  background: var(--keycap-bg-hover);
+  box-shadow: var(--keycap-shadow), inset 0 -2px 5px rgba(0, 0, 0, 0.18);
+}
+
+/* --- Zoned nav: Portfolio (left) and Theme (right) float independently ----- */
+.kc-portfolio-nav {
+  position: fixed;
+  top: 1.1rem;
+  left: 1.1rem;
+  z-index: 9999;
+}
+
+.kc-theme-nav {
+  position: fixed;
+  top: 1.1rem;
+  right: 1.1rem;
+  z-index: 9999;
+}
+
+/* Single theme keycap — icon + caret; blooms into Light / Dark / Auto. */
+.kc-theme {
+  gap: 0.3rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-size: 0.95rem;
+}
+
+/* The theme bloom opens over the right margin (anchored to the right keycap).
+   Double-class to outrank the base .kc-bloom centering defined later in file —
+   otherwise the third chip (Auto) gets pushed off the right edge. */
+.kc-bloom.kc-bloom-theme {
+  left: auto;
+  right: 0;
+  transform: none;
+  justify-content: flex-end;
+}
+
+.kc-theme-nav[data-bloom="theme"] .kc-theme {
+  border-color: rgba(212, 175, 55, 0.45);
+}
+
+/* --- Tone modes — static foundation preview (Balanced default) ------------- */
+.tone-modes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1.1rem;
+}
+
+.tone-modes-label {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-right: 0.15rem;
+}
+
+.tone-mode {
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--hairline);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.tone-mode[data-active="true"] {
+  border-color: var(--spotlight-border);
+  background: rgba(212, 175, 55, 0.07);
+  color: var(--text-bright);
+  font-weight: 600;
+}
+
+/* --- Invitation: a gentle ambient pulse + low-profile toast ---------------- */
+/* Replaces the auto-wave on a fresh cold open — calls attention without
+   interrupting. The keycap breathes an amber ring; a small toast sits beneath. */
+.kc[data-invite="true"] {
+  border-color: rgba(212, 175, 55, 0.5);
+  animation: kc-invite-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes kc-invite-pulse {
+  0%,
+  100% {
+    box-shadow: var(--keycap-shadow), 0 0 0 0 rgba(212, 175, 55, 0);
+  }
+  50% {
+    box-shadow: var(--keycap-shadow), 0 0 0 6px rgba(212, 175, 55, 0.16);
+  }
+}
+
+.kc-invite {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: max-content;
+  max-width: min(84vw, 19rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: var(--tray-bg);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: var(--tray-shadow);
+  color: var(--text-bright);
+  pointer-events: auto;
+  animation: kc-invite-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.kc-invite-text {
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.kc-invite-dismiss {
+  align-self: flex-end;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.kc-invite-dismiss:hover {
+  color: var(--text-bright);
+}
+
+.kc-invite-dismiss:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+@keyframes kc-invite-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Respect reduced motion — keep the static toast, drop the breathing ring. */
+@media (prefers-reduced-motion: reduce) {
+  .kc[data-invite="true"] {
+    animation: none;
+  }
+  .kc-invite {
+    animation: none;
+  }
+}
+
+/* --- Glass Bloom expansion ------------------------------------------------ */
+
+.kc-slot {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Companions yield the stage: soften and drift away from the open anchor.
+   Drift is tunable via --bloom-drift-distance (default 15px). The center
+   cluster now holds [ view | identity ]. */
+.kc-cluster[data-bloom="identity"] .kc-view {
+  opacity: 0.4;
+  transform: translateX(calc(-1 * var(--bloom-drift-distance, 15px)));
+}
+.kc-cluster[data-bloom="view"] .kc-identity {
+  opacity: 0.4;
+  transform: translateX(var(--bloom-drift-distance, 15px));
+}
+
+/* The anchor key gets a quiet amber rim while its bloom is open. */
+.kc-cluster[data-bloom="identity"] .kc-identity,
+.kc-cluster[data-bloom="view"] .kc-view {
+  border-color: rgba(212, 175, 55, 0.45);
+}
+
+/* Bloom cloud — chips emerge outward from the anchor (not a linear menu). */
+.kc-bloom {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 0.4rem;
+  width: max-content;
+  max-width: min(320px, calc(100vw - 2rem));
+}
+
+/* In the flat row (A) identity sits at the right edge, so its bloom opens over
+   the right margin. In the constellations (B/C) the identity key rides a
+   centered top row, so the base centered bloom is correct — don't re-anchor. */
+.kc-cluster[data-cluster="a"] .kc-bloom-right {
+  left: auto;
+  right: 0;
+  transform: none;
+  justify-content: flex-end;
+}
+
+.kc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 12px;
+  background: var(--keycap-bg);
+  color: var(--keycap-text);
+  border: 1px solid var(--keycap-border);
+  border-bottom: 2px solid var(--keycap-shelf);
+  box-shadow: var(--keycap-shadow);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transform-origin: center top;
+  animation: kc-bloom-in 0.34s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.kc-chip:hover:not(:disabled) {
+  background: var(--keycap-bg-hover);
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+.kc-chip:active:not(:disabled) {
+  border-bottom-width: 1px;
+  box-shadow: var(--keycap-shadow-active);
+}
+
+.kc-chip:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* Active chip — communicated purely through fill + weight (no symbols). */
+.kc-chip[data-active="true"] {
+  border-color: rgba(212, 175, 55, 0.6);
+  background: rgba(212, 175, 55, 0.16);
+  color: var(--accent-amber);
+  font-weight: 700;
+}
+
+.kc-chip[data-soon="true"] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.kc-chip-soon {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@keyframes kc-bloom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Temporary cluster spit-test switch (low-profile, bottom-left). */
+.kc-switcher {
+  position: fixed;
+  bottom: 0.85rem;
+  left: 0.85rem;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: var(--glass-shadow);
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.kc-switcher:hover {
+  opacity: 1;
+}
+
+.kc-switcher-label {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.kc-switcher-btn {
+  width: 22px;
+  height: 22px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.kc-switcher-btn[data-active="true"] {
+  background: var(--hover-bg);
+  color: var(--text-bright);
+}
+
+.kc-switcher-btn:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 1px;
+}
+
+/* ===========================================================================
+   TUNING LAB — live physics controls (bottom-right; balances the switcher).
+   Sliders write CSS variables on :root, read by the wave/bloom rules above.
+   =========================================================================== */
+
+.tune-lab {
+  position: fixed;
+  bottom: 0.85rem;
+  right: 0.85rem;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.45rem;
+}
+
+.tune-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: var(--glass-shadow);
+  color: var(--text-bright);
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.tune-toggle:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+}
+
+.tune-toggle:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.tune-body {
+  width: 244px;
+  max-width: calc(100vw - 1.7rem);
+  padding: 0.9rem 0.95rem 0.8rem;
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
+  background: var(--tray-bg);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: var(--tray-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tune-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  column-gap: 0.6rem;
+  row-gap: 0.3rem;
+}
+
+.tune-name {
+  grid-column: 1 / -1;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.tune-row input[type="range"] {
+  grid-column: 1;
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent-amber);
+  cursor: pointer;
+}
+
+.tune-row input[type="range"]:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 3px;
+}
+
+.tune-val {
+  grid-column: 2;
+  min-width: 3.5ch;
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  color: var(--text-bright);
+}
+
+.tune-select-row {
+  grid-template-columns: 1fr;
+}
+
+.tune-select {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 0.1rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: var(--surface-card);
+  color: var(--text-bright);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.tune-select:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* Boolean control — checkbox left, label right, hint spanning underneath. */
+.tune-check-row {
+  grid-template-columns: auto 1fr;
+  column-gap: 0.5rem;
+  row-gap: 0.25rem;
+  align-items: center;
+}
+
+.tune-check {
+  grid-column: 1;
+  width: 0.95rem;
+  height: 0.95rem;
+  margin: 0;
+  accent-color: var(--accent-amber);
+  cursor: pointer;
+}
+
+.tune-check:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.tune-check-name {
+  grid-column: 2;
+  margin: 0;
+}
+
+.tune-check-hint {
+  grid-column: 1 / -1;
+  font-size: 0.58rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+/* Hard reset for onboarding-loop testing — clears first-visit flag + reloads. */
+.tune-firstvisit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--glass-border);
+  background: var(--surface-card);
+  color: var(--text-bright);
+  font: inherit;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.tune-firstvisit:hover {
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.tune-firstvisit:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.tune-reset {
+  align-self: flex-start;
+  margin-top: 0.1rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent-cyan);
+  font: inherit;
+  font-size: 0.66rem;
+  cursor: pointer;
+}
+
+.tune-reset:hover {
+  text-decoration: underline;
+}
+
+.tune-reset:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+/* --- Footer --------------------------------------------------------------- */
+
+.sbx-footer {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--hairline);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+.sbx-footer a {
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.sbx-footer a:hover {
+  text-decoration: underline;
+}
+
+/* --- Motion / smoothing --------------------------------------------------- */
+
+.sbx .project-card,
+.sbx .human-insight-callout,
+.sbx .tech-tag {
+  transition: background 0.45s ease, border-color 0.45s ease,
+    box-shadow 0.45s ease, color 0.45s ease, padding 0.45s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sbx *,
+  .sbx *::before,
+  .sbx *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* --- Responsive — comprehensive mobile pass (< 768px) --------------------- */
+
+@media (max-width: 768px) {
+  /* Tight, intentional spacing under the floating cluster — no empty gaps.
+     Top clears the (possibly wrapped) cluster; bottom clears the fixed
+     switcher / Tuning Lab controls so the last content is never hidden. */
+  .sbx-main {
+    padding: 7rem 1.1rem 4.5rem;
+  }
+
+  .sbx-classic {
+    padding: 7rem 1.1rem 4.5rem;
+  }
+
+  /* Three zones on the top band: Portfolio left, cluster centered + narrow,
+     theme right. The cluster wraps and is constrained to fit between the
+     corner keycaps so nothing overlaps. [data-cluster] matches base specificity
+     so A wraps too. */
+  .kc-portfolio-nav {
+    top: 0.85rem;
+    left: 0.6rem;
+  }
+  .kc-theme-nav {
+    top: 0.85rem;
+    right: 0.6rem;
+  }
+  .kc-cluster,
+  .kc-cluster[data-cluster="a"] {
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: calc(100vw - 13rem);
+  }
+  .kc {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.74rem;
+  }
+  /* Keep blooms inside the viewport. */
+  .kc-bloom {
+    max-width: calc(100vw - 1.2rem);
+  }
+  .kc-bloom.kc-bloom-theme {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+
+  /* Single-column catalog. */
+  .sbx[data-renderer="enhanced"] .catalog-columns {
+    column-count: 1;
+  }
+  .sbx[data-renderer="enhanced"] .catalog-columns .project-card {
+    margin-bottom: 1.5rem;
+  }
+  .sbx[data-renderer="enhanced"] .project-card {
+    padding: 1.4rem;
+  }
+
+  /* Compact V2 + classic header typography. */
+  .sbx-exec-name {
+    font-size: 1.45rem;
+  }
+  .sbx-exec-thesis {
+    font-size: 0.95rem;
+  }
+  .featured-title {
+    font-size: 1.45rem;
+  }
+  .cl-name {
+    font-size: 1.9rem;
+  }
+  .cl-thesis {
+    font-size: 1.05rem;
+  }
+
+  /* Featured strip → swipeable single-image carousel; no margin clipping. */
+  .featured-strip {
+    scroll-snap-type: x mandatory;
+    gap: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .featured-shot {
+    width: 86%;
+    height: 200px;
+    scroll-snap-align: start;
+  }
+
+  /* Highlights + CTA stack cleanly. */
+  .featured-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  /* Highlights become a compact inline string (· separated) — no bulky pills. */
+  .featured-highlights {
+    flex: none;
+    display: block;
+    gap: 0;
+    font-size: 0.76rem;
+    line-height: 1.55;
+    color: var(--text-muted);
+  }
+  .featured-highlights li {
+    display: inline;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: inherit;
+    color: inherit;
+  }
+  .featured-highlights li::before {
+    content: "·";
+    width: auto;
+    height: auto;
+    margin: 0 0.4rem;
+    background: none;
+    border-radius: 0;
+    color: var(--accent-amber);
+  }
+  .featured-highlights li:first-child::before {
+    content: "";
+    margin: 0;
+  }
+
+  /* Keep the Tuning Lab drawer fully on-screen and above the cluster switcher. */
+  .tune-lab {
+    bottom: 0.6rem;
+    right: 0.6rem;
+  }
+  .tune-body {
+    width: min(244px, calc(100vw - 1.4rem));
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  .kc-switcher {
+    bottom: 0.6rem;
+    left: 0.6rem;
+  }
+}
+
+@media (max-width: 430px) {
+  /* Smallest phones — carousel shows one full frame with a peek of the next. */
+  .featured-shot {
+    width: 90%;
+    height: 180px;
+  }
+  .sbx-exec-name,
+  .featured-title,
+  .cl-name {
+    font-size: 1.35rem;
+  }
+}
