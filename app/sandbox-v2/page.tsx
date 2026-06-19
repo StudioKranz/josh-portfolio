@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   PORTFOLIO_DATABASE,
-  LENSES,
   IDENTITIES,
   EXPERIENCES,
   MASTER,
@@ -210,17 +209,14 @@ function EvidenceItem({ item }: { item: Evidence }) {
 function ProjectCard({
   project,
   spotlight,
-  lensLabel,
 }: {
   project: SandboxProject;
   spotlight: boolean;
-  lensLabel: string;
 }) {
   return (
     <article className="project-card" data-spotlight={spotlight ? "true" : "false"}>
       <div className="card-header">
         <span className="project-type-badge">{project.type}</span>
-        <span className="provenance-tag">id: {project.id}</span>
       </div>
 
       <div className="card-titles">
@@ -229,8 +225,6 @@ function ProjectCard({
       </div>
 
       <p className="status-line">{project.status}</p>
-
-      {spotlight && <p className="spotlight-chip">Relevant to {lensLabel}</p>}
 
       {project.evidence.length > 0 && (
         <div className="evidence-container">
@@ -242,9 +236,9 @@ function ProjectCard({
         </div>
       )}
 
-      <div className="human-insight-callout">
-        <p>&ldquo;{project.narrative.insight}&rdquo;</p>
-      </div>
+      <blockquote className="human-insight-callout">
+        <p>{project.narrative.insight}</p>
+      </blockquote>
 
       <div className="narrative-body">
         <h4>The problem</h4>
@@ -737,7 +731,6 @@ export default function SandboxV2() {
       ? IDENTITIES.find((i) => i.id === identityId) ?? null
       : null;
   const perspective: Perspective = identity ? identity.lens : "curious";
-  const activeLens = LENSES.find((l) => l.id === perspective) ?? LENSES[0];
   const activeExperience =
     EXPERIENCES.find((e) => e.renderer === renderer) ?? EXPERIENCES[0];
 
@@ -858,22 +851,25 @@ export default function SandboxV2() {
           <p className="sbx-exec-thesis">{MASTER.thesis}</p>
         </header>
 
-        {/* The feed leads with the strongest artifact, then the lens-matched
-            primary work; non-matching exhibits collapse into "More Projects". */}
-        <section className="portfolio-grid portfolio-grid-feed">
-          <FeaturedCard project={featuredProject} />
-          {feedPrimary.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              spotlight={
-                perspective !== "curious" &&
-                project.perspectives.includes(perspective)
-              }
-              lensLabel={activeLens.label}
-            />
-          ))}
-        </section>
+        {/* The feed leads with the strongest artifact; the lens-matched primary
+            work flows beneath in a balanced two-column catalog (natural card
+            heights, no stretched half-blanks). */}
+        <FeaturedCard project={featuredProject} />
+
+        {feedPrimary.length > 0 && (
+          <section className="catalog-columns">
+            {feedPrimary.map((project) => (
+              <ProjectCard
+                key={project.id}
+                project={project}
+                spotlight={
+                  perspective !== "curious" &&
+                  project.perspectives.includes(perspective)
+                }
+              />
+            ))}
+          </section>
+        )}
 
         {feedMore.length > 0 && (
           <div className="more-projects">
@@ -889,13 +885,12 @@ export default function SandboxV2() {
               </span>
             </button>
             {moreOpen && (
-              <section className="portfolio-grid more-grid">
+              <section className="catalog-columns">
                 {feedMore.map((project) => (
                   <ProjectCard
                     key={project.id}
                     project={project}
                     spotlight={false}
-                    lensLabel={activeLens.label}
                   />
                 ))}
               </section>
