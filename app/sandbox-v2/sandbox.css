@@ -1945,15 +1945,18 @@
     white-space: normal;
   }
 
-  /* Single-column catalog (grid collapses to one full-width track). */
+  /* Single-column catalog (grid collapses to one full-width track). minmax(0,1fr)
+     + min-width:0 let the card shrink to the track instead of expanding to the
+     wide evidence filmstrip's min-content (which would overflow the viewport). */
   .sbx[data-renderer="enhanced"] .catalog-columns {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.5rem;
   }
   .sbx[data-renderer="enhanced"] .catalog-columns .project-card {
     height: auto;
   }
   .sbx[data-renderer="enhanced"] .project-card {
+    min-width: 0;
     padding: 1.4rem;
   }
 
