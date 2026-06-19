@@ -341,17 +341,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.35rem;
+  gap: 0.4rem;
   padding: 0.75rem;
   text-align: center;
-  border: 1px dashed var(--placeholder-border);
-  background: repeating-linear-gradient(
-    45deg,
-    var(--placeholder-stripe-a),
-    var(--placeholder-stripe-a) 10px,
-    var(--placeholder-stripe-b) 10px,
-    var(--placeholder-stripe-b) 20px
-  );
+  border: 1px solid var(--placeholder-border);
+  /* Frosted blueprint mesh so an absent asset reads as intentional. */
+  background-color: var(--vault-bg);
+  background-image: linear-gradient(
+      var(--placeholder-border) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, var(--placeholder-border) 1px, transparent 1px);
+  background-size: 18px 18px;
+  background-position: center;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .media-placeholder .ph-label {
@@ -728,24 +732,42 @@
     1
   );
   animation-fill-mode: forwards;
+  pointer-events: none; /* the overlay never intercepts input mid-sweep */
   will-change: clip-path, filter;
 }
 
 /* --- Wavefront spectacle styles (data-wavefront on .sbx) ------------------ */
 
-/* Chromatic prism fringe — cyan/magenta refraction split along the boundary. */
+/* Chromatic prism fringe — bold magenta/cyan RGB split straddling the edge. */
 .sbx[data-wavefront="chromatic"] .sbx-layer-out {
-  filter: drop-shadow(-2px 0 1px rgba(0, 200, 255, 0.85))
-    drop-shadow(2px 0 1px rgba(255, 60, 180, 0.85))
-    drop-shadow(0 0 var(--wave-glow-intensity, 6px) var(--accent-amber));
+  filter: drop-shadow(-3px -2px 2px rgba(255, 0, 128, 0.85))
+    drop-shadow(3px -2px 2px rgba(0, 225, 255, 0.85))
+    drop-shadow(0 0 calc(var(--wave-glow-intensity, 6px) + 2px)
+      rgba(214, 175, 55, 0.6));
 }
 
 /* Volumetric glass mist — a thick, soft atmospheric glow sweeping the edge. */
 .sbx[data-wavefront="volumetric"] .sbx-layer-out {
   filter: drop-shadow(
-      0 0 calc(var(--wave-glow-intensity, 6px) * 3) rgba(212, 175, 55, 0.55)
+      0 0 calc(var(--wave-glow-intensity, 6px) * 3.5) rgba(212, 175, 55, 0.6)
     )
-    drop-shadow(0 0 40px rgba(255, 255, 255, 0.18));
+    drop-shadow(0 -2px 26px rgba(255, 255, 255, 0.4)) saturate(180%);
+}
+
+/* --- Bloom focus: recede the narrative content behind an open bloom --------
+   Applied only to the static content blocks — never the animating wave layers
+   (so the wave spectacle stays razor-crisp) and never the controls. */
+.sbx-main,
+.sbx-classic {
+  transition: filter 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sbx[data-dim="true"] .sbx-main,
+.sbx[data-dim="true"] .sbx-classic {
+  filter: blur(8px);
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 /* A gentle smile arc (depth = --wave-arc-depth, default 6%) translates from
@@ -794,10 +816,10 @@
 
 .kc-cluster {
   position: fixed;
-  top: 1rem;
+  top: 1.1rem;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 999;
+  z-index: 9999; /* always above content + the blurred narrative layer */
   display: flex;
   flex-direction: row;
   align-items: center;

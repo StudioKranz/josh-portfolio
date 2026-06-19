@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   PORTFOLIO_DATABASE,
   LENSES,
@@ -54,11 +54,11 @@ function prefersReducedMotion(): boolean {
 type TuneKey = "depth" | "duration" | "glow" | "drift" | "attack" | "release";
 const TUNE_DEFAULTS: Record<TuneKey, number> = {
   depth: 6, // % arc smile
-  duration: 1.4, // s wave sweep
+  duration: 3.1, // s wave sweep (dialed-in default)
   glow: 6, // px amber edge blur
   drift: 15, // px companion drift
-  attack: 0.76, // ease-in handle (cubic-bezier x1)
-  release: 0.24, // ease-out handle (cubic-bezier x2)
+  attack: 0.95, // ease-in handle (cubic-bezier x1)
+  release: 0.36, // ease-out handle (cubic-bezier x2)
 };
 const TUNE_VAR: Record<TuneKey, string> = {
   depth: "--wave-arc-depth",
@@ -378,6 +378,16 @@ export default function SandboxV2() {
     setPrevRenderer(null);
   }
 
+  // Hold the stage at least as tall as the OUTGOING content during the sweep,
+  // so the page never shrinks mid-transition (the V2 -> V1 "jump"). scrollHeight
+  // reports the content height even though the layer is height:100%. The reflow
+  // to the incoming height then happens after teardown, below the fold.
+  const setOutRef = useCallback((node: HTMLDivElement | null) => {
+    if (node && node.parentElement) {
+      node.parentElement.style.minHeight = `${node.scrollHeight}px`;
+    }
+  }, []);
+
   // Safety net: never leave the overlay stuck if animationEnd doesn't fire.
   // Tracks the live (tunable) wave duration.
   useEffect(() => {
@@ -618,6 +628,7 @@ export default function SandboxV2() {
       data-perspective={perspective}
       data-theme={theme}
       data-wavefront={wavefront}
+      data-dim={openBloom ? "true" : undefined}
     >
       {/* Independent glass "typewriter key" artifacts. Sequence (left → right):
           [ ☾ ] | [ Enhanced ] | [ Who are you? ] — identity sits at the right
@@ -804,6 +815,7 @@ export default function SandboxV2() {
           <div
             className="sbx-layer sbx-layer-out"
             aria-hidden="true"
+            ref={setOutRef}
             onAnimationEnd={endWave}
           >
             {renderMain(prevRenderer)}
