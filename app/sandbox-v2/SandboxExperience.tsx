@@ -372,7 +372,7 @@ export default function SandboxV2() {
   // OS preference live. The effective theme drives data-theme on the root.
   const [themeMode, setThemeMode] = useState<ThemeMode>("auto");
   const [systemTheme, setSystemTheme] = useState<Theme>("dark");
-  const [cluster, setCluster] = useState<Cluster>("b"); // tight constellation default
+  const [cluster, setCluster] = useState<Cluster>("a"); // clean horizontal row (production default)
   const [openBloom, setOpenBloom] = useState<Bloom>(null);
   const [hydrated, setHydrated] = useState(false);
   // Wave transition between Classic <-> Enhanced (dual-layer, runs on toggle).
@@ -401,7 +401,20 @@ export default function SandboxV2() {
   // Bumped on each audience selection to scroll the feed into focus + replay the
   // featured artifact's entry-flash (confidence cue that the engine responded).
   const [feedSignal, setFeedSignal] = useState(0);
+  // Developer scaffolding (A/B/C switcher + Tuning Lab) is hidden from public
+  // traffic and revealed only behind ?dev=true. Off during SSR/first paint.
+  const [devMode, setDevMode] = useState(false);
   const clusterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    try {
+      setDevMode(
+        new URLSearchParams(window.location.search).get("dev") === "true",
+      );
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   // Restore persisted choices after mount (avoids hydration mismatch).
   useEffect(() => {
@@ -1044,8 +1057,8 @@ export default function SandboxV2() {
           {inviteActive && (
             <div className="kc-invite" role="status">
               <span className="kc-invite-text">
-                Experience the evolution — switch to the Evolutionary Brief for
-                high-density systemic evidence.
+                See the evolution — switch to the Executive Brief for a
+                high-density, systemic view of the work.
               </span>
               <button
                 type="button"
@@ -1161,29 +1174,32 @@ export default function SandboxV2() {
         )}
       </div>
 
-      {/* Temporary layout spit-test switch — removed once a cluster wins. */}
-      <div
-        className="kc-switcher"
-        role="group"
-        aria-label="Cluster layout (temporary)"
-      >
-        <span className="kc-switcher-label">cluster</span>
-        {(["a", "b", "c"] as const).map((c) => (
-          <button
-            key={c}
-            type="button"
-            className="kc-switcher-btn"
-            data-active={cluster === c}
-            aria-pressed={cluster === c}
-            onClick={() => setCluster(c)}
-          >
-            {c.toUpperCase()}
-          </button>
-        ))}
-      </div>
+      {/* Developer-only: A/B/C cluster layout switch. Hidden unless ?dev=true. */}
+      {devMode && (
+        <div
+          className="kc-switcher"
+          role="group"
+          aria-label="Cluster layout (developer)"
+        >
+          <span className="kc-switcher-label">cluster</span>
+          {(["a", "b", "c"] as const).map((c) => (
+            <button
+              key={c}
+              type="button"
+              className="kc-switcher-btn"
+              data-active={cluster === c}
+              aria-pressed={cluster === c}
+              onClick={() => setCluster(c)}
+            >
+              {c.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      )}
 
-      {/* Tuning Lab — live physics controls (bottom-right). */}
-      <div className="tune-lab" data-open={tuneOpen ? "true" : undefined}>
+      {/* Developer-only: Tuning Lab (live physics). Hidden unless ?dev=true. */}
+      {devMode && (
+        <div className="tune-lab" data-open={tuneOpen ? "true" : undefined}>
         <button
           type="button"
           className="tune-toggle"
@@ -1273,8 +1289,8 @@ export default function SandboxV2() {
                 Start auto-wave on scroll
               </span>
               <span className="tune-check-hint">
-                Applies only when Auto-Wave is on — holds in the Full Narrative
-                View until first scroll.
+                Applies only when Auto-Wave is on — holds in the Detailed Story
+                until first scroll.
               </span>
             </label>
             <button
@@ -1289,7 +1305,8 @@ export default function SandboxV2() {
             </button>
           </div>
         )}
-      </div>
+        </div>
+      )}
 
       {waving && prevRenderer ? (
         // Reinterpretation wave: incoming renders in flow (defines final
