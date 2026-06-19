@@ -76,7 +76,7 @@ type TuneKey =
   | "attack"
   | "release";
 const TUNE_DEFAULTS: Record<TuneKey, number> = {
-  depth: 6, // % arc smile
+  depth: 0, // % arc bow — 0 = a perfectly flat horizontal wavefront
   duration: 3.1, // s wave sweep (dialed-in default)
   delay: 700, // ms before the intro wave starts
   glow: 6, // px amber edge blur
@@ -109,7 +109,7 @@ const TUNE_FIELDS: {
   max: number;
   step: number;
 }[] = [
-  { key: "depth", label: "Wave arc depth", min: 0, max: 15, step: 0.5 },
+  { key: "depth", label: "Wave arc depth (0 = flat)", min: 0, max: 6, step: 0.5 },
   { key: "duration", label: "Wave duration", min: 0.5, max: 6, step: 0.1 },
   { key: "delay", label: "Intro start delay", min: 0, max: 3000, step: 50 },
   { key: "attack", label: "Wave attack (ease-in)", min: 0, max: 1, step: 0.01 },
@@ -616,6 +616,17 @@ export default function SandboxV2() {
     } catch {
       /* ignore */
     }
+    // Clamp into the current field ranges so stale persisted values from earlier
+    // phases (e.g. a deeper arc depth) can't reintroduce the old V-shaped wave.
+    restored = (Object.keys(restored) as TuneKey[]).reduce(
+      (acc, k) => {
+        const f = TUNE_FIELDS.find((x) => x.key === k);
+        const v = restored[k];
+        acc[k] = f ? Math.min(f.max, Math.max(f.min, v)) : v;
+        return acc;
+      },
+      { ...restored },
+    );
     setTune(restored);
     (Object.keys(restored) as TuneKey[]).forEach((k) =>
       document.documentElement.style.setProperty(
