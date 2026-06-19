@@ -480,4 +480,88 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         "Care technology has to earn trust through consent first; the signal is only useful if the relationship around it is respected.",
     },
   },
+  {
+    id: "apple-experience-systems",
+    title: "Apple Experience Systems",
+    subtitle: "Turning long-term human observation into real-world retail systems.",
+    type: "operational systems & team leadership",
+    status: "Apple retail · Genius and Product Zone Lead",
+    summary:
+      "Apple retail leadership — Genius and Product Zone Lead — prototyping service interactions, training playbooks, and spatial readiness on the floor.",
+    thumbLabel: "Retail systems",
+    maturity: "deployed",
+    maturityLabel: "Live operational · Apple retail",
+    href: "#",
+    metadata: {
+      date: "Apple retail",
+      hardware: "Genius Bar · sales floor",
+      tags: ["Retail systems", "Team training", "Spatial readiness"],
+    },
+    perspectives: ["leader", "builder", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "Large consumer environments tend to treat support and onboarding as rigid scripts, which misses the subtle human cues that decide how a moment actually lands.",
+      execution:
+        "As a Genius and Product Zone Lead, I've treated the floor and the Genius Bar as live test beds — prototyping service interactions, writing position statements and training playbooks for teammates, and supporting readiness and field testing for spatial products including Apple Vision Pro.",
+      insight:
+        "An operational system is only as strong as its human interface; you scale excellence by giving a team lightweight frameworks to listen and adapt, not a stricter rulebook.",
+    },
+  },
+  {
+    id: "sonic-experience-design",
+    title: "Sonic Experience Design",
+    subtitle: "Engineering the room and the signal so human expression can take over.",
+    type: "record production & live sound",
+    status: "Producer, mix engineer, songwriter, bassist",
+    summary:
+      "Years of music — producing, mix engineering, songwriting, bass, and live production — building the technical and acoustic space for creativity.",
+    thumbLabel: "Studio",
+    maturity: "deployed",
+    maturityLabel: "Career body of work",
+    href: "#",
+    metadata: {
+      date: "Career body of work",
+      hardware: "Studio · stage",
+      tags: ["Mix engineering", "Live production", "Bass"],
+    },
+    perspectives: ["musician", "creative", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "Music creation is a vulnerable, high-bandwidth state that stalls the moment the surrounding technical setup feels clinical or high-friction.",
+      execution:
+        "As a mix engineer, producer, songwriter, and bass player, I've spent years tracking and mixing in the studio and engineering live production — sculpting the acoustic and technical environment so the gear disappears and the performance leads.",
+      insight:
+        "Mixing many live tracks is the same discipline as designing an asynchronous system: track parallel streams, predict their interactions, and shape one visceral result — make the system invisible so the human comes through.",
+    },
+  },
+  {
+    id: "ai-music-voice",
+    title: "Voice & Generative Music Models",
+    subtitle: "Custom vocal models and generative arrangement inside real audio workflows.",
+    type: "AI audio R&D",
+    status: "Active R&D · voice synthesis & generative music",
+    summary:
+      "Building custom voice models and generative arrangement systems, and testing AI audio continuity inside professional DAWs.",
+    thumbLabel: "AI audio",
+    maturity: "prototype",
+    maturityLabel: "Active R&D",
+    href: "#",
+    metadata: {
+      date: "Active R&D",
+      hardware: "DAW · local AI",
+      tags: ["Voice synthesis", "Generative music", "Model training"],
+    },
+    perspectives: ["musician", "inventor", "creative", "curious"],
+    evidence: [],
+    narrative: {
+      problem:
+        "Generative audio tools mostly sit outside the real production workflow, with no continuity between a producer's intent and the model's output.",
+      execution:
+        "I'm building custom vocal models and generative arrangement systems and testing AI audio tooling against real DAW workflows — bringing voice synthesis and model training into the production loop rather than a separate sandbox.",
+      insight:
+        "The leverage isn't a one-off generation; it's continuity — a model that carries the producer's intent through the whole arrangement.",
+    },
+  },
 ];
