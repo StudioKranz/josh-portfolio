@@ -159,32 +159,22 @@ function isWavefront(v: string | null): v is Wavefront {
 // Evidence (Layer 0) renderers — identical data, shown by both view engines.
 // ---------------------------------------------------------------------------
 
-// Explicit "asset expected" tile — names the exact path a missing image should
-// live at, so it's actionable (drop the file in) rather than a silent gray box.
-function MissingAsset({ path }: { path: string }) {
-  return (
-    <div className="media-missing" role="note">
-      <span className="mm-label">Image asset expected at</span>
-      <code className="mm-path">{path}</code>
-    </div>
-  );
-}
-
+// Production-grade graceful degradation: if an image asset is absent the figure
+// collapses entirely (no placeholder, no broken frame). Containers that end up
+// empty are hidden via `:empty` CSS, so a project with no available imagery
+// simply reads as a clean text card — mirroring the live case-study pages.
 function EvidenceImage({ item }: { item: Evidence }) {
   const [errored, setErrored] = useState(false);
+  if (errored) return null;
   return (
     <figure className="evidence-figure">
-      {errored ? (
-        <MissingAsset path={item.path} />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={item.path}
-          alt={item.label}
-          loading="lazy"
-          onError={() => setErrored(true)}
-        />
-      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={item.path}
+        alt={item.label}
+        loading="lazy"
+        onError={() => setErrored(true)}
+      />
       <figcaption>
         {item.eyebrow && <span className="ev-eyebrow">{item.eyebrow}</span>}
         {item.label}
@@ -284,7 +274,8 @@ function ProjectCard({
 
       {project.href && project.href !== "#" && (
         <a className="card-cta" href={project.href}>
-          Explore {project.title} <span aria-hidden="true">→</span>
+          {project.ctaLabel ?? `Explore ${project.title}`}{" "}
+          <span aria-hidden="true">→</span>
         </a>
       )}
     </article>
@@ -298,20 +289,17 @@ function ProjectCard({
 
 function FeaturedShot({ item }: { item: Evidence }) {
   const [errored, setErrored] = useState(false);
+  if (errored) return null;
   return (
     <div className="featured-shot">
-      {errored ? (
-        <MissingAsset path={item.path} />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={item.path}
-          alt={item.label}
-          title={item.label}
-          loading="lazy"
-          onError={() => setErrored(true)}
-        />
-      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={item.path}
+        alt={item.label}
+        title={item.label}
+        loading="lazy"
+        onError={() => setErrored(true)}
+      />
     </div>
   );
 }
@@ -353,7 +341,8 @@ function FeaturedCard({ project }: { project: SandboxProject }) {
         </ul>
         {project.href && project.href !== "#" && (
           <a className="featured-cta" href={project.href}>
-            Explore {project.title} <span aria-hidden="true">→</span>
+            {project.ctaLabel ?? `Explore ${project.title}`}{" "}
+            <span aria-hidden="true">→</span>
           </a>
         )}
       </div>
