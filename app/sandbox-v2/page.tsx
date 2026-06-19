@@ -31,7 +31,7 @@ const STORAGE = {
 type Theme = "light" | "dark";
 type ThemeMode = "light" | "dark" | "auto";
 type Cluster = "a" | "b" | "c";
-type Bloom = "identity" | "view" | null;
+type Bloom = "identity" | "view" | "theme" | null;
 
 // Featured Artifact Spotlight — which project anchors the top of the V2 feed.
 // In Auto mode it tracks the active "Who are you?" audience; the Tuning Lab
@@ -72,6 +72,11 @@ function isRenderer(v: string): v is Renderer {
 function isThemeMode(v: string | null): v is ThemeMode {
   return v === "light" || v === "dark" || v === "auto";
 }
+const THEME_MODES: { id: ThemeMode; label: string; icon: string }[] = [
+  { id: "light", label: "Light", icon: "☀️" },
+  { id: "dark", label: "Dark", icon: "🌙" },
+  { id: "auto", label: "Auto", icon: "💻" },
+];
 function isCluster(v: string | null): v is Cluster {
   return v === "a" || v === "b" || v === "c";
 }
@@ -207,6 +212,25 @@ function EvidenceItem({ item }: { item: Evidence }) {
 // `data-renderer` re-interprets it (classic hides the visual layers).
 // ---------------------------------------------------------------------------
 
+// Foundation for future Attune tone modes — a static, non-interactive preview
+// (Balanced is the default). The live tone slider is a later phase.
+function ToneModes({ modes }: { modes: string[] }) {
+  return (
+    <div className="tone-modes" role="group" aria-label="Tone modes (preview)">
+      <span className="tone-modes-label">Tone</span>
+      {modes.map((m) => (
+        <span
+          key={m}
+          className="tone-mode"
+          data-active={m === "Balanced" ? "true" : undefined}
+        >
+          {m}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 function ProjectCard({
   project,
   spotlight,
@@ -248,6 +272,8 @@ function ProjectCard({
         <p>{project.narrative.execution}</p>
       </div>
 
+      {project.toneModes && <ToneModes modes={project.toneModes} />}
+
       <div className="card-technical-footer tech-tags">
         {project.metadata.tags.map((tag) => (
           <span className="tech-tag" key={tag}>
@@ -258,7 +284,7 @@ function ProjectCard({
 
       {project.href && project.href !== "#" && (
         <a className="card-cta" href={project.href}>
-          Read case study <span aria-hidden="true">→</span>
+          Explore {project.title} <span aria-hidden="true">→</span>
         </a>
       )}
     </article>
@@ -317,6 +343,8 @@ function FeaturedCard({ project }: { project: SandboxProject }) {
         </div>
       )}
 
+      {project.toneModes && <ToneModes modes={project.toneModes} />}
+
       <div className="featured-meta">
         <ul className="featured-highlights">
           {highlights.map((h) => (
@@ -325,7 +353,7 @@ function FeaturedCard({ project }: { project: SandboxProject }) {
         </ul>
         {project.href && project.href !== "#" && (
           <a className="featured-cta" href={project.href}>
-            Explore <span aria-hidden="true">→</span>
+            Explore {project.title} <span aria-hidden="true">→</span>
           </a>
         )}
       </div>
@@ -712,11 +740,13 @@ export default function SandboxV2() {
     );
   }, []);
 
-  // Close an open bloom on outside click / Escape.
+  // Close an open bloom on outside click / Escape. Controls now span three
+  // zones (Portfolio left, cluster center, theme right), so match any of them.
   useEffect(() => {
     if (!openBloom) return;
     function onDown(e: PointerEvent) {
-      if (clusterRef.current && !clusterRef.current.contains(e.target as Node)) {
+      const el = e.target as Element | null;
+      if (!el?.closest?.(".kc-cluster, .kc-theme-nav, .kc-portfolio-nav")) {
         setOpenBloom(null);
       }
     }
@@ -952,18 +982,13 @@ export default function SandboxV2() {
       data-cluster={cluster}
       data-dim={openBloom ? "true" : undefined}
     >
-      {/* Persistent glass header. Sequence (left → right):
-          [ Portfolio ▲ ] | [ Detailed Story / Executive Brief ] | [ Who are you? ]
-          identity sits at the right so its dense bloom opens over clean margin. */}
-      <div
-        className="kc-cluster"
-        data-cluster={cluster}
-        data-bloom={openBloom ?? undefined}
-        role="group"
-        aria-label="Controls"
-        ref={clusterRef}
-      >
-        {/* Portfolio (first element; scrolls back to the top of the feed). */}
+      {/* Persistent glass header, three zones:
+          LEFT  → Portfolio (scroll-to-top)
+          CENTER → Detailed Story / Executive Brief + Who are you?  (A/B/C cluster)
+          RIGHT → one theme keycap that blooms into Light / Dark / Auto */}
+
+      {/* LEFT zone — Portfolio scroll-to-top. */}
+      <div className="kc-portfolio-nav">
         <button
           type="button"
           className="kc kc-portfolio"
@@ -972,8 +997,18 @@ export default function SandboxV2() {
         >
           Portfolio <span className="kc-caret" aria-hidden="true">▲</span>
         </button>
+      </div>
 
-        {/* Experience (blooms V1–V4). On a fresh cold open this key gently
+      {/* CENTER zone — experience + audience (A/B/C geometry preserved). */}
+      <div
+        className="kc-cluster"
+        data-cluster={cluster}
+        data-bloom={openBloom ?? undefined}
+        role="group"
+        aria-label="Controls"
+        ref={clusterRef}
+      >
+        {/* Experience (blooms the modes). On a fresh cold open this key gently
             pulses and shows a low-profile invitation toast instead of an
             auto-sweep — the transition stays user-initiated. */}
         <div className="kc-slot">
@@ -1067,32 +1102,48 @@ export default function SandboxV2() {
         </div>
       </div>
 
-      {/* Theme — independent three-state chip floated to the far right. */}
-      <div className="sbx-theme-chip" role="group" aria-label="Theme">
-        {(["light", "dark", "auto"] as const).map((m) => (
-          <button
-            key={m}
-            type="button"
-            className="theme-seg"
-            data-active={themeMode === m ? "true" : undefined}
-            aria-pressed={themeMode === m}
-            onClick={() => updateThemeMode(m)}
-            title={
-              m === "light"
-                ? "Light"
-                : m === "dark"
-                  ? "Dark"
-                  : "Auto — match system"
-            }
-          >
-            <span aria-hidden="true">
-              {m === "light" ? "☀️" : m === "dark" ? "🌙" : "💻"}
-            </span>
-            <span className="theme-seg-label">
-              {m === "light" ? "Light" : m === "dark" ? "Dark" : "Auto"}
-            </span>
-          </button>
-        ))}
+      {/* RIGHT zone — one theme keycap that blooms into Light / Dark / Auto. */}
+      <div
+        className="kc-theme-nav"
+        data-bloom={openBloom === "theme" ? "theme" : undefined}
+      >
+        <button
+          type="button"
+          className="kc kc-theme"
+          aria-haspopup="true"
+          aria-expanded={openBloom === "theme"}
+          onClick={() => toggleBloom("theme")}
+          aria-label={`Theme: ${themeMode}. Tap to choose.`}
+          title="Theme"
+        >
+          <span aria-hidden="true">
+            {themeMode === "auto" ? "💻" : theme === "dark" ? "🌙" : "☀️"}
+          </span>
+          <span className="kc-caret" aria-hidden="true">
+            ▾
+          </span>
+        </button>
+        {openBloom === "theme" && (
+          <div className="kc-bloom kc-bloom-theme" role="listbox" aria-label="Theme">
+            {THEME_MODES.map((m, i) => (
+              <button
+                key={m.id}
+                type="button"
+                role="option"
+                aria-selected={themeMode === m.id}
+                className="kc-chip"
+                data-active={themeMode === m.id ? "true" : undefined}
+                style={{ animationDelay: `${i * 30}ms` }}
+                onClick={() => {
+                  updateThemeMode(m.id);
+                  setOpenBloom(null);
+                }}
+              >
+                <span aria-hidden="true">{m.icon}</span> {m.label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Temporary layout spit-test switch — removed once a cluster wins. */}
@@ -1169,7 +1220,7 @@ export default function SandboxV2() {
                 onChange={(e) =>
                   selectFeatured(e.target.value as "auto" | FeaturedId)
                 }
-                aria-label="Featured artifact anchoring the top of the V2 feed"
+                aria-label="Featured artifact anchoring the top of the feed"
               >
                 <option value="auto">Auto (match audience)</option>
                 {FEATURED_OPTIONS.map((id) => (
@@ -1191,7 +1242,8 @@ export default function SandboxV2() {
                 Force Auto-Wave on Cold Open
               </span>
               <span className="tune-check-hint">
-                Off = invitation pulse (default). On = original V1→V2 auto-sweep.
+                Off = invitation pulse (default). On = auto-sweep into the
+                Executive Brief.
               </span>
             </label>
             <label className="tune-row tune-check-row">
@@ -1206,7 +1258,8 @@ export default function SandboxV2() {
                 Start auto-wave on scroll
               </span>
               <span className="tune-check-hint">
-                Applies only when Auto-Wave is on — holds in V1 until first scroll.
+                Applies only when Auto-Wave is on — holds in the Detailed Story
+                until first scroll.
               </span>
             </label>
             <button

@@ -72,6 +72,9 @@ export interface SandboxProject {
   featuredKicker?: string;
   featuredImage?: string;
   highlights?: string[];
+  /** Foundation for future Attune tone modes (internal labels). Presentation is
+   *  a static preview for now — the live tone slider is a later phase. */
+  toneModes?: string[];
   metadata: {
     date: string;
     hardware: string;
@@ -171,8 +174,8 @@ export interface ExperienceOption {
 export const EXPERIENCES: ExperienceOption[] = [
   { id: "classic", label: "Detailed Story", renderer: "classic", available: true },
   { id: "enhanced", label: "Executive Brief", renderer: "enhanced", available: true },
-  { id: "museum", label: "V3 Museum", available: false },
-  { id: "roombridge", label: "V4 RoomBridge", available: false },
+  { id: "museum", label: "Museum", available: false },
+  { id: "roombridge", label: "Spatial Room", available: false },
 ];
 
 // ---------------------------------------------------------------------------
@@ -420,21 +423,23 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
   {
     id: "attune",
     title: "Attune",
-    subtitle: "Tone, consent, and emotional bandwidth as first-class controls.",
-    type: "system concept & interface framework",
+    subtitle:
+      "Understanding tone and emotional context before misunderstandings happen.",
+    type: "emotional-awareness concept",
     status: "Design exploration",
     summary:
-      "Real-time tone controls, emotional consent, and gentle modes — the human side of emotionally-aware technology.",
+      "An emotional-awareness and communication concept — helping people read tone and emotional context, with consent and gentle modes built in.",
     thumbLabel: "System concept",
     maturity: "exploration",
     maturityLabel: "Design exploration",
     href: "/work/attune",
-    featuredKicker: "Emotional-context system concept & interface framework",
+    featuredKicker: "An emotional-awareness and communication concept",
     highlights: [
-      "Real-time tone controls",
-      "Explicit emotional consent",
-      "Gentle modes that scale back density and pacing",
+      "Reads tone and emotional context",
+      "Consent built in from the start",
+      "Gentle modes when someone needs quiet",
     ],
+    toneModes: ["Analytical", "Balanced", "Human"],
     metadata: {
       date: "Design exploration",
       hardware: "Concept",

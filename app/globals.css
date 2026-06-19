@@ -18,17 +18,21 @@ html {
   }
 }
 
-/* Persistent universal header — a fixed, centered glass bar matching the
-   sandbox control cluster's placement so navigation feels continuous. */
+/* Persistent universal header — a fixed glass bar in the left zone, matching
+   the sandbox's Portfolio keycap placement so navigation feels continuous. */
 .site-nav {
   position: fixed;
   top: 1.1rem;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 1.1rem;
   z-index: 9999;
   display: flex;
-  justify-content: center;
-  max-width: calc(100vw - 1.5rem);
+}
+
+@media (max-width: 768px) {
+  .site-nav {
+    top: 0.85rem;
+    left: 0.6rem;
+  }
 }
 
 /* Shared glass keycap — the sandbox's premium control surface, adapted for the
