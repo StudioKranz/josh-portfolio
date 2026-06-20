@@ -64,7 +64,11 @@ function autoFeaturedId(identityId: string | null): string {
     case "product-leader":
       // Product Leader → the system-design / product-framing flagship.
       return "systemic-portfolio";
-    // incubation-team, design-leader, curious-human, default:
+    // Attune is a design exploration — surface its live tone demo to the
+    // design-leadership lens so the FeaturedCard teaser is reachable.
+    case "design-leader":
+      return "attune";
+    // incubation-team, curious-human, default:
     default:
       return "roombridge";
   }
