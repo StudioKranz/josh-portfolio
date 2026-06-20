@@ -617,34 +617,43 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
   },
   {
     // Self-referential meta node: the multi-renderer engine that renders this
-    // very page, entered as a first-class case study in its own catalog.
-    id: "systemic-portfolio-engine",
+    // very page, entered as a first-class case study with its own /work route.
+    // (The public "Inside My Process" page still lives independently at
+    // /how-i-work; this node now leads to its dedicated case study instead.)
+    id: "systemic-portfolio",
     title: "Systemic Portfolio Engine",
     subtitle:
-      "An adaptive, multi-renderer design environment context-mapped to the reviewer's intent.",
-    type: "design-engineering system",
-    status: "Live production system · the portfolio you're reading now",
+      "An adaptive portfolio platform that reshapes project evidence around reviewer intent.",
+    type: "Bespoke Web Application and UI Architecture",
+    status: "Live production system",
     summary:
-      "An adaptive, multi-renderer design environment context-mapped to the reviewer's intent — the system rendering this page right now.",
-    thumbLabel: "This site",
+      "A working portfolio platform built as a product surface, using one project database to feed multiple reviewer specific views, audience lenses, featured project routing, and responsive case study pages.",
+    thumbLabel: "Architecture",
     maturity: "deployed",
-    maturityLabel: "Live · this portfolio",
-    href: "/how-i-work",
+    maturityLabel: "Production Release",
+    href: "/work/systemic-portfolio",
     ctaLabel: "Explore the System Architecture",
     metadata: {
-      date: "Live · 2026",
-      hardware: "Web · Next.js",
-      tags: ["Next.js", "State Routing", "Interaction Design"],
+      date: "June 2026",
+      hardware: "Web",
+      tags: [
+        "Next.js",
+        "React",
+        "TypeScript",
+        "Tailwind",
+        "Vercel",
+        "Interface Systems",
+      ],
     },
-    perspectives: ["builder", "inventor", "creative", "curious"],
+    perspectives: ["builder", "leader", "creative", "curious", "inventor"],
     evidence: [],
     narrative: {
       problem:
-        "Generic portfolio templates treat all hiring audiences identically, creating dry, high-friction scanning experiences for hyper-specialized design and engineering roles.",
+        "Most portfolio sites flatten complex work into a fixed sequence of cards, forcing every reviewer through the same low context path regardless of their role, priorities, or attention window.",
       execution:
-        "Engineered a custom Next.js environment powered by dynamic layout state routing, horizontal flat wavefront transitions, and context-aware action links that recalibrate the canvas depending on audience selection.",
+        "Built a dual renderer portfolio system with a single source of truth feeding both a detailed narrative view and a compact executive brief. The interface uses audience lenses, dynamic featured project selection, reusable data structures, responsive case study routes, and a tuned visual system designed for fast scanning without hiding depth.",
       insight:
-        "The most honest portfolio piece is the portfolio itself — a system that adapts how the work is presented to the person who is actually reading it.",
+        "The portfolio became more than a presentation layer. It became a working proof of product thinking, information architecture, systems design, and taste under real constraints.",
     },
   },
 ];
