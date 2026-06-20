@@ -625,12 +625,12 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     subtitle:
       "An adaptive portfolio platform that reshapes project evidence around reviewer intent.",
     type: "Bespoke Web Application and UI Architecture",
-    status: "Production preview on Vercel",
+    status: "Live production system",
     summary:
       "A working portfolio platform built as a product surface, using one project database to feed multiple reviewer specific views, audience lenses, featured project routing, and responsive case study pages.",
     thumbLabel: "Architecture",
     maturity: "deployed",
-    maturityLabel: "Production Preview",
+    maturityLabel: "Production Release",
     href: "/work/systemic-portfolio",
     ctaLabel: "Explore the System Architecture",
     metadata: {
@@ -645,7 +645,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         "Interface Systems",
       ],
     },
-    perspectives: ["builder", "leader", "creative", "curious"],
+    perspectives: ["builder", "leader", "creative", "curious", "inventor"],
     evidence: [],
     narrative: {
       problem:
