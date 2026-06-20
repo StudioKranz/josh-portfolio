@@ -1915,12 +1915,13 @@
     padding: 0.45rem 0.65rem;
     font-size: 0.74rem;
   }
-  /* Mobile selection bloom → a contained, centered modal-style panel. Every
-     bloom (view / identity / theme) drops its keycap-relative anchor and becomes
-     one frosted, vertically-stacked, scroll-gated sheet pinned safely below the
-     status bar and inset from both viewport edges — so nothing can collide with
-     the notch or spill off-screen. High-specificity selectors (with the .sbx
-     ancestor) outrank the desktop right-edge anchors for identity and theme. */
+  /* Mobile selection bloom → the SAME beautiful floating glass-chip cloud as
+     desktop, just re-centered to the viewport and width-capped so it can never
+     clip the notch or spill past the edges. Each bloom (view / identity / theme)
+     drops its keycap-relative anchor and centers as a fixed, wrapping cloud over
+     the already-dimmed/blurred page (data-dim) — no boxy modal, no stretched
+     pills. High-specificity selectors (with .sbx) outrank the desktop right-edge
+     anchors for identity and theme. */
   .sbx .kc-cluster .kc-bloom,
   .sbx .kc-theme-nav .kc-bloom {
     position: fixed;
@@ -1928,32 +1929,17 @@
     left: 50%;
     right: auto;
     transform: translateX(-50%);
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: stretch;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    width: min(20rem, calc(100vw - 1.6rem));
-    max-width: min(20rem, calc(100vw - 1.6rem));
-    max-height: min(70vh, calc(100vh - env(safe-area-inset-top, 0px) - 7rem));
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    justify-content: center;
+    gap: 0.45rem;
+    width: max-content;
+    max-width: calc(100vw - 1.5rem);
+    max-height: min(72vh, calc(100vh - env(safe-area-inset-top, 0px) - 7rem));
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 0.7rem;
-    border-radius: 16px;
-    border: 1px solid var(--glass-border);
-    background: var(--tray-bg);
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    box-shadow: var(--tray-shadow);
-  }
-
-  /* Full-width, center-aligned chips that wrap cleanly inside the sheet. */
-  .sbx .kc-cluster .kc-bloom .kc-chip,
-  .sbx .kc-theme-nav .kc-bloom .kc-chip {
-    width: 100%;
-    justify-content: center;
-    text-align: center;
-    white-space: normal;
   }
 
   /* Single-column catalog (grid collapses to one full-width track). minmax(0,1fr)
