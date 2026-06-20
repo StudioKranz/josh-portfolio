@@ -13,6 +13,7 @@ import {
   type Renderer,
   type SandboxProject,
 } from "./data";
+import ToneSliderCompact from "./ToneSliderCompact";
 
 const IDENTITY_IDS = IDENTITIES.map((i) => i.id);
 const STORAGE = {
@@ -63,7 +64,11 @@ function autoFeaturedId(identityId: string | null): string {
     case "product-leader":
       // Product Leader → the system-design / product-framing flagship.
       return "systemic-portfolio";
-    // incubation-team, design-leader, curious-human, default:
+    // Attune is a design exploration — surface its live tone demo to the
+    // design-leadership lens so the FeaturedCard teaser is reachable.
+    case "design-leader":
+      return "attune";
+    // incubation-team, curious-human, default:
     default:
       return "roombridge";
   }
@@ -334,7 +339,11 @@ function FeaturedCard({ project }: { project: SandboxProject }) {
         </div>
       )}
 
-      {project.toneModes && <ToneModes modes={project.toneModes} />}
+      {project.id === "attune" ? (
+        <ToneSliderCompact />
+      ) : (
+        project.toneModes && <ToneModes modes={project.toneModes} />
+      )}
 
       <div className="featured-meta">
         <ul className="featured-highlights">
