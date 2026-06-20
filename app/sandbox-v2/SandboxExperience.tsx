@@ -13,6 +13,7 @@ import {
   type Renderer,
   type SandboxProject,
 } from "./data";
+import ToneSliderCompact from "./ToneSliderCompact";
 
 const IDENTITY_IDS = IDENTITIES.map((i) => i.id);
 const STORAGE = {
@@ -334,7 +335,11 @@ function FeaturedCard({ project }: { project: SandboxProject }) {
         </div>
       )}
 
-      {project.toneModes && <ToneModes modes={project.toneModes} />}
+      {project.id === "attune" ? (
+        <ToneSliderCompact />
+      ) : (
+        project.toneModes && <ToneModes modes={project.toneModes} />
+      )}
 
       <div className="featured-meta">
         <ul className="featured-highlights">

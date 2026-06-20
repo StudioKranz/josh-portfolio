@@ -1367,6 +1367,103 @@
   font-weight: 600;
 }
 
+/* --- Attune live tone teaser (FeaturedCard only) -------------------------- */
+/* A compact, theme-aware preview of the Sassitivity Slider. Calm and premium —
+   one scenario, one reply, one slider. Full demo lives at /work/attune. */
+.tone-demo {
+  margin-top: 1.1rem;
+  padding: 0.95rem 1rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-raised);
+}
+
+.tone-demo-hint {
+  margin: 0 0 0.7rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.tone-demo-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.tone-demo-bubble {
+  max-width: 88%;
+  padding: 0.5rem 0.8rem;
+  border-radius: 14px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.tone-demo-bubble-user {
+  align-self: flex-end;
+  background: var(--surface-thumb);
+  color: var(--text-body);
+}
+
+.tone-demo-bubble-reply {
+  align-self: flex-start;
+  border: 1px solid var(--hairline);
+  background: rgba(212, 175, 55, 0.06);
+  color: var(--text-bright);
+}
+
+.tone-demo-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  margin: 1.1rem 0 0;
+  border-radius: 999px;
+  background: var(--divider);
+  accent-color: var(--accent-amber);
+  cursor: pointer;
+}
+
+.tone-demo-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--accent-amber);
+  border: 2px solid var(--surface-card);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tone-demo-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--accent-amber);
+  border: 2px solid var(--surface-card);
+}
+
+.tone-demo-range:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 4px;
+}
+
+.tone-demo-scale {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.45rem;
+  font-size: 0.68rem;
+  color: var(--text-faint);
+}
+
+.tone-demo-label {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
 /* --- Invitation: a gentle ambient pulse + low-profile toast ---------------- */
 /* Replaces the auto-wave on a fresh cold open — calls attention without
    interrupting. The keycap breathes an amber ring; a small toast sits beneath. */
