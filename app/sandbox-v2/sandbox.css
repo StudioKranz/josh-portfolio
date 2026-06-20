@@ -1915,31 +1915,25 @@
     padding: 0.45rem 0.65rem;
     font-size: 0.74rem;
   }
-  /* Mobile selection bloom → the SAME beautiful floating glass-chip cloud as
-     desktop, just re-centered to the viewport and width-capped so it can never
-     clip the notch or spill past the edges. Each bloom (view / identity / theme)
-     drops its keycap-relative anchor and centers as a fixed, wrapping cloud over
-     the already-dimmed/blurred page (data-dim) — no boxy modal, no stretched
-     pills. High-specificity selectors (with .sbx) outrank the desktop right-edge
-     anchors for identity and theme. */
-  .sbx .kc-cluster .kc-bloom,
-  .sbx .kc-theme-nav .kc-bloom {
-    position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 4.6rem);
+  /* Mobile selection bloom: float from the anchor keycap exactly as on desktop
+     (absolute, emerging right below the button — no repositioning, no container).
+     The ONLY original bug was the identity bloom opening over a right margin that
+     doesn't exist on a phone, so it clipped off the left edge. On mobile the
+     cluster keycaps wrap to their own centered rows, so center each bloom under
+     its anchor and cap its width to the viewport — that keeps it fully on-page
+     while it still blooms naturally from the keycap. (Specificity with .sbx
+     outranks the desktop .kc-bloom-right right-anchor.) */
+  .sbx .kc-cluster .kc-bloom {
     left: 50%;
     right: auto;
     transform: translateX(-50%);
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    align-content: flex-start;
     justify-content: center;
-    gap: 0.45rem;
-    width: max-content;
-    max-width: calc(100vw - 1.5rem);
-    max-height: min(72vh, calc(100vh - env(safe-area-inset-top, 0px) - 7rem));
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    gap: 0.6rem 0.55rem;
+    max-width: calc(100vw - 1.1rem);
+  }
+  /* A touch more room inside each chip so the floating cloud breathes. */
+  .sbx .kc-cluster .kc-bloom .kc-chip {
+    padding: 0.5rem 0.85rem;
   }
 
   /* Single-column catalog (grid collapses to one full-width track). minmax(0,1fr)
