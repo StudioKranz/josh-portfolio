@@ -60,7 +60,10 @@ function autoFeaturedId(identityId: string | null): string {
       return "relicworld";
     case "music-collaborator":
       return "sonic-experience-design";
-    // incubation-team, design-leader, curious-human, product-leader, default:
+    case "product-leader":
+      // Product Leader → the system-design / product-framing flagship.
+      return "systemic-portfolio";
+    // incubation-team, design-leader, curious-human, default:
     default:
       return "roombridge";
   }
