@@ -11,19 +11,46 @@ export const TONE_NAMES = [
   "Sassitive",
 ];
 
-export const DECLINE_LABELS = [
-  "I'd rather not right now",
-  "No, thank you",
-  "No thanks",
-  "Pass for now",
-  "Hard pass",
-];
-
 export interface Scenario {
   tab: string;
   prompt: string;
   replies: string[];
 }
+
+// Page-level tone config for the full Attune detail page (components/AttuneDetail).
+// Indexed 0–4 in lockstep with TONE_NAMES. Keeps every per-tone
+// copy variant in one dictionary so reactive blocks read ATTUNE_TONE_VARIANTS[tone]
+// instead of scattering conditionals. NOT imported by the compact sandbox card —
+// that surface stays deliberately minimal.
+export interface AttuneToneVariant {
+  // One-line gloss on what this tone setting does to a response.
+  explanation: string;
+  // The graceful out, phrased in this tone (No thank you / Not now / Skip / …).
+  action: string;
+}
+
+export const ATTUNE_TONE_VARIANTS: AttuneToneVariant[] = [
+  {
+    explanation: "Replies slow down, soften, and leave room — care before efficiency.",
+    action: "I'd rather not right now",
+  },
+  {
+    explanation: "Warm and considerate, but still direct enough to get out of the way.",
+    action: "No, thank you",
+  },
+  {
+    explanation: "Neutral and efficient — the assistant says what's needed and stops.",
+    action: "Not now",
+  },
+  {
+    explanation: "A little personality slips in — light, encouraging, a touch of warmth.",
+    action: "Skip for now",
+  },
+  {
+    explanation: "Dry, teasing, unmistakably opinionated — the assistant has a take.",
+    action: "Hard pass",
+  },
+];
 
 export const SCENARIOS: Scenario[] = [
   {
