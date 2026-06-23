@@ -27,7 +27,15 @@ const STORAGE = {
   featured: "sbx_featured",
   featuredManual: "sbx_featured_manual",
   forceAutoWave: "sbx_forceautowave",
+  lastInvite: "sbx_last_invitation_prompt",
 };
+
+// Smart invitation tuning: while a visitor sits in the Classic site, nudge them
+// toward the New site after a dwell OR a meaningful scroll — but at most once
+// per cooldown window so returning visitors are never nagged.
+const INVITE_DWELL_MS = 20_000; // 20s reading the Classic view
+const INVITE_SCROLL_RATIO = 0.4; // or 40% down the page, whichever comes first
+const INVITE_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24h suppression after use
 
 type Theme = "light" | "dark";
 type ThemeMode = "light" | "dark" | "auto";
@@ -389,6 +397,9 @@ export default function SandboxV2() {
   // than force-sweeping. Auto-wave is opt-in via forceAutoWave (Tuning Lab).
   const [forceAutoWave, setForceAutoWave] = useState(false);
   const [invite, setInvite] = useState(false);
+  // Bumped by the dev-only "Reset Invitation Prompt" control to re-arm the smart
+  // invitation watcher without a full reload (handy for testing the 24h gate).
+  const [inviteNonce, setInviteNonce] = useState(0);
   // Tuning Lab — live physics controls mapped to :root CSS variables.
   const [tune, setTune] = useState<Record<TuneKey, number>>(TUNE_DEFAULTS);
   const [tuneOpen, setTuneOpen] = useState(false);
@@ -449,21 +460,18 @@ export default function SandboxV2() {
     if (firstVisit) setIntroArmed(true);
   }, []);
 
-  // Cold-open behavior after a first visit. Default (invitation): stay in V1 and,
-  // after the tunable delay, pulse the experience keycap with a gentle "try
-  // Enhanced" invitation. Opt-in (Force Auto-Wave): play the original V1->V2
-  // sweep instead, optionally gated on first scroll. Reduced motion never sweeps.
+  // Cold-open behavior after a first visit. Default: stay in V1 — the smart
+  // invitation watcher (below) decides when to surface the "New site" nudge.
+  // Opt-in (Force Auto-Wave): play the original V1->V2 sweep instead, optionally
+  // gated on first scroll. Reduced motion never sweeps.
   useEffect(() => {
     if (!introArmed) return;
     const delayMs = Math.max(0, tune.delay);
 
     if (!forceAutoWave) {
-      // Respectful default — invite, never interrupt.
-      const t = setTimeout(() => {
-        setInvite(true);
-        setIntroArmed(false);
-      }, delayMs);
-      return () => clearTimeout(t);
+      // Respectful default — hand off to the smart invitation watcher.
+      setIntroArmed(false);
+      return;
     }
 
     if (prefersReducedMotion()) {
@@ -497,6 +505,47 @@ export default function SandboxV2() {
     const t = setTimeout(fire, delayMs);
     return () => clearTimeout(t);
   }, [introArmed, forceAutoWave, scrollStart, tune.delay]);
+
+  // Smart invitation watcher. Whenever the visitor is sitting in the Classic
+  // site (a fresh landing OR a manual switch back), surface a low-profile glass
+  // card nudging them toward the New site — but only after they've dwelt (20s)
+  // or scrolled past 40% of the page, and at most once per 24h. Reduced motion
+  // and the dev auto-sweep path opt out entirely.
+  useEffect(() => {
+    if (!hydrated) return;
+    if (renderer !== "classic") return;
+    if (waving || forceAutoWave) return;
+    // Reduced-motion visitors still get the (static) invitation; the CTA simply
+    // switches without the reveal wave (handled in selectExperience).
+
+    let last = 0;
+    try {
+      last = Number(localStorage.getItem(STORAGE.lastInvite)) || 0;
+    } catch {
+      /* ignore */
+    }
+    if (last && Date.now() - last < INVITE_COOLDOWN_MS) return;
+
+    let fired = false;
+    const cleanup = () => {
+      clearTimeout(dwell);
+      window.removeEventListener("scroll", onScroll);
+    };
+    const fire = () => {
+      if (fired) return;
+      fired = true;
+      setInvite(true);
+      cleanup();
+    };
+    const onScroll = () => {
+      const max =
+        document.documentElement.scrollHeight - window.innerHeight;
+      if (max > 0 && window.scrollY / max >= INVITE_SCROLL_RATIO) fire();
+    };
+    const dwell = setTimeout(fire, INVITE_DWELL_MS);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return cleanup;
+  }, [hydrated, renderer, waving, forceAutoWave, inviteNonce]);
 
   // Persist the chosen identity site-wide.
   useEffect(() => {
@@ -565,8 +614,38 @@ export default function SandboxV2() {
     }
   }
 
+  // Record that the invitation was shown/answered so it stays quiet for 24h.
+  function stampInvite() {
+    try {
+      localStorage.setItem(STORAGE.lastInvite, String(Date.now()));
+    } catch {
+      /* ignore */
+    }
+  }
+
   function dismissInvite() {
     setInvite(false);
+    stampInvite();
+  }
+
+  // CTA: take the visitor to the New site (with the reveal wave) and suppress
+  // the prompt for the cooldown window.
+  function acceptInvite() {
+    stampInvite();
+    const enhanced = EXPERIENCES.find((e) => e.id === "enhanced");
+    if (enhanced) selectExperience(enhanced); // clears invite + runs the wave
+  }
+
+  // Dev-only: clear the 24h gate and re-arm the watcher so the prompt can be
+  // re-tested immediately (no reload). Wired to a control behind ?dev=true.
+  function resetInvitePrompt() {
+    try {
+      localStorage.removeItem(STORAGE.lastInvite);
+    } catch {
+      /* ignore */
+    }
+    setInvite(false);
+    setInviteNonce((n) => n + 1);
   }
 
   function toggleBloom(node: Exclude<Bloom, null>) {
@@ -1016,7 +1095,7 @@ export default function SandboxV2() {
     >
       {/* Persistent glass header, three zones:
           LEFT  → Portfolio (scroll-to-top)
-          CENTER → Detailed Story / Executive Brief + Who are you?  (A/B/C cluster)
+          CENTER → Site: New / Site: Classic + Who are you?  (A/B/C cluster)
           RIGHT → one theme keycap that blooms into Light / Dark / Auto */}
 
       {/* LEFT zone — Portfolio scroll-to-top. */}
@@ -1040,9 +1119,11 @@ export default function SandboxV2() {
         aria-label="Controls"
         ref={clusterRef}
       >
-        {/* Experience (blooms the modes). On a fresh cold open this key gently
-            pulses and shows a low-profile invitation toast instead of an
-            auto-sweep — the transition stays user-initiated. */}
+        {/* Site version (blooms into New / Classic). The closed keycap quietly
+            broadcasts where you are — "Site: New" or "Site: Classic". While the
+            visitor lingers in Classic, this key pulses and a low-profile glass
+            invitation toast appears nudging toward the New site (smart watcher
+            above) — the switch always stays user-initiated. */}
         <div className="kc-slot">
           <button
             type="button"
@@ -1051,27 +1132,37 @@ export default function SandboxV2() {
             aria-haspopup="true"
             aria-expanded={openBloom === "view"}
             onClick={() => toggleBloom("view")}
-            aria-label={`View mode: ${activeExperience.label}. Tap to switch.`}
+            aria-label={`Site version: ${activeExperience.navName ?? activeExperience.label}. Tap to switch.`}
           >
-            {activeExperience.label}
+            <span className="kc-view-prefix">Site:</span>{" "}
+            {activeExperience.navName ?? activeExperience.label}
           </button>
           {inviteActive && (
             <div className="kc-invite" role="status">
               <span className="kc-invite-text">
-                See the evolution — switch to the Executive Brief for a
-                high-density, systemic view of the work.
+                New site available. Built to show projects, prototypes, and
+                systems more visually.
               </span>
-              <button
-                type="button"
-                className="kc-invite-dismiss"
-                onClick={dismissInvite}
-              >
-                Dismiss
-              </button>
+              <div className="kc-invite-actions">
+                <button
+                  type="button"
+                  className="kc-invite-cta"
+                  onClick={acceptInvite}
+                >
+                  Try New Site
+                </button>
+                <button
+                  type="button"
+                  className="kc-invite-dismiss"
+                  onClick={dismissInvite}
+                >
+                  Dismiss
+                </button>
+              </div>
             </div>
           )}
           {openBloom === "view" && (
-            <div className="kc-bloom" role="listbox" aria-label="Experience">
+            <div className="kc-bloom" role="listbox" aria-label="Site version">
               {EXPERIENCES.map((opt, i) => (
                 <button
                   key={opt.id}
@@ -1080,15 +1171,25 @@ export default function SandboxV2() {
                   aria-selected={opt.renderer === renderer}
                   aria-disabled={!opt.available}
                   disabled={!opt.available}
-                  className="kc-chip"
+                  className="kc-chip kc-chip-site"
                   data-active={opt.renderer === renderer ? "true" : undefined}
                   data-soon={!opt.available ? "true" : undefined}
                   style={{ animationDelay: `${i * 30}ms` }}
                   onClick={() => selectExperience(opt)}
                 >
-                  {opt.label}
-                  {!opt.available && (
-                    <span className="kc-chip-soon">Upcoming</span>
+                  <span className="kc-chip-line">
+                    {opt.icon && (
+                      <span className="kc-chip-icon" aria-hidden="true">
+                        {opt.icon}
+                      </span>
+                    )}
+                    {opt.label}
+                    {!opt.available && (
+                      <span className="kc-chip-soon">Upcoming</span>
+                    )}
+                  </span>
+                  {opt.sublabel && (
+                    <span className="kc-chip-sub">{opt.sublabel}</span>
                   )}
                 </button>
               ))}
@@ -1096,7 +1197,10 @@ export default function SandboxV2() {
           )}
         </div>
 
-        {/* Identity (rightmost; blooms the audience taxonomy over the margin). */}
+        {/* Identity (rightmost; blooms the audience taxonomy over the margin).
+            The button stays phrased as a question — "Who are you?" — at all
+            times so it never changes width or stops feeling conversational. The
+            current choice is shown only inside the bloom (golden checkmark). */}
         <div className="kc-slot kc-slot-identity">
           <button
             type="button"
@@ -1105,11 +1209,11 @@ export default function SandboxV2() {
             aria-haspopup="true"
             aria-expanded={openBloom === "identity"}
             onClick={() => toggleBloom("identity")}
-            aria-label={`Audience: ${
-              identity ? identity.label : "not chosen"
-            }. Tap to choose.`}
+            aria-label={`Who are you? ${
+              identity ? `Currently: ${identity.label}.` : ""
+            } Tap to choose.`}
           >
-            {identity ? identity.label : "Who are you?"}
+            Who are you?
           </button>
           {openBloom === "identity" && (
             <div
@@ -1128,6 +1232,11 @@ export default function SandboxV2() {
                   style={{ animationDelay: `${i * 30}ms` }}
                   onClick={() => selectIdentity(opt.id)}
                 >
+                  {identityId === opt.id && (
+                    <span className="kc-chip-check" aria-hidden="true">
+                      ✓
+                    </span>
+                  )}
                   {opt.label}
                 </button>
               ))}
@@ -1300,6 +1409,13 @@ export default function SandboxV2() {
               onClick={resetFirstVisit}
             >
               <span aria-hidden="true">🔄</span> Reset First Visit State
+            </button>
+            <button
+              type="button"
+              className="tune-firstvisit"
+              onClick={resetInvitePrompt}
+            >
+              <span aria-hidden="true">✉️</span> Reset Invitation Prompt (24h)
             </button>
             <button type="button" className="tune-reset" onClick={resetTune}>
               Reset to defaults

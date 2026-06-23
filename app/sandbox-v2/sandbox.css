@@ -1510,6 +1510,36 @@
   line-height: 1.45;
 }
 
+.kc-invite-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.kc-invite-cta {
+  padding: 0.4rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+  background: rgba(212, 175, 55, 0.16);
+  color: var(--accent-amber);
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.kc-invite-cta:hover {
+  background: rgba(212, 175, 55, 0.26);
+  border-color: rgba(212, 175, 55, 0.8);
+}
+
+.kc-invite-cta:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
 .kc-invite-dismiss {
   align-self: flex-end;
   padding: 0;
@@ -1661,6 +1691,53 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
+}
+
+/* Quiet "Site:" lead-in on the version keycap — present but not shouting, so
+   the changing word (New / Classic) carries the weight. */
+.kc-view-prefix {
+  opacity: 0.6;
+  font-weight: 600;
+}
+
+/* Golden selection mark inside the audience bloom — the choice lives here, not
+   in the (permanently conversational) button label. */
+.kc-chip-check {
+  color: var(--accent-amber);
+  font-weight: 800;
+}
+
+/* Site-version chips carry an icon + label line over a small explanatory
+   sublabel, so they stack vertically rather than the default single row. */
+.kc-chip-site {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18rem;
+  text-align: left;
+  max-width: 15rem;
+  white-space: normal;
+}
+
+.kc-chip-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.kc-chip-icon {
+  font-size: 0.92em;
+}
+
+.kc-chip-sub {
+  font-size: 0.62rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--text-muted);
+}
+
+.kc-chip-site[data-active="true"] .kc-chip-sub {
+  color: var(--accent-amber);
+  opacity: 0.85;
 }
 
 @keyframes kc-bloom-in {
