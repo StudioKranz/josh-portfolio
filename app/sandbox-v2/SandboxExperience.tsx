@@ -1135,8 +1135,7 @@ export default function SandboxV2() {
             aria-label={`Site version: ${activeExperience.navName ?? activeExperience.label}. Tap to switch.`}
           >
             <span className="kc-view-prefix">Site:</span>{" "}
-            {activeExperience.navName ?? activeExperience.label}{" "}
-            <span className="kc-caret" aria-hidden="true">▾</span>
+            {activeExperience.navName ?? activeExperience.label}
           </button>
           {inviteActive && (
             <div className="kc-invite" role="status">
@@ -1214,7 +1213,7 @@ export default function SandboxV2() {
               identity ? `Currently: ${identity.label}.` : ""
             } Tap to choose.`}
           >
-            Who are you? <span className="kc-caret" aria-hidden="true">▾</span>
+            Who are you?
           </button>
           {openBloom === "identity" && (
             <div
