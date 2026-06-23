@@ -117,24 +117,12 @@ export default function ToneSlider({
         </div>
       </div>
 
-      {/* Reactive tone read: a one-line explanation plus a one-word descriptor.
-          Both stacked for zero layout shift. */}
-      <div className="mt-4 flex items-start justify-between gap-3">
-        <StackedSwap
-          items={ATTUNE_TONE_VARIANTS.map((v) => v.explanation)}
-          active={tone}
-          className="min-w-0 flex-1 justify-items-start text-[12px] leading-snug text-muted"
-        />
-        <span className="flex shrink-0 items-center gap-1.5">
-          <span className="text-[11px] text-faint">Reads as</span>
-          <StackedSwap
-            items={ATTUNE_TONE_VARIANTS.map((v) => v.oneWord)}
-            active={tone}
-            className="justify-items-end"
-            itemClassName="rounded-full border border-line bg-surface px-2.5 py-0.5 text-[11px] font-medium text-muted whitespace-nowrap"
-          />
-        </span>
-      </div>
+      {/* Reactive tone explanation: one quiet line, stacked for zero layout shift. */}
+      <StackedSwap
+        items={ATTUNE_TONE_VARIANTS.map((v) => v.explanation)}
+        active={tone}
+        className="mt-4 justify-items-start text-[12px] leading-snug text-muted"
+      />
 
       <div className="mt-6 border-t border-line pt-4">
         <p className="text-[12px] text-faint">

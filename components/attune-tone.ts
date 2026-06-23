@@ -27,35 +27,28 @@ export interface AttuneToneVariant {
   explanation: string;
   // The graceful out, phrased in this tone (No thank you / Not now / Skip / …).
   action: string;
-  // A single-word read of the tone, shown as a small descriptor chip in the demo.
-  oneWord: string;
 }
 
 export const ATTUNE_TONE_VARIANTS: AttuneToneVariant[] = [
   {
     explanation: "Replies slow down, soften, and leave room — care before efficiency.",
     action: "I'd rather not right now",
-    oneWord: "Tender",
   },
   {
     explanation: "Warm and considerate, but still direct enough to get out of the way.",
     action: "No, thank you",
-    oneWord: "Gentle",
   },
   {
     explanation: "Neutral and efficient — the assistant says what's needed and stops.",
     action: "Not now",
-    oneWord: "Even",
   },
   {
     explanation: "A little personality slips in — light, encouraging, a touch of warmth.",
     action: "Skip for now",
-    oneWord: "Playful",
   },
   {
     explanation: "Dry, teasing, unmistakably opinionated — the assistant has a take.",
     action: "Hard pass",
-    oneWord: "Sassy",
   },
 ];
 
