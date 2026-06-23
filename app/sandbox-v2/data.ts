@@ -165,25 +165,38 @@ export const IDENTITIES: Identity[] = [
   { id: "curious-human", label: "Curious Human", lens: "curious" },
 ];
 
-// Node 2 — experience (renderer) options. V3/V4 are upcoming, shown frosted.
+// Node 2 — site-version options. The control is a conceptual "Site" selector:
+// the closed keycap reads "Site: New" / "Site: Classic" and the bloom presents
+// each version with an icon and a short explanatory sublabel. V3/V4 remain on
+// the roadmap, shown frosted. `navName` is the short word the closed keycap
+// pairs with "Site:" — kept separate from the bloom `label` on purpose.
 export interface ExperienceOption {
   id: string;
   label: string;
+  navName?: string;
+  icon?: string;
+  sublabel?: string;
   renderer?: Renderer;
   available: boolean;
 }
 
 export const EXPERIENCES: ExperienceOption[] = [
   {
-    id: "classic",
-    label: "Detailed Story",
-    renderer: "classic",
+    id: "enhanced",
+    label: "New Site",
+    navName: "New",
+    icon: "✨",
+    sublabel: "Visual project showcase & adaptive prototypes",
+    renderer: "enhanced",
     available: true,
   },
   {
-    id: "enhanced",
-    label: "Executive Brief",
-    renderer: "enhanced",
+    id: "classic",
+    label: "Classic Site",
+    navName: "Classic",
+    icon: "🏛️",
+    sublabel: "Original portfolio layout & core history",
+    renderer: "classic",
     available: true,
   },
   { id: "museum", label: "Museum", available: false },
