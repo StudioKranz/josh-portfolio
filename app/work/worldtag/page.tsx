@@ -9,16 +9,16 @@ import FieldValidationGallery from "@/components/FieldValidationGallery";
 export const metadata: Metadata = {
   title: "RelicWorld — Josh Rosenkranz",
   description:
-    "A location-based capture-the-flag prototype (formerly WorldTag) exploring how real-world movement, map data, and spatial state become playable interaction — a three-phase iOS spatial state machine with no backend.",
+    "RelicWorld is an active game-systems project spanning 2026 Roblox BunkerBattle development and an earlier iOS spatial prototype, with work across multiplayer lifecycle, telemetry, mobile interaction, and field-tested spatial rules.",
 };
 
 const META = [
-  { label: "Category", value: "Spatial infrastructure & prototyping" },
-  { label: "Timeline", value: "Earlier prototype · revisited 2026" },
-  { label: "Status", value: "Functional iOS architecture prototype" },
-  { label: "Medium", value: "iOS · MapKit · SwiftUI · Core Location" },
-  { label: "Theme", value: "Physical space as an interactive system" },
-  { label: "Role", value: "Concept, systems architecture, AI-assisted prototyping" },
+  { label: "Category", value: "Game systems, product prototyping & spatial interaction" },
+  { label: "Timeline", value: "Active 2026 · earlier iOS foundation" },
+  { label: "Status", value: "Active multiplayer prototype development" },
+  { label: "Medium", value: "Roblox · mobile · GitHub · earlier iOS" },
+  { label: "Theme", value: "Rules that survive real players and real environments" },
+  { label: "Role", value: "Product direction, systems design, testing, AI-assisted development" },
 ];
 
 const WORLDTAG_THEN = [
@@ -66,10 +66,10 @@ export default async function RelicWorld() {
   return (
     <CaseStudy
       name="RelicWorld"
-      eyebrow="Formerly WorldTag"
-      tagline="A location-based capture-the-flag system exploring how real-world movement, map data, and spatial state can become playable interaction."
+      eyebrow="Active 2026 game-systems work"
+      tagline="A living prototype space for multiplayer rules, telemetry, mobile interaction, computer opponents, and spatial gameplay — with BunkerBattle as the current Roblox expression and WorldTag as the earlier iOS foundation."
       maturity="prototype"
-      maturityLabel="Functional iOS architecture prototype"
+      maturityLabel="Active 2026 prototype"
     >
       <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 rounded-xl border border-line bg-surface p-5 sm:grid-cols-3 sm:p-7">
         {META.map((m) => (
@@ -84,7 +84,25 @@ export default async function RelicWorld() {
         ))}
       </dl>
 
-      <Section label="The problem">
+      <Section label="What is current">
+        <p>
+          RelicWorld is no longer only the earlier iOS field experiment shown
+          below. In 2026 the active work moved into Roblox through
+          <strong> BunkerBattle</strong>, where I have been directing the game
+          rules, match lifecycle, mobile interaction, telemetry and persistence
+          concepts, computer-opponent behavior, playtest changes, and the
+          GitHub-based workflow used with AI coding agents.
+        </p>
+        <p>
+          That work is useful to me precisely because it is messy. A rule that
+          sounds elegant on paper has to survive two players, timing, missed
+          turns, mobile controls, spectators, state transitions, and repeated
+          changes after playtesting. The current project is an exercise in
+          turning those failures into clearer systems.
+        </p>
+      </Section>
+
+      <Section label="The earlier spatial foundation">
         <p>
           A live outdoor environment is the most hostile design surface there
           is: no level designer authored it, GPS drifts by the second, and the
@@ -226,11 +244,12 @@ export default async function RelicWorld() {
       <Section label="What it demonstrates">
         <p>
           The throughline of RelicWorld is the same one in the rest of this work:
-          take a messy, unpredictable human reality — here, raw physical movement
-          through unauthored space — and engineer it into something intentional,
-          fair, and safe to interact with. The substance is the systems
-          architecture: a clean state machine, a layered separation of state, and
-          field-hardened heuristics that survive contact with real GPS.
+          take a messy system, define rules people can understand, test those
+          rules against real behavior, and keep iterating when reality disagrees
+          with the design. The earlier iOS prototype demonstrates that approach
+          against noisy physical geography. The current BunkerBattle work applies
+          the same discipline to multiplayer lifecycle, mobile play, telemetry,
+          and product iteration.
         </p>
       </Section>
 
