@@ -1,8 +1,12 @@
 # joshrosenkranz.info
 
-Personal portfolio and résumé for Josh Rosenkranz — Apple technologist and
-experience systems designer, applying for Apple's Incubation Design Prototyper
-role.
+Personal portfolio and résumé for Josh Rosenkranz — Apple technologist,
+experience systems designer, technical problem solver, educator, and builder.
+
+The portfolio collects current product, AI, spatial-computing, interaction,
+and creative-system work alongside a long Apple Retail career. It is designed
+to show how Josh approaches ambiguous problems, learns new systems, tests ideas,
+and turns observations into working experiences.
 
 - **Domain:** joshrosenkranz.info (registered via GoDaddy)
 - **Planned hosting:** Vercel (DNS to be pointed from GoDaddy once deployed)
