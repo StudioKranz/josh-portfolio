@@ -81,12 +81,12 @@ export const emergingProjects: Project[] = [
 export const additionalProjects: Project[] = [
   {
     slug: "worldtag",
-    name: "RelicWorld",
+    name: "RelicWorld / BunkerBattle",
     summary:
-      "A location-based capture-the-flag system exploring how real-world movement, map data, and spatial state can become playable interaction.",
+      "An active game-system laboratory spanning multiplayer Roblox prototypes, match lifecycle, telemetry, mobile interaction, AI-assisted development workflows, and earlier iOS spatial gameplay experiments.",
     maturity: "prototype",
-    maturityLabel: "Earlier prototype",
-    thumbLabel: "Spatial iOS",
+    maturityLabel: "Active 2026 prototype",
+    thumbLabel: "Game systems",
   },
 ];
 
