@@ -96,9 +96,9 @@ export const MASTER = {
   name: "Josh Rosenkranz",
   role: "Apple technologist and experience systems designer",
   thesis:
-    "I turn long-term human observation into prototypeable experience systems — across iOS, visionOS, AI continuity, and the web.",
+    "I turn long-term human observation into working systems — across Apple customer experience, technical troubleshooting, AI, spatial computing, games, teaching, and the web.",
   capabilities:
-    "AI-driven interaction · spatial presence · emotional context and consent · agentic workflows · multimodal prototyping",
+    "technical problem solving · product systems · coaching and facilitation · AI-assisted development · spatial interaction · creative technology",
 };
 
 // ---------------------------------------------------------------------------
@@ -160,7 +160,7 @@ export const IDENTITIES: Identity[] = [
   { id: "design-leader", label: "Design Leader", lens: "creative" },
   { id: "product-leader", label: "Product Leader", lens: "inventor" },
   { id: "engineering-manager", label: "Engineering Manager", lens: "builder" },
-  { id: "incubation-team", label: "Incubation Team", lens: "inventor" },
+  { id: "career-experience-host", label: "Career Experience Host", lens: "leader" },
   { id: "music-collaborator", label: "Music Collaborator", lens: "musician" },
   { id: "curious-human", label: "Curious Human", lens: "curious" },
 ];
@@ -295,25 +295,25 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
   {
     id: "relicworld",
     title: "RelicWorld",
-    subtitle: "Turning raw GPS and device heading into fair, deterministic gameplay.",
-    type: "iOS application prototype",
-    status: "Functional iOS architecture prototype · formerly WorldTag",
+    subtitle: "An active laboratory for multiplayer rules, telemetry, mobile play, and spatial game systems.",
+    type: "game systems & product prototype",
+    status: "Active 2026 development · Roblox BunkerBattle + earlier iOS spatial work",
     summary:
-      "A location-based capture-the-flag system exploring how real-world movement, map data, and spatial state can become playable interaction.",
-    thumbLabel: "Spatial iOS",
+      "A current game-system project exploring multiplayer lifecycle, telemetry, mobile interaction, computer opponents, repository governance, and earlier location-based spatial gameplay.",
+    thumbLabel: "Game systems",
     maturity: "prototype",
-    maturityLabel: "Earlier prototype",
+    maturityLabel: "Active 2026 prototype",
     href: "/work/worldtag",
-    featuredKicker: "Location-based spatial gameplay prototype for iOS",
+    featuredKicker: "Active multiplayer and spatial game-system prototyping",
     highlights: [
-      "Three-phase spatial state machine",
-      "Asymmetric hysteresis absorbs GPS jitter",
-      "Deterministic and fully on-device — no backend",
+      "Active Roblox BunkerBattle development in 2026",
+      "Match lifecycle, telemetry, mobile interaction, and computer-opponent iteration",
+      "Earlier iOS field prototype provides the spatial-systems foundation",
     ],
     metadata: {
-      date: "Earlier prototype · revisited 2026",
-      hardware: "iPhone · iOS",
-      tags: ["SwiftUI", "MapKit", "Core Location"],
+      date: "Active 2026",
+      hardware: "Roblox · iPad/iPhone · earlier iOS",
+      tags: ["Game Systems", "Telemetry", "Mobile UX", "GitHub Workflow"],
     },
     perspectives: ["builder", "inventor", "creative", "curious"],
     evidence: [
@@ -355,11 +355,11 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     ],
     narrative: {
       problem:
-        "A live outdoor environment is the most hostile design surface there is: no level designer authored it, GPS drifts by the second, and the map doesn't know which side of a fence you're on. The challenge isn't the game — it's turning raw, noisy sensor input into an interaction layer that is fair, safe, and deterministic, all without backend authority.",
+        "Game rules become interesting when they survive real players, mobile controls, timing, failure states, spectators, persistence, and repeated iteration. RelicWorld has become a place to test those systems rather than only describe them.",
       execution:
-        "I evolved an iOS prototype from a simple coordinate-proximity check into a three-phase spatial state machine — Explore → Trigger → Escape — with all state local and zero backend. I added asymmetric hysteresis buffers to absorb GPS jitter and used MapKit walking-route polylines as a placement proxy to keep objectives walkable.",
+        "In 2026 I shifted the active work into Roblox through BunkerBattle, directing rules, match lifecycle, telemetry, mobile interaction, computer-opponent behavior, playtest changes, and GitHub-based development with AI coding agents. The earlier iOS field prototype remains the spatial-systems foundation and evidence of how I approach noisy real-world inputs.",
       insight:
-        "The primary engineering challenge isn't compiling the game logic — it's translating messy, asynchronous physical geography into clear, bulletproof digital rules that stay synchronized as a human moves through space.",
+        "The throughline is systems thinking: define clear rules, instrument what happens, watch where people get confused or the system breaks, then change the product and test again.",
     },
   },
   {
