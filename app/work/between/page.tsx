@@ -5,45 +5,17 @@ import Section from "@/components/Section";
 export const metadata: Metadata = {
   title: "Between — Josh Rosenkranz",
   description:
-    "A deployed Next.js and Supabase foundation for agent-guided, mediated workflows.",
+    "A Next.js and Supabase prototype for agent-guided, mediated workflows.",
 };
-
-const DEMO_URL = "https://between.global";
-const ACCESS_CODE = "MZGFB8DJZWGS"; // reviewer access code
 
 export default function Between() {
   return (
     <CaseStudy
       name="Between"
       tagline="Agent-guided, mediated workflows."
-      maturity="deployed"
-      maturityLabel="Deployed · Next.js + Supabase on Vercel"
+      maturity="prototype"
+      maturityLabel="Prototype · Next.js + Supabase"
     >
-      <div className="mt-8 rounded-xl border border-line bg-surface p-5 sm:p-6">
-        <a
-          href={DEMO_URL}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-2.5 text-[14px] font-medium text-white transition-opacity hover:opacity-90"
-        >
-          Open the live demo →
-        </a>
-        <p className="mt-4 text-[13px] leading-relaxed text-muted">
-          Between is a two-person mediated space — open it at{" "}
-          <span className="text-ink">between.global</span>
-          {ACCESS_CODE ? (
-            <>
-              {" "}
-              with access code{" "}
-              <span className="rounded-md bg-white px-2 py-0.5 font-medium tracking-wide text-ink ring-1 ring-line">
-                {ACCESS_CODE}
-              </span>
-            </>
-          ) : null}
-          .
-        </p>
-      </div>
-
       <Section label="The problem">
         <p>
           Most software either pits people against an agent or replaces the human
@@ -55,16 +27,16 @@ export default function Between() {
 
       <Section label="What exists today">
         <p>
-          A deployed foundation, live today. Built on Next.js and Supabase and
-          shipped on Vercel, it supports mediated, agent-guided conversations and
-          workflows with managed state.
+          A working prototype built on Next.js and Supabase. It explores mediated,
+          agent-guided conversations and workflows with managed state, but it is
+          not currently presented as a public live service.
         </p>
       </Section>
 
       <Section label="What I directed, built, and tested">
         <p>
-          I built the prompt system, the mediation behavior, and the workflow
-          state, and deployed the working foundation. The core design
+          I directed and iterated the prompt system, mediation behavior, workflow
+          state, product constraints, and testing. The core design
           constraint — strict neutrality — shaped every agent response.
         </p>
       </Section>
