@@ -294,13 +294,13 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
   },
   {
     id: "relicworld",
-    title: "RelicWorld",
-    subtitle: "An active laboratory for multiplayer rules, telemetry, mobile play, and spatial game systems.",
+    title: "BunkerBattle / RelicWorld",
+    subtitle: "Active multiplayer game systems, telemetry, mobile play, and spatial experiments.",
     type: "game systems & product prototype",
     status: "Active 2026 development · Roblox BunkerBattle + earlier iOS spatial work",
     summary:
       "A current game-system project exploring multiplayer lifecycle, telemetry, mobile interaction, computer opponents, repository governance, and earlier location-based spatial gameplay.",
-    thumbLabel: "Game systems",
+    thumbLabel: "BunkerBattle",
     maturity: "prototype",
     maturityLabel: "Active 2026 prototype",
     href: "/work/worldtag",
@@ -394,13 +394,13 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     id: "between",
     title: "Between",
     subtitle: "Agent-guided, mediated workflows.",
-    type: "deployed web application",
-    status: "Deployed · Next.js + Supabase on Vercel",
+    type: "web application prototype",
+    status: "Working prototype · Next.js + Supabase",
     summary:
-      "Agent-guided, mediated workflows on a deployed Next.js and Supabase foundation.",
-    thumbLabel: "Live demo",
-    maturity: "deployed",
-    maturityLabel: "Deployed",
+      "Agent-guided, mediated workflows explored through a working Next.js and Supabase prototype.",
+    thumbLabel: "AI workflow",
+    maturity: "prototype",
+    maturityLabel: "Working prototype",
     href: "/work/between",
     metadata: {
       date: "Deployed",
@@ -413,7 +413,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
       problem:
         "High-stakes conversations and workflows often break down without a neutral structure to guide both sides toward a fair outcome.",
       execution:
-        "I built and deployed Between on a Next.js and Supabase foundation — an agent-guided, mediated workflow that structures the exchange between parties.",
+        "I directed and iterated Between as a Next.js and Supabase prototype — shaping the mediation model, product constraints, workflow state, testing, and interaction behavior."
       insight:
         "An agent earns trust by mediating the process, not by deciding the outcome — the structure is the product.",
     },
