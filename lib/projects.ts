@@ -20,6 +20,15 @@ export const projects: Project[] = [
     thumbLabel: "Vision Pro",
   },
   {
+    slug: "worldtag",
+    name: "BunkerBattle / RelicWorld",
+    summary:
+      "Active multiplayer Roblox game-system prototyping spanning match lifecycle, telemetry, mobile interaction, playtesting, AI-assisted development workflows, and earlier iOS spatial experiments.",
+    maturity: "prototype",
+    maturityLabel: "Active 2026 prototype",
+    thumbLabel: "Game systems",
+  },
+  {
     slug: "mindhub",
     name: "MindHub",
     summary:
@@ -32,10 +41,10 @@ export const projects: Project[] = [
     slug: "between",
     name: "Between",
     summary:
-      "Agent-guided, mediated workflows on a deployed Next.js and Supabase foundation.",
-    maturity: "deployed",
-    maturityLabel: "Deployed",
-    thumbLabel: "Live demo",
+      "Agent-guided, mediated workflows explored through a working Next.js and Supabase prototype.",
+    maturity: "prototype",
+    maturityLabel: "Working prototype",
+    thumbLabel: "AI workflow",
   },
   {
     slug: "attune",
@@ -79,15 +88,7 @@ export const emergingProjects: Project[] = [
 ];
 
 export const additionalProjects: Project[] = [
-  {
-    slug: "worldtag",
-    name: "RelicWorld / BunkerBattle",
-    summary:
-      "An active game-system laboratory spanning multiplayer Roblox prototypes, match lifecycle, telemetry, mobile interaction, AI-assisted development workflows, and earlier iOS spatial gameplay experiments.",
-    maturity: "prototype",
-    maturityLabel: "Active 2026 prototype",
-    thumbLabel: "Game systems",
-  },
+
 ];
 
 export function getProject(slug: string): Project | undefined {
