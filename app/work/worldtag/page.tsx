@@ -7,10 +7,12 @@ import SpatialZoneDiagram from "@/components/SpatialZoneDiagram";
 import FieldValidationGallery from "@/components/FieldValidationGallery";
 
 export const metadata: Metadata = {
-  title: "RelicWorld — Josh Rosenkranz",
+  title: "BunkerBattle / RelicWorld — Josh Rosenkranz",
   description:
-    "RelicWorld is an active game-systems project spanning 2026 Roblox BunkerBattle development and an earlier iOS spatial prototype, with work across multiplayer lifecycle, telemetry, mobile interaction, and field-tested spatial rules.",
+    "BunkerBattle is an active 2026 Roblox multiplayer prototype within the broader RelicWorld game-systems project, spanning match lifecycle, telemetry, mobile interaction, playtesting, and earlier iOS spatial work.",
 };
+
+const BUNKERBATTLE_URL = "https://www.roblox.com/share?code=9be6c027b779524a961008990c5cac31&type=ExperienceDetails&stamp=1790365568138";
 
 const META = [
   { label: "Category", value: "Game systems, product prototyping & spatial interaction" },
@@ -65,12 +67,26 @@ export default async function RelicWorld() {
 
   return (
     <CaseStudy
-      name="RelicWorld"
+      name="BunkerBattle / RelicWorld"
       eyebrow="Active 2026 game-systems work"
       tagline="A living prototype space for multiplayer rules, telemetry, mobile interaction, computer opponents, and spatial gameplay — with BunkerBattle as the current Roblox expression and WorldTag as the earlier iOS foundation."
       maturity="prototype"
       maturityLabel="Active 2026 prototype"
     >
+      <div className="mt-8 rounded-xl border border-line bg-surface p-5 sm:p-6">
+        <p className="text-[13.5px] leading-6 text-ink">
+          BunkerBattle is playable on Roblox. The live experience is the fastest way to understand the current game loop and the systems being tested.
+        </p>
+        <a
+          href={BUNKERBATTLE_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 inline-flex items-center rounded-full bg-ink px-5 py-2.5 text-[14px] font-medium text-white transition-opacity hover:opacity-90"
+        >
+          Play BunkerBattle on Roblox →
+        </a>
+      </div>
+
       <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 rounded-xl border border-line bg-surface p-5 sm:grid-cols-3 sm:p-7">
         {META.map((m) => (
           <div key={m.label}>
