@@ -305,7 +305,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     maturityLabel: "Published playable prototype",
     href: "/work/bunkerbattle",
     featuredKicker: "Playable multiplayer system shaped by real play",
-    featuredImage: "/images/projects/bunkerbattle-placement.jpg",
+    featuredImage: "/images/projects/bunkerbattle-placement-clean.webp",
     highlights: [
       "Published Roblox experience with a complete human match loop",
       "Three recorded live matches produced 217 turns with four timeouts",
@@ -325,7 +325,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
         eyebrow: "Published gameplay",
         label:
           "Mobile bunker-placement flow in the published Roblox experience, including the next-bunker prompt and computer-opponent option.",
-        path: "/images/projects/bunkerbattle-placement.jpg",
+        path: "/images/projects/bunkerbattle-placement-clean.webp",
       },
     ],
     narrative: {
