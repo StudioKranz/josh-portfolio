@@ -293,27 +293,72 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     },
   },
   {
-    id: "relicworld",
-    title: "BunkerBattle / RelicWorld",
-    subtitle: "Active multiplayer game systems, telemetry, mobile play, and spatial experiments.",
-    type: "game systems & product prototype",
-    status: "Active 2026 development · Roblox BunkerBattle + earlier iOS spatial work",
+    id: "bunkerbattle",
+    title: "BunkerBattle",
+    subtitle: "A playable multiplayer game where Battleship becomes a physical space.",
+    type: "multiplayer game systems & product prototype",
+    status: "Published playable Roblox prototype · active 2026",
     summary:
-      "A current game-system project exploring multiplayer lifecycle, telemetry, mobile interaction, computer opponents, repository governance, and earlier location-based spatial gameplay.",
-    thumbLabel: "BunkerBattle",
+      "A published Roblox multiplayer prototype built around physical court claiming, bunker placement, match lifecycle, telemetry, mobile play, and repeated playtesting.",
+    thumbLabel: "Roblox",
     maturity: "prototype",
-    maturityLabel: "Active 2026 prototype",
-    href: "/work/worldtag",
-    featuredKicker: "Active multiplayer and spatial game-system prototyping",
+    maturityLabel: "Published playable prototype",
+    href: "/work/bunkerbattle",
+    featuredKicker: "Playable multiplayer system shaped by real play",
+    featuredImage: "/images/projects/bunkerbattle-placement.jpg",
     highlights: [
-      "Active Roblox BunkerBattle development in 2026",
-      "Match lifecycle, telemetry, mobile interaction, and computer-opponent iteration",
-      "Earlier iOS field prototype provides the spatial-systems foundation",
+      "Published Roblox experience with a complete human match loop",
+      "Three recorded live matches produced 217 turns with four timeouts",
+      "Telemetry, persistence, mobile interaction, and computer-opponent prototyping",
     ],
     metadata: {
       date: "Active 2026",
-      hardware: "Roblox · iPad/iPhone · earlier iOS",
-      tags: ["Game Systems", "Telemetry", "Mobile UX", "GitHub Workflow"],
+      hardware: "Roblox · mobile · desktop",
+      tags: ["Game Systems", "Telemetry", "Mobile UX", "Playtesting", "GitHub Workflow"],
+    },
+    perspectives: ["builder", "inventor", "leader", "creative", "curious"],
+    evidence: [
+      {
+        id: "bb_01",
+        type: "image",
+        securityTier: "public",
+        eyebrow: "Published gameplay",
+        label:
+          "Mobile bunker-placement flow in the published Roblox experience, including the next-bunker prompt and computer-opponent option.",
+        path: "/images/projects/bunkerbattle-placement.jpg",
+      },
+    ],
+    narrative: {
+      problem:
+        "A simple Battleship-like mechanic becomes a systems problem once the board is a place people physically move through: claiming, private setup, readiness, turn communication, incomplete setup, quitting, persistence, mobile controls, and reset all have to work together.",
+      execution:
+        "I direct BunkerBattle's product behavior, rules, interaction model, priorities, acceptance criteria, playtests, telemetry, and iteration. Development is managed in GitHub with documented decisions and test plans, using AI coding agents as implementation partners.",
+      insight:
+        "The strongest rules are the ones that survive first-time players. Instrumenting live matches turns confusion, timing, and failure states into evidence for the next product decision.",
+    },
+  },
+  {
+    id: "relicworld",
+    title: "RelicWorld",
+    subtitle: "Field-tested spatial game rules built on noisy real-world location input.",
+    type: "spatial game & interaction prototype",
+    status: "Field-tested iOS prototype · 2025 to 2026",
+    summary:
+      "An iOS spatial prototype exploring road-aware placement, nested game zones, GPS hysteresis, carrying state, and interaction rules tested outdoors.",
+    thumbLabel: "Spatial game",
+    maturity: "prototype",
+    maturityLabel: "Field-tested spatial prototype",
+    href: "/work/worldtag",
+    featuredKicker: "Spatial game systems tested in the real world",
+    highlights: [
+      "Road-aware target placement using walking-route geometry",
+      "Nested zone and chamber state with hysteresis for GPS boundary jitter",
+      "On-device field testing around real streets and physical movement",
+    ],
+    metadata: {
+      date: "2025 to 2026",
+      hardware: "iPhone · iOS",
+      tags: ["SwiftUI", "MapKit", "Core Location", "Spatial Interaction"],
     },
     perspectives: ["builder", "inventor", "creative", "curious"],
     evidence: [
@@ -355,11 +400,11 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
     ],
     narrative: {
       problem:
-        "Game rules become interesting when they survive real players, mobile controls, timing, failure states, spectators, persistence, and repeated iteration. RelicWorld has become a place to test those systems rather than only describe them.",
+        "Outdoor spatial play has to turn drifting GPS, roads, fences, headings, and physical movement into rules that feel stable and fair.",
       execution:
-        "In 2026 I shifted the active work into Roblox through BunkerBattle, directing rules, match lifecycle, telemetry, mobile interaction, computer-opponent behavior, playtest changes, and GitHub-based development with AI coding agents. The earlier iOS field prototype remains the spatial-systems foundation and evidence of how I approach noisy real-world inputs.",
+        "I evolved an iOS field prototype from coordinate proximity into a three-phase spatial state machine with route-aware placement, nested zones, contextual routing, and hysteresis buffers, then tested it on-device outdoors.",
       insight:
-        "The throughline is systems thinking: define clear rules, instrument what happens, watch where people get confused or the system breaks, then change the product and test again.",
+        "Presence and fairness depend on translating imperfect sensor data into interaction rules that feel deterministic to the person moving through them.",
     },
   },
   {
@@ -413,7 +458,7 @@ export const PORTFOLIO_DATABASE: SandboxProject[] = [
       problem:
         "High-stakes conversations and workflows often break down without a neutral structure to guide both sides toward a fair outcome.",
       execution:
-        "I directed and iterated Between as a Next.js and Supabase prototype — shaping the mediation model, product constraints, workflow state, testing, and interaction behavior."
+        "I directed and iterated Between as a Next.js and Supabase prototype — shaping the mediation model, product constraints, workflow state, testing, and interaction behavior.",
       insight:
         "An agent earns trust by mediating the process, not by deciding the outcome — the structure is the product.",
     },
