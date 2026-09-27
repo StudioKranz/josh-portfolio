@@ -51,7 +51,7 @@ export default function BunkerBattle() {
     >
       <div className="mt-8 overflow-hidden rounded-2xl border border-line bg-surface">
         <Image
-          src="/images/projects/bunkerbattle-placement.jpg"
+          src="/images/projects/bunkerbattle-placement-clean.webp"
           alt="BunkerBattle running in Roblox with a player placing bunkers on a court"
           width={900}
           height={414}
