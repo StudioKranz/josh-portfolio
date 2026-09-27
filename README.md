@@ -14,7 +14,8 @@ The portfolio is an active product, not a static résumé site. Recent work
 includes:
 
 - Between, an AI mediated shared problem solving application
-- RelicWorld and BunkerBattle, active multiplayer and game systems prototyping
+- BunkerBattle, a published Roblox multiplayer prototype shaped by live play, telemetry, and iteration
+- RelicWorld, an earlier field-tested iOS spatial game prototype
 - Socarengue Studio, a multimedia creator and storytelling platform
 - Attune, an exploration of tone, emotional context, and consent
 - RoomBridge, a spatial computing prototype for Apple Vision Pro
