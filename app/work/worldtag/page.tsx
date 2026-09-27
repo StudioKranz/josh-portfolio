@@ -1,26 +1,25 @@
 import type { Metadata } from "next";
 import { promises as fs } from "fs";
 import path from "path";
+import Link from "next/link";
 import CaseStudy from "@/components/CaseStudy";
 import Section from "@/components/Section";
 import SpatialZoneDiagram from "@/components/SpatialZoneDiagram";
 import FieldValidationGallery from "@/components/FieldValidationGallery";
 
 export const metadata: Metadata = {
-  title: "BunkerBattle / RelicWorld — Josh Rosenkranz",
+  title: "RelicWorld — Josh Rosenkranz",
   description:
-    "BunkerBattle is an active 2026 Roblox multiplayer prototype within the broader RelicWorld game-systems project, spanning match lifecycle, telemetry, mobile interaction, playtesting, and earlier iOS spatial work.",
+    "A field-tested iOS spatial game prototype exploring road-aware placement, noisy location input, nested game zones, hysteresis, and real-world interaction rules.",
 };
 
-const BUNKERBATTLE_URL = "https://www.roblox.com/share?code=9be6c027b779524a961008990c5cac31&type=ExperienceDetails&stamp=1790365568138";
-
 const META = [
-  { label: "Category", value: "Game systems, product prototyping & spatial interaction" },
-  { label: "Timeline", value: "Active 2026 · earlier iOS foundation" },
-  { label: "Status", value: "Active multiplayer prototype development" },
-  { label: "Medium", value: "Roblox · mobile · GitHub · earlier iOS" },
-  { label: "Theme", value: "Rules that survive real players and real environments" },
-  { label: "Role", value: "Product direction, systems design, testing, AI-assisted development" },
+  { label: "Category", value: "Spatial interaction & game systems" },
+  { label: "Timeline", value: "2025 to 2026" },
+  { label: "Status", value: "Field-tested iOS prototype" },
+  { label: "Medium", value: "iOS · SwiftUI · MapKit · Core Location" },
+  { label: "Theme", value: "Turning noisy real-world input into stable game rules" },
+  { label: "Role", value: "Product direction, systems design, field testing" },
 ];
 
 const WORLDTAG_THEN = [
@@ -67,26 +66,12 @@ export default async function RelicWorld() {
 
   return (
     <CaseStudy
-      name="BunkerBattle / RelicWorld"
-      eyebrow="Active 2026 game-systems work"
-      tagline="A living prototype space for multiplayer rules, telemetry, mobile interaction, computer opponents, and spatial gameplay — with BunkerBattle as the current Roblox expression and WorldTag as the earlier iOS foundation."
+      name="RelicWorld"
+      eyebrow="Field-tested spatial game prototype"
+      tagline="An iOS spatial game prototype that turns noisy location data, roads, nested zones, and physical movement into a stable interaction system."
       maturity="prototype"
-      maturityLabel="Active 2026 prototype"
+      maturityLabel="Field-tested spatial prototype"
     >
-      <div className="mt-8 rounded-xl border border-line bg-surface p-5 sm:p-6">
-        <p className="text-[13.5px] leading-6 text-ink">
-          BunkerBattle is playable on Roblox. The live experience is the fastest way to understand the current game loop and the systems being tested.
-        </p>
-        <a
-          href={BUNKERBATTLE_URL}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-4 inline-flex items-center rounded-full bg-ink px-5 py-2.5 text-[14px] font-medium text-white transition-opacity hover:opacity-90"
-        >
-          Play BunkerBattle on Roblox →
-        </a>
-      </div>
-
       <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 rounded-xl border border-line bg-surface p-5 sm:grid-cols-3 sm:p-7">
         {META.map((m) => (
           <div key={m.label}>
@@ -100,21 +85,16 @@ export default async function RelicWorld() {
         ))}
       </dl>
 
-      <Section label="What is current">
+      <Section label="Relationship to BunkerBattle">
         <p>
-          RelicWorld is no longer only the earlier iOS field experiment shown
-          below. In 2026 the active work moved into Roblox through
-          <strong> BunkerBattle</strong>, where I have been directing the game
-          rules, match lifecycle, mobile interaction, telemetry and persistence
-          concepts, computer-opponent behavior, playtest changes, and the
-          GitHub-based workflow used with AI coding agents.
-        </p>
-        <p>
-          That work is useful to me precisely because it is messy. A rule that
-          sounds elegant on paper has to survive two players, timing, missed
-          turns, mobile controls, spectators, state transitions, and repeated
-          changes after playtesting. The current project is an exercise in
-          turning those failures into clearer systems.
+          RelicWorld documents the earlier spatial-game work: road-aware target
+          placement, nested zones, noisy GPS boundaries, carrying state, and
+          field testing outdoors. The current Roblox multiplayer project grew
+          from the same systems mindset, but it now stands on its own as{" "}
+          <Link href="/work/bunkerbattle" className="underline underline-offset-4">
+            BunkerBattle
+          </Link>
+          .
         </p>
       </Section>
 
@@ -259,13 +239,11 @@ export default async function RelicWorld() {
 
       <Section label="What it demonstrates">
         <p>
-          The throughline of RelicWorld is the same one in the rest of this work:
-          take a messy system, define rules people can understand, test those
-          rules against real behavior, and keep iterating when reality disagrees
-          with the design. The earlier iOS prototype demonstrates that approach
-          against noisy physical geography. The current BunkerBattle work applies
-          the same discipline to multiplayer lifecycle, mobile play, telemetry,
-          and product iteration.
+          RelicWorld demonstrates a way of working with messy physical systems:
+          define rules people can understand, test those rules against real
+          behavior, and keep iterating when reality disagrees with the design.
+          The field work here became part of the product lineage that later
+          informed BunkerBattle, while remaining a distinct spatial prototype.
         </p>
       </Section>
 
