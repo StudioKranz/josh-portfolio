@@ -20,13 +20,22 @@ export const projects: Project[] = [
     thumbLabel: "Vision Pro",
   },
   {
-    slug: "worldtag",
-    name: "BunkerBattle / RelicWorld",
+    slug: "bunkerbattle",
+    name: "BunkerBattle",
     summary:
-      "Active multiplayer Roblox game-system prototyping spanning match lifecycle, telemetry, mobile interaction, playtesting, AI-assisted development workflows, and earlier iOS spatial experiments.",
+      "A published Roblox multiplayer prototype built around physical court claiming, bunker placement, match lifecycle, telemetry, mobile play, and repeated playtesting.",
     maturity: "prototype",
-    maturityLabel: "Active 2026 prototype",
-    thumbLabel: "Game systems",
+    maturityLabel: "Published playable prototype",
+    thumbLabel: "Roblox",
+  },
+  {
+    slug: "worldtag",
+    name: "RelicWorld",
+    summary:
+      "An earlier iOS spatial game prototype exploring road-aware placement, noisy location input, nested game zones, hysteresis, and field-tested interaction rules.",
+    maturity: "prototype",
+    maturityLabel: "Field-tested spatial prototype",
+    thumbLabel: "Spatial game",
   },
   {
     slug: "mindhub",
