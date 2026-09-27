@@ -46,6 +46,7 @@ type Bloom = "identity" | "view" | "theme" | null;
 // In Auto mode it tracks the active "Who are you?" audience; the Tuning Lab
 // selector can manually override (and lock) it to one of these options.
 const FEATURED_OPTIONS = [
+  "bunkerbattle",
   "roombridge",
   "relicworld",
   "attune",
@@ -59,14 +60,15 @@ function isFeatured(v: string | null): v is FeaturedId {
 
 // Auto-binding: the active audience identity maps to the project that anchors
 // the top of the feed. Returns a project id (may be outside FEATURED_OPTIONS).
-// "Stronger active visual" tie-breaks resolved to: eval audiences → RelicWorld
-// (the only visual-evidence option of that pair), musician → Sonic Experience.
+// Current, playable evidence leads the general and evaluation audiences.
+// Specialized lenses can still feature the project that best matches their work.
 function autoFeaturedId(identityId: string | null): string {
   switch (identityId) {
     case "engineering-manager":
     case "recruiter":
     case "hiring-manager":
-      return "relicworld";
+    case "career-experience-host":
+      return "bunkerbattle";
     case "music-collaborator":
       return "sonic-experience-design";
     case "product-leader":
@@ -78,7 +80,7 @@ function autoFeaturedId(identityId: string | null): string {
       return "attune";
     // incubation-team, curious-human, default:
     default:
-      return "roombridge";
+      return "bunkerbattle";
   }
 }
 
@@ -406,7 +408,7 @@ export default function SandboxV2() {
   const [wavefront, setWavefront] = useState<Wavefront>("crisp");
   // Featured spotlight: `featured` is the manual choice; `featuredManual` says
   // whether it overrides the audience auto-binding. Default = Auto (track lens).
-  const [featured, setFeatured] = useState<FeaturedId>("roombridge");
+  const [featured, setFeatured] = useState<FeaturedId>("bunkerbattle");
   const [featuredManual, setFeaturedManual] = useState(false);
   // Whether the lens-filtered "More Projects" section is expanded.
   const [moreOpen, setMoreOpen] = useState(false);
