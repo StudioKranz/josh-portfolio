@@ -30,6 +30,15 @@ includes:
 - `/how-i-work` documents process and systems thinking
 - `/legacy-home` preserves the earlier portfolio as a rollback and comparison point
 
+## Design research and proposed improvements
+
+The October 28, 2026 visitor feedback is recorded separately from proposed changes:
+
+1. [Observed visitor feedback and research notes](docs/research/2026-10-28-portfolio-visitor-feedback.md)
+2. [Adaptive portfolio experience, language slider, and discovery proposal](docs/2026-10-28-adaptive-portfolio-visitor-experience.md)
+
+These are proposals and research notes, not features confirmed to be live.
+
 ## Technical approach
 
 The site is built with Next.js, React, TypeScript, and Tailwind, using a
