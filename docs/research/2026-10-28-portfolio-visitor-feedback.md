@@ -79,4 +79,4 @@ Capture observed behaviors and exact confusing terms before proposing fixes. Do 
 
 ## Related design proposal
 
-See [Adaptive portfolio: language and visitor discovery](../design/adaptive-portfolio-language-and-discovery.md).
+See [Adaptive portfolio: visitor experience, language, and discovery](../2026-10-28-adaptive-portfolio-visitor-experience.md).
