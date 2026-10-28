@@ -140,6 +140,69 @@ This analogy is valuable because visitors understand *why* shared memory is usef
 
 Check the actual code and documentation of MindHub, MindMeld, Attune, and related projects before attributing features. In the current portfolio, MindHub is labeled an early continuity prototype and MindMeld an active reasoning archive prototype. Do not silently collapse them into one implemented system.
 
+
+## 6A. Cascading language preference: learn from deliberate choices
+
+**Added from Josh's October 28 follow-up:** A card's Simple ↔ Expert slider should affect other cards that the visitor has not adjusted, potentially using an average of the visitor's explicit selections. Previously customized cards should keep their own setting.
+
+This is a **design proposal, not a live behavior**.
+
+### Candidate rule for first prototype
+
+Start all cards at a balanced midpoint (for example, 2 on a scale from 0 to 4). Distinguish **inherit** from **override** on each card.
+
+- A card has `languageOverride = null` until the visitor deliberately changes it. It displays the current inherited preference.
+- A card with an explicit override always shows its own chosen level. The visitor can select "Use site preference" to clear that override.
+- Calculate the inherited preference from the arithmetic mean of each card's **latest deliberately committed override**, rounded to the nearest supported language level. If there are no overrides, use the initial midpoint.
+- Never include automatically inherited values in the mean, otherwise the system would count its own output as input and manufacture feedback.
+- Repeated dragging on the *same* slider replaces its current selection, not multiple independent votes. Commit a single final selection after a drag or keyboard adjustment; still preview the active card immediately.
+- A card currently being read should keep its wording stable. Apply an inherited change when the visitor leaves and reopens it or at an otherwise nondisruptive boundary. Scroll position, focus, and reading state should not be lost.
+- Treat simple/technical language as a **content preference**, not a visitor identity, ability score, or proof of expertise. Never use it to imply that someone is less knowledgeable.
+
+**Example:** All cards start at 2. The visitor explicitly moves MindHub to 4: the still-unadjusted cards inherit 4, while MindHub is pinned at 4. Next they move Attune to 2: MindHub remains 4; Attune remains 2; other unadjusted cards inherit the mean, 3. If the visitor resets MindHub to "Use site preference," the remaining explicit selection of 2 becomes the inherited level.
+
+### Interaction semantics and alternatives
+
+**Per-card sliders:** The direct feedback mechanism. A moved slider becomes a card-specific override. Show subtle affordance for "Customized" versus "Following your preference," and give every card a small reset option.
+
+**Site-wide slider:** Josh also wants a visible Simple ↔ Expert control for the overall page. There is a real UX ambiguity between a user *directly setting* a site-wide preference and the portfolio *inferring* one from individual cards. Do not silently erase an explicit global selection by later averaging.
+
+Two options for a test:
+1. **Suggested starting point:** Site-wide `Auto` mode reflects the mean of card overrides. Selecting an explicit site-wide level switches to `Manual` mode, immediately updates only cards still following the site setting, and keeps that level stable until the user returns to `Auto`. Per-card overrides remain untouched.
+2. **Simpler first release:** Only the per-card controls contribute to a learned inherited preference. A top-level readout shows "Language: adapting" and can restore the midpoint or clear customizations. Add manual global override only after usability testing.
+
+**Viewed versus moved:** Viewing a card should *not* permanently pin its level by itself. However, **actively reading** a card can temporarily defer text updates to avoid jarring rewrites. A visitor should not need to adjust every card just to prevent changes while reading.
+
+**Persistence:** Prototype within the session. Saving language preferences across visits should be opt-in and distinct from storing visitor interests. Manual overrides may need a reset per card and a "Reset language preferences" action.
+
+**Data signals:** The visitor's committed level may inform presentation preferences, but it should not be counted as evidence of recruiter, engineer, investor, or any sensitive trait. Even the inference process should be locally computed and transparent.
+
+### Implementation notes and evaluation
+
+A conceptual state shape, not an existing API:
+
+```ts
+type LanguageLevel = 0 | 1 | 2 | 3 | 4;
+type LanguageSettings = {
+  mode: "auto" | "manual";
+  manualSiteLevel: LanguageLevel;
+  overridesByProject: Record<string, LanguageLevel | undefined>;
+};
+
+function inheritedLevel(s: LanguageSettings): LanguageLevel {
+  if (s.mode === "manual") return s.manualSiteLevel;
+  const levels = Object.values(s.overridesByProject).filter(
+    (v): v is LanguageLevel => v !== undefined
+  );
+  if (levels.length === 0) return 2;
+  return Math.round(levels.reduce((a, b) => a + b, 0) / levels.length) as LanguageLevel;
+}
+```
+
+When a card has a committed override, show its chosen language. When it has no override, show the inherited level, subject to temporary reading stability. The formula is only a first prototype: test whether rounding makes the interface lurch between levels when there are few inputs. A median, smoothing, or per-visit prior might prove calmer, but those alternatives should not be silently substituted for Josh's requested arithmetic mean.
+
+A critical usability test: Can a visitor explain why an untouched card changed, why a touched card did not, and how to undo either change? Prefer a small, friendly message such as "Other projects now use this explanation style" over an opaque prediction animation. Ensure keyboard accessibility, stable focus, and reduced-motion compliance.
+
 ## 7. Visitor interest and the glass invitation
 
 ### Two complementary paths
