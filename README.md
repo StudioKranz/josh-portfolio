@@ -37,6 +37,7 @@ The October 28, 2026 visitor feedback is recorded separately from proposed chang
 1. [Observed visitor feedback and research notes](docs/research/2026-10-28-portfolio-visitor-feedback.md)
 2. [Adaptive portfolio experience, language slider, and discovery proposal](docs/2026-10-28-adaptive-portfolio-visitor-experience.md)
 3. [Resume entry perspectives and invitation-only access concept](docs/design/2026-10-28-resume-entry-and-private-access.md)
+4. [Identity navigation and inline expanding project case studies](docs/design/2026-10-28-navigation-and-inline-projects.md)
 
 These are proposals and research notes, not features confirmed to be live.
 
