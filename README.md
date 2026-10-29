@@ -54,6 +54,8 @@ résumé PDF. Re-render with:
 ## Career work
 
 Private application research, qualification matrices, evidence records, and
-interview preparation live separately in `StudioKranz/career-work`. Apple
+interview preparation live separately in [`StudioKranz/career-work`](https://github.com/StudioKranz/career-work) (private; access requires permission). Apple
 confidential material and private career notes are not stored in this public
 repository.
+
+Career facts and evidence are maintained in that private workspace and reviewed before public publication. Individual software project repositories remain the implementation sources of truth. **There is no automatic sync between repositories.** See the [public-safe career evidence handoff policy](docs/career-evidence-publishing.md) for how to reuse approved information in portfolio cards and résumés.
